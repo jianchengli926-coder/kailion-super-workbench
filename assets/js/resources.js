@@ -93,6 +93,7 @@
     else if (key === 'scene') renderScene(root);
     else if (key === 'brand') renderBrand(root);
     else if (key === 'product') renderProduct(root);
+    else if (key === 'semantic') renderSemantic(root);
     else {
       root.innerHTML = '<div class="manual-empty">' + (window.I18N ? I18N.t('res.unknown') : '未知资源模块') + '</div>';
     }
@@ -1287,6 +1288,152 @@
       toast(window.I18N ? I18N.t('res.detailFlowDone') : '已生成：提示词 → 详情页生成');
     });
     draw();
+  }
+
+  /* ====================== 语义库 (v2.2.0-super) ======================
+     三个子类型：
+       synonyms  同义词库  [{id, word, synonyms:[], addedAt}]
+       keywords   关键词库  [{id, topic, keywords:[], addedAt}]
+       entities   实体库   [{id, name, type, attrs:{}, addedAt}] */
+  var SEM_KEYS = {
+    synonyms: 'kailion_semantic_synonyms',
+    keywords: 'kailion_semantic_keywords',
+    entities: 'kailion_semantic_entities'
+  };
+  var SEM_SUBS = [
+    { id: 'synonyms', title: '同义词库', icon: '🔁', phWord: '主词（如：好）', phList: '同义词，逗号分隔（如：优秀,出色,卓越）' },
+    { id: 'keywords', title: '关键词库', icon: '🔑', phWord: '主题（如：五金刀剪）', phList: '关键词，逗号分隔（如：菜刀,不锈钢,5Cr15MoV,HRC）' },
+    { id: 'entities', title: '实体库', icon: '🏷️', phWord: '实体名（如：KaiLionCrafts）', phList: '属性 KEY=VALUE，每行一个（如：country=中国）' }
+  ];
+
+  function renderSemantic(root) {
+    var activeSub = 'synonyms';
+    root.innerHTML =
+      '<div class="res-wrap">'
+      + '<div class="res-header"><div><h2 class="res-title">🧠 语义库</h2>'
+      + '<p class="res-sub">同义词 / 关键词 / 命名实体，供 AI 节点做语义扩展与检索</p></div>'
+      + '<input id="sem-search" class="input" style="width:200px" placeholder="搜索…">'
+      + '<button id="sem-add" class="btn btn-primary btn-sm">➕ 新增</button></div>'
+      + '<div class="res-tools" id="sem-tabs" style="display:flex;gap:6px;margin:8px 0;"></div>'
+      + '<div id="sem-list"></div>'
+      + '</div>';
+
+    var tabsEl = document.getElementById('sem-tabs');
+    var listEl = document.getElementById('sem-list');
+    var searchEl = document.getElementById('sem-search');
+
+    function drawTabs() {
+      tabsEl.innerHTML = SEM_SUBS.map(function (s) {
+        return '<button class="btn btn-sm ' + (s.id === activeSub ? 'btn-primary' : '') + '" data-sub="' + s.id + '">'
+          + s.icon + ' ' + s.title + '</button>';
+      }).join('');
+      tabsEl.querySelectorAll('button').forEach(function (b) {
+        b.addEventListener('click', function () { activeSub = b.getAttribute('data-sub'); drawTabs(); drawList(); });
+      });
+    }
+
+    function currentList() { return load(SEM_KEYS[activeSub]); }
+
+    function drawList() {
+      var q = (searchEl.value || '').trim().toLowerCase();
+      var list = currentList().filter(function (it) {
+        if (!q) return true;
+        return JSON.stringify(it).toLowerCase().indexOf(q) !== -1;
+      });
+      if (!list.length) {
+        listEl.innerHTML = '<div class="manual-empty">暂无数据，点击右上角「新增」添加</div>';
+        return;
+      }
+      listEl.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' + list.map(function (it) {
+        var main = '', extra = '';
+        if (activeSub === 'synonyms') {
+          main = '<strong>' + esc(it.word) + '</strong>';
+          extra = (it.synonyms || []).map(function (s) { return '<span class="tag" style="margin-right:4px;">' + esc(s) + '</span>'; }).join('');
+        } else if (activeSub === 'keywords') {
+          main = '<strong>' + esc(it.topic) + '</strong>';
+          extra = (it.keywords || []).map(function (s) { return '<span class="tag" style="margin-right:4px;">' + esc(s) + '</span>'; }).join('');
+        } else {
+          main = '<strong>' + esc(it.name) + '</strong> <span class="tag">' + esc(it.type || '未分类') + '</span>';
+          extra = Object.keys(it.attrs || {}).map(function (k) {
+            return '<span class="tag" style="margin-right:4px;">' + esc(k) + '=' + esc(it.attrs[k]) + '</span>';
+          }).join('');
+        }
+        return '<div class="res-item" data-id="' + esc(it.id) + '" style="display:flex;align-items:center;gap:8px;padding:8px;border:1px solid rgba(128,128,128,0.2);border-radius:6px;">'
+          + '<div style="flex:1;min-width:0;">' + main + '<div style="margin-top:4px;">' + extra + '</div></div>'
+          + '<button class="btn btn-sm sem-edit">编辑</button>'
+          + '<button class="btn btn-sm btn-danger sem-del">删除</button>'
+          + '</div>';
+      }).join('') + '</div>';
+
+      listEl.querySelectorAll('.res-item').forEach(function (row) {
+        var id = row.getAttribute('data-id');
+        row.querySelector('.sem-del').addEventListener('click', function () {
+          var all = currentList().filter(function (x) { return x.id !== id; });
+          save(SEM_KEYS[activeSub], all); drawList(); toast('已删除');
+        });
+        row.querySelector('.sem-edit').addEventListener('click', function () {
+          var it = currentList().filter(function (x) { return x.id === id; })[0];
+          openSemEditor(it);
+        });
+      });
+    }
+
+    function openSemEditor(it) {
+      var sub = SEM_SUBS.filter(function (s) { return s.id === activeSub; })[0];
+      var ov = document.createElement('div');
+      ov.className = 'overlay';
+      ov.style.display = 'flex'; ov.style.alignItems = 'center'; ov.style.justifyContent = 'center';
+      var wordVal = it ? (it.word || it.topic || it.name || '') : '';
+      var listVal = '';
+      if (activeSub === 'synonyms') listVal = (it && it.synonyms ? it.synonyms.join(',') : '');
+      else if (activeSub === 'keywords') listVal = (it && it.keywords ? it.keywords.join(',') : '');
+      else listVal = (it && it.attrs ? Object.keys(it.attrs).map(function (k) { return k + '=' + it.attrs[k]; }).join('\n') : '');
+      ov.innerHTML =
+        '<div class="settings-modal" style="max-width:460px;width:92%;">'
+        + '<div class="settings-header"><h2>' + (it ? '编辑' : '新增') + sub.title + '</h2><button class="btn btn-sm" data-c>✕</button></div>'
+        + '<div style="padding:16px;">'
+        + '<div class="form-row"><label>' + esc(sub.phWord) + '</label><input id="sem-f-w" class="input" value="' + esc(wordVal) + '"></div>'
+        + (activeSub === 'entities' ? '<div class="form-row"><label>类型（如：品牌/产品/人物）</label><input id="sem-f-type" class="input" value="' + esc(it && it.type ? it.type : '') + '"></div>' : '')
+        + '<div class="form-row"><label>' + esc(sub.phList) + '</label>'
+        + (activeSub === 'entities'
+            ? '<textarea id="sem-f-l" class="textarea" rows="4">' + esc(listVal) + '</textarea>'
+            : '<input id="sem-f-l" class="input" value="' + esc(listVal) + '">')
+        + '</div>'
+        + '<div class="form-row" style="text-align:right;"><button id="sem-f-save" class="btn btn-primary btn-sm">保存</button></div>'
+        + '</div></div>';
+      document.body.appendChild(ov);
+      ov.querySelector('[data-c]').addEventListener('click', function () { ov.remove(); });
+      ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
+      ov.querySelector('#sem-f-save').addEventListener('click', function () {
+        var w = ov.querySelector('#sem-f-w').value.trim();
+        if (!w) { toast('请填写名称'); return; }
+        var all = currentList();
+        var rec;
+        if (activeSub === 'synonyms') rec = { word: w, synonyms: ov.querySelector('#sem-f-l').value.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean) };
+        else if (activeSub === 'keywords') rec = { topic: w, keywords: ov.querySelector('#sem-f-l').value.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean) };
+        else {
+          var attrs = {};
+          ov.querySelector('#sem-f-l').value.split('\n').forEach(function (line) {
+            line = line.trim(); if (!line) return;
+            var i = line.indexOf('='); if (i > 0) attrs[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+          });
+          rec = { name: w, type: ov.querySelector('#sem-f-type').value.trim(), attrs: attrs };
+        }
+        if (it) {
+          var found = all.filter(function (x) { return x.id === it.id; })[0];
+          if (found) Object.assign(found, rec);
+        } else {
+          rec.id = uid(); rec.addedAt = Date.now(); all.push(rec);
+        }
+        save(SEM_KEYS[activeSub], all);
+        ov.remove(); drawList(); toast('已保存');
+      });
+    }
+
+    document.getElementById('sem-add').addEventListener('click', function () { openSemEditor(null); });
+    searchEl.addEventListener('input', drawList);
+    drawTabs();
+    drawList();
   }
 
   // Register language change callback

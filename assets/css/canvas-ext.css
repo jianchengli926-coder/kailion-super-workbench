@@ -296,3 +296,25 @@
   word-break: break-word;
   color: #e2e8f0;
 }
+
+/* ============================================================
+   对齐辅助线 & 网格吸附（Align Guides / Grid Snap）
+   ============================================================ */
+#align-guides-g line {
+  stroke-width: 1.25;
+  stroke-dasharray: 5, 5;
+  pointer-events: none;
+}
+#align-guides-g line.guide-v { stroke: #ef4444; } /* 垂直对齐：红 */
+#align-guides-g line.guide-h { stroke: #3b82f6; } /* 水平对齐：蓝 */
+
+/* 工具栏开关按钮激活态 */
+#btn-align-guides.active,
+#btn-grid-snap.active {
+  background: rgba(99, 102, 241, 0.28);
+  border-color: #818cf8;
+  color: #e0e7ff;
+  box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.55), 0 2px 8px rgba(99, 102, 241, 0.35);
+}
+#btn-align-guides.active .btn-icon,
+#btn-grid-snap.active .btn-icon { filter: drop-shadow(0 0 3px rgba(129, 140, 248, 0.8)); }

@@ -1,1 +1,51 @@
-{}
+{
+  "workflowName": "欢迎使用锴利超级AI工作台",
+  "providers": [
+    {
+      "id": "builtin_doubao_relay",
+      "name": "豆包中转站",
+      "nameEn": "Doubao Relay",
+      "baseurl": "https://ark.cn-beijing.volces.com/api/v3",
+      "key": "",
+      "category": "universal",
+      "protocol": "openai",
+      "isDefault": true,
+      "models": [
+        {
+          "id": "ep-20260916205923-vpq88",
+          "label": "豆包模型 (ep-20260916205923-vpq88)"
+        }
+      ],
+      "desc": "预置豆包火山方舟中转站，开箱即用"
+    },
+    {
+      "id": "builtin_zhipu_relay",
+      "name": "智谱中转站",
+      "nameEn": "Zhipu Relay",
+      "baseurl": "https://open.bigmodel.cn/api/paas/v4",
+      "key": "ffc4da9047c24fe28e7ac8f03bad592f.vKSWMuobEC1CetTZ",
+      "category": "universal",
+      "protocol": "openai",
+      "isDefault": false,
+      "models": [
+        {
+          "id": "glm-4",
+          "label": "GLM-4"
+        },
+        {
+          "id": "glm-4-flash",
+          "label": "GLM-4 Flash"
+        },
+        {
+          "id": "glm-3-turbo",
+          "label": "GLM-3 Turbo"
+        },
+        {
+          "id": "glm-4v",
+          "label": "GLM-4V（视觉）"
+        }
+      ],
+      "desc": "预置智谱AI中转站，开箱即用"
+    }
+  ]
+}

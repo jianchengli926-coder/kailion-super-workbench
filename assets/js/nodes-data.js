@@ -290,7 +290,8 @@ window.RESOURCE_LIBS = [
   { key: 'role',     name: '角色',   nameEn: 'Roles',           icon: '🎭', visible: 1 },
   { key: 'scene',    name: '场景',   nameEn: 'Scenes',          icon: '🏞️', visible: 1 },
   { key: 'brand',    name: '品牌',   nameEn: 'Brands',          icon: '🏷️', visible: 1 },
-  { key: 'product',  name: '商品',   nameEn: 'Products',        icon: '📦', visible: 1 }
+  { key: 'product',  name: '商品',   nameEn: 'Products',        icon: '📦', visible: 1 },
+  { key: 'semantic', name: '语义',   nameEn: 'Semantic',        icon: '🧠', visible: 1 }
 ];
 
 /** 品牌配置 - 二次开发时只需改这里 */

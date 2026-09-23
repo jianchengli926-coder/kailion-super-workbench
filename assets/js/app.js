@@ -20,6 +20,182 @@
   // 便捷取元素，缺失时返回 null 供调用方判空
   const $ = id => document.getElementById(id);
 
+  /* ====================== v2.2.0-super：localStorage 配额自愈 ======================
+     捕获 QuotaExceededError，自动清理最旧的运行历史 / API 日志 / 节点缓存，
+     再删除 >100KB 的 base64 图片大值，重试写入。 */
+  const _origSetItem = localStorage.setItem.bind(localStorage);
+  function safeSetItem(key, value) {
+    try {
+      _origSetItem(key, value);
+      return true;
+    } catch (e) {
+      if (e && (e.name === 'QuotaExceededError' || e.code === 22 || /quota/i.test(e.message || ''))) {
+        let cleaned = 0;
+        // a) 运行历史保留最新10条
+        try {
+          const h = JSON.parse(localStorage.getItem('kailion_run_history') || '[]');
+          if (Array.isArray(h) && h.length > 10) { _origSetItem('kailion_run_history', JSON.stringify(h.slice(0, 10))); cleaned++; }
+        } catch (e2) {}
+        // b) API 日志保留最新50条
+        try {
+          const l = JSON.parse(localStorage.getItem('kailion_api_log') || '[]');
+          if (Array.isArray(l) && l.length > 50) { _origSetItem('kailion_api_log', JSON.stringify(l.slice(0, 50))); cleaned++; }
+        } catch (e2) {}
+        // c) 节点缓存保留最新10条
+        try {
+          const c = JSON.parse(localStorage.getItem('kailion_node_cache') || '{}');
+          if (c && typeof c === 'object') {
+            const keys = Object.keys(c);
+            if (keys.length > 10) {
+              keys.slice(0, keys.length - 10).forEach(k => delete c[k]);
+              _origSetItem('kailion_node_cache', JSON.stringify(c));
+              cleaned++;
+            }
+          }
+        } catch (e2) {}
+        // d) 扫描所有 key，删除 >100KB 的 base64 图片大值
+        try {
+          const bigKeys = [];
+          for (let i = 0; i < localStorage.length; i++) {
+            const k = localStorage.key(i);
+            if (!k) continue;
+            const v = localStorage.getItem(k) || '';
+            if (v.length > 100 * 1024 && /data:image|base64/i.test(v)) bigKeys.push(k);
+          }
+          bigKeys.forEach(k => { try { localStorage.removeItem(k); cleaned++; } catch (e3) {} });
+        } catch (e2) {}
+        // 重试
+        try {
+          _origSetItem(key, value);
+          if (window.UI) UI.toast('⚠️ 存储空间不足，已自动清理旧数据（清理 ' + cleaned + ' 项）');
+          return true;
+        } catch (e3) {
+          if (window.UI) UI.toast('❌ 存储空间严重不足，请手动清理数据');
+          return false;
+        }
+      }
+      throw e;
+    }
+  }
+  // monkey-patch：所有模块后续写 localStorage 都走自愈路径
+  try { localStorage.setItem = safeSetItem; } catch (e) {}
+  window.safeSetItem = safeSetItem;
+
+  /* ====================== v2.2.0-super：CORS 代理设置绑定 ====================== */
+  function initCorsSettings() {
+    const en = $('cors-enabled');
+    const addr = $('cors-address');
+    if (!en || !addr) return;
+    try { en.checked = localStorage.getItem('kailion_cors_enabled') === '1'; } catch (e) {}
+    try {
+      const a = localStorage.getItem('kailion_cors_address');
+      if (a) addr.value = a;
+    } catch (e) {}
+    en.addEventListener('change', () => {
+      try { localStorage.setItem('kailion_cors_enabled', en.checked ? '1' : '0'); } catch (e) {}
+      UI.toast(en.checked ? '🌐 CORS 代理已启用（请确保本地代理已启动）' : '🌐 CORS 代理已关闭，恢复直连');
+    });
+    addr.addEventListener('change', () => {
+      try { localStorage.setItem('kailion_cors_address', addr.value.trim() || 'http://localhost:8787'); } catch (e) {}
+      UI.toast('✅ 代理地址已保存');
+    });
+  }
+
+  /* ====================== v2.2.0-super：运行前 API 费用警告（人工闸门） ====================== */
+  const API_NODE_TYPES = new Set([
+    'llmContentNode', 'imageGeneratorProNode', 'seedanceGeneratorNode',
+    'detailPageGeneratorNode', 'pptGeneratorNode', 'imageTextNode',
+    'brandIPGeneratorNode', 'htmlGeneratorNode', 'salesScriptNode',
+    'contentReviewNode', 'gptImageGeneratorNode', 'creativeInspirationNode',
+    'imageGeneratorFastNode', 'doubaoGeneratorNode', 'dalleGeneratorNode',
+    'fluxGeneratorNode', 'zImageGeneratorNode', 'agnesImageGeneratorNode',
+    'omniGeneratorNode', 'minimaxGeneratorNode', 'grokGeneratorNode',
+    'videoGeneratorNode', 'veoGeneratorNode', 'klingGeneratorNode',
+    'agnesVideoGeneratorNode', 'lux3DGeneratorNode', 'ahWorldGeneratorNode',
+    'model3DGeneratorNode', 'httpRequestNode', 'infoRetrievalNode',
+    'topicDiscoveryNode', 'aipSuperIndividualNode', 'batchGeneratorNode',
+    'klProductShotNode', 'klInquiryReplyNode', 'klCertPackNode',
+    'klSiteCopyNode', 'newtonImageSearchNode', 'newtonInquiryNode',
+    'newtonInquiryResultNode'
+  ]);
+  function countApiNodes(state) {
+    let n = 0;
+    Object.keys(state.nodes || {}).forEach(id => {
+      const t = state.nodes[id] && state.nodes[id].type;
+      if (t && API_NODE_TYPES.has(t)) n++;
+    });
+    return n;
+  }
+  function runGatePass(state) {
+    let gateOn = true;
+    try { gateOn = localStorage.getItem('kailion_run_gate') !== '0'; } catch (e) {}
+    if (!gateOn) return Promise.resolve(true);
+    const apiCount = countApiNodes(state);
+    if (!apiCount) return Promise.resolve(true);
+    return new Promise(resolve => {
+      const ov = document.createElement('div');
+      ov.className = 'overlay';
+      ov.style.display = 'flex'; ov.style.alignItems = 'center'; ov.style.justifyContent = 'center';
+      ov.innerHTML =
+        '<div class="settings-modal" style="max-width:440px;width:92%;">'
+        + '<div class="settings-header"><h2>⚠️ 运行前确认</h2></div>'
+        + '<div style="padding:16px;line-height:1.7;">'
+        + '<p>当前工作流包含 <strong>' + apiCount + '</strong> 个会调用 AI API 的节点，运行将产生费用。</p>'
+        + '<label style="display:flex;align-items:center;gap:6px;margin-top:10px;cursor:pointer;">'
+        + '<input type="checkbox" id="gate-no-more"> 不再提示（可在设置页重新开启）</label>'
+        + '</div>'
+        + '<div class="backup-row" style="justify-content:flex-end;padding:0 16px 16px;">'
+        + '<button id="gate-cancel" class="btn btn-sm">取消</button>'
+        + '<button id="gate-ok" class="btn btn-primary btn-sm">继续运行</button>'
+        + '</div></div>';
+      document.body.appendChild(ov);
+      const done = (ok) => {
+        const noMore = ov.querySelector('#gate-no-more');
+        if (ok && noMore && noMore.checked) {
+          try { localStorage.setItem('kailion_run_gate', '0'); syncRunGateCheckbox(); } catch (e) {}
+        }
+        ov.remove();
+        resolve(ok);
+      };
+      ov.querySelector('#gate-cancel').addEventListener('click', () => done(false));
+      ov.querySelector('#gate-ok').addEventListener('click', () => done(true));
+      ov.addEventListener('click', e => { if (e.target === ov) done(false); });
+    });
+  }
+  function syncRunGateCheckbox() {
+    const el = $('run-gate-enabled');
+    if (el) {
+      try { el.checked = localStorage.getItem('kailion_run_gate') !== '0'; } catch (e) { el.checked = true; }
+    }
+  }
+  function initRunGateSettings() {
+    syncRunGateCheckbox();
+    const el = $('run-gate-enabled');
+    if (el) el.addEventListener('change', () => {
+      try { localStorage.setItem('kailion_run_gate', el.checked ? '1' : '0'); } catch (e) {}
+      UI.toast(el.checked ? '✅ 已开启运行前 API 费用警告' : '🔕 已关闭运行前警告');
+    });
+  }
+
+  /* ====================== v2.2.0-super：孤儿文件清理按钮 ====================== */
+  function initPruneButton() {
+    const btn = $('btn-prune-blobs');
+    if (!btn) return;
+    btn.addEventListener('click', async () => {
+      const span = $('prune-result');
+      if (span) span.textContent = '清理中…';
+      try {
+        if (!window.BlobStore || !BlobStore.pruneBlobs) throw new Error('BlobStore 不可用');
+        const r = await BlobStore.pruneBlobs();
+        const kb = (r.freedBytes / 1024).toFixed(1);
+        if (span) span.textContent = '已清理 ' + r.removed + ' 个文件，释放 ' + kb + ' KB';
+        UI.toast('🧹 已清理 ' + r.removed + ' 个孤儿文件，释放 ' + kb + ' KB');
+      } catch (e) {
+        if (span) span.textContent = '清理失败：' + (e.message || e);
+      }
+    });
+  }
+
   // 内存剪贴板（Ctrl+C/V）
   let clipboard = null; // {nodes: [{oldId, type, x, y, params}], links: [{from, to}]}
 
@@ -228,13 +404,16 @@
   /* ====================== 工具栏绑定 ====================== */
   function bindToolbar() {
     const btnRun = $('btn-run');
-    if (btnRun) btnRun.addEventListener('click', () => {
+    if (btnRun) btnRun.addEventListener('click', async () => {
       const state = Canvas.getState();
       const count = Object.keys(state.nodes).length;
       if (!count) {
         UI.toast(window.I18N ? I18N.t('app.canvasEmptyRun') : '画布为空，无法运行');
         return;
       }
+      // v2.2.0-super：运行前人工闸门（API 费用警告）
+      const pass = await runGatePass(state);
+      if (!pass) return;
       if (window.Engine) {
         // v0.8.0：记录运行统计
         if (window.Stats) {
@@ -416,6 +595,10 @@
 
   /* ====================== 启动 ====================== */
   function boot() {
+    // v2.1.3：首次启动自动填入预置中转站（豆包/智谱），与种子数据双重保障
+    if (window.ProviderStore && typeof window.ProviderStore.seedBuiltinIfEmpty === 'function') {
+      try { ProviderStore.seedBuiltinIfEmpty(); } catch (eSeed) {}
+    }
     // v2.1.0-super：首次运行加载种子数据（异步，不阻塞主界面）
     loadSeedIfFirstRun();
     // v0.8.0：初始化主题管理器（须在 UI 渲染前，避免闪烁）
@@ -435,6 +618,12 @@
 
     // v0.8.0：初始化快捷键面板
     if (window.Shortcuts) Shortcuts.init();
+
+    // v2.2.0-super：CORS 代理 / MCP / 运行闸门 / 孤儿清理
+    initCorsSettings();
+    initRunGateSettings();
+    initPruneButton();
+    if (window.MCP) MCP.init();
 
     // Canvas 状态变化 → 记录历史
     Canvas.onStateChange(() => pushHistory());

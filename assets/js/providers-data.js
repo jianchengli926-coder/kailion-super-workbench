@@ -85,6 +85,26 @@
         { id: 'claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
         { id: 'dall-e-3', label: 'DALL·E 3（生图）' }
       ] },
+    { name: 'Ollama 本地模型', nameEn: 'Ollama (Local)', baseurl: 'http://localhost:11434/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🦙', protocol: 'openai',
+      desc: '本地运行，无需联网，隐私安全（API Key 可留空）',
+      descEn: 'Runs locally, no internet needed, private and secure (API Key can be left empty)',
+      models: [
+        { id: 'llama3.1', label: 'Llama 3.1' },
+        { id: 'qwen2.5', label: 'Qwen 2.5' },
+        { id: 'mistral', label: 'Mistral' },
+        { id: 'gemma2', label: 'Gemma 2' },
+        { id: 'phi3', label: 'Phi 3' },
+        { id: 'nomic-embed-text', label: 'Nomic Embed Text（向量）' }
+      ] },
+    { name: '硅基流动 SiliconFlow', nameEn: 'SiliconFlow', baseurl: 'https://api.siliconflow.cn/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🌊', protocol: 'openai',
+      desc: '国内开源模型聚合平台，价格低廉（需填入 sk- 开头的 Key）',
+      descEn: 'Domestic open-source model aggregator, low cost (needs sk- API key)',
+      models: [
+        { id: 'Qwen/Qwen2.5-7B-Instruct', label: 'Qwen2.5-7B-Instruct' },
+        { id: 'deepseek-ai/DeepSeek-V3', label: 'DeepSeek-V3' },
+        { id: 'THUDM/glm-4-9b-chat', label: 'GLM-4-9B-Chat' },
+        { id: 'Qwen/Qwen2-VL-7B-Instruct', label: 'Qwen2-VL-7B-Instruct（视觉）' }
+      ] },
     { name: 'Tripo3D', nameEn: 'Tripo3D', baseurl: 'https://api.tripo3d.ai/v2', category: '3d', categoryEn: CAT_EN['3d'], icon: '🧊',
       desc: 'Tripo3D 文生/图生 3D 模型，支持 GLB/OBJ 导出',
       descEn: 'Tripo3D text/image-to-3D models, GLB/OBJ export supported',
@@ -181,12 +201,58 @@
     });
   }
 
+  /* ====================== v2.1.3：内置默认供应商种子 ======================
+   * 首次启动且 localStorage 无供应商时，自动填入预置中转站（豆包/智谱）
+   * 与 data/初始数据.json 双重保障：fetch 失败时用这里的硬编码兜底
+   */
+  const BUILTIN_PROVIDERS = [
+    {
+      id: 'builtin_doubao_relay',
+      name: '豆包中转站', nameEn: 'Doubao Relay',
+      baseurl: 'https://ark.cn-beijing.volces.com/api/v3',
+      key: '',
+      category: 'universal', protocol: 'openai', isDefault: true,
+      models: [
+        { id: 'ep-20260916205923-vpq88', label: '豆包模型 (ep-20260916205923-vpq88)' }
+      ],
+      desc: '预置豆包火山方舟中转站，开箱即用'
+    },
+    {
+      id: 'builtin_zhipu_relay',
+      name: '智谱中转站', nameEn: 'Zhipu Relay',
+      baseurl: 'https://open.bigmodel.cn/api/paas/v4',
+      key: 'ffc4da9047c24fe28e7ac8f03bad592f.vKSWMuobEC1CetTZ',
+      category: 'universal', protocol: 'openai', isDefault: false,
+      models: [
+        { id: 'glm-4', label: 'GLM-4' },
+        { id: 'glm-4-flash', label: 'GLM-4 Flash' },
+        { id: 'glm-3-turbo', label: 'GLM-3 Turbo' },
+        { id: 'glm-4v', label: 'GLM-4V（视觉）' }
+      ],
+      desc: '预置智谱AI中转站，开箱即用'
+    }
+  ];
+
+  // 如果当前没有任何供应商，自动写入内置默认
+  function seedBuiltinIfEmpty() {
+    try {
+      const existing = localStorage.getItem(DEFAULT_PROVIDER_KEY);
+      if (existing && existing !== '[]' && existing !== 'null') return; // 已有数据，不覆盖
+      save(BUILTIN_PROVIDERS.map(p => Object.assign({}, p)));
+      console.info('[ProviderStore] 已自动填入2个预置中转站（豆包/智谱）');
+    } catch (e) {
+      console.warn('[ProviderStore] 内置供应商种子写入失败：', e);
+    }
+  }
+
   /* ====================== 暴露全局 ====================== */
   window.PROVIDER_PRESETS = PRESETS;
   window.PROVIDER_CAT_EN = CAT_EN;   // 供应商分类英文映射，供 i18n / UI 使用
   window.DEFAULT_PROVIDER_KEY = DEFAULT_PROVIDER_KEY;
+  window.BUILTIN_PROVIDERS = BUILTIN_PROVIDERS;
   window.ProviderStore = {
-    load, save, add, update, remove, getById, getDefault, setDefault, getByCategory
+    load, save, add, update, remove, getById, getDefault, setDefault, getByCategory,
+    seedBuiltinIfEmpty
   };
 })();
 
@@ -345,4 +411,179 @@
   }
 
   window.ProviderDiagnostic = { diagnose: diagnose };
+})();
+
+/* ============================================================
+   v2.3.0-super：模型自动发现
+   暴露：window.Providers.discoverModels / ensureModels
+   - discoverModels(baseurl, key)：GET {baseurl}/models，10s 超时
+     兼容 OpenAI({data:[{id}]}) / Gemini({models:[{name}]}) / 通用(data|models|items|裸数组)
+   - ensureModels(provider)：发现并去重合并进 provider.models，有 id 则落库
+   - 接管 #pf-fetch-models 按钮：读表单 → 发现模型 → 复用 ui.js 的「添加模型」
+     入口写回 formModels（通过点击 #pf-model-add），不破坏既有 CRUD
+   ============================================================ */
+(function () {
+  'use strict';
+
+  var FETCH_TIMEOUT_MS = 10000;
+
+  function toastMsg(msg) {
+    try {
+      if (window.UI && typeof window.UI.toast === 'function') { window.UI.toast(msg); return; }
+    } catch (e) {}
+    try { console.log('[Providers] ' + msg); } catch (e) {}
+  }
+
+  // 从任意返回体提取模型 ID：兼容 OpenAI data[].id / Gemini models[].name / 通用 items / 裸数组
+  function parseModelIds(data) {
+    var ids = [], seen = {};
+    function push(raw) {
+      var id = String(raw == null ? '' : raw).trim();
+      if (!id) return;
+      if (id.indexOf('models/') === 0) id = id.slice(7); // Gemini: models/xxx -> xxx
+      if (!id || seen[id]) return;
+      seen[id] = true; ids.push(id);
+    }
+    function walk(arr) {
+      if (!Array.isArray(arr)) return;
+      arr.forEach(function (it) {
+        if (typeof it === 'string') push(it);
+        else if (it && typeof it === 'object') push(it.id || it.name || it.model);
+      });
+    }
+    if (!data) return ids;
+    if (Array.isArray(data.data)) walk(data.data);
+    if (Array.isArray(data.models)) walk(data.models);
+    if (Array.isArray(data.items)) walk(data.items);
+    if (Array.isArray(data)) walk(data);
+    return ids;
+  }
+
+  // GET {baseurl}/models，10s 超时；抛带 .kind/.status 的 Error
+  async function discoverModels(baseurl, key) {
+    var base = String(baseurl || '').replace(/\/+$/, '');
+    if (!base) { var e0 = new Error('请先填写API地址'); e0.kind = 'nourl'; throw e0; }
+    var url = base + '/models';
+    var headers = {};
+    if (key) headers['Authorization'] = 'Bearer ' + key;
+
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function () { try { ctrl && ctrl.abort(); } catch (e) {} }, FETCH_TIMEOUT_MS);
+
+    var resp;
+    try {
+      resp = await fetch(url, { method: 'GET', headers: headers, signal: ctrl ? ctrl.signal : undefined });
+    } catch (e) {
+      if (e && e.name === 'AbortError') {
+        var te = new Error('请求超时（10秒），请检查API地址或网络'); te.kind = 'timeout'; throw te;
+      }
+      var ne = new Error('连接失败，请检查API地址（' + ((e && e.message) || '网络错误') + '）');
+      ne.kind = 'network'; throw ne;
+    } finally { clearTimeout(timer); }
+
+    if (!resp.ok) {
+      var bodyText = '';
+      try { bodyText = await resp.text(); } catch (e) {}
+      var msg;
+      if (resp.status === 401 || resp.status === 403) msg = '未授权（' + resp.status + '），请检查API Key';
+      else if (resp.status === 404) msg = '接口不存在（404），请检查API地址是否正确';
+      else msg = '请求失败 HTTP ' + resp.status + (bodyText ? '：' + String(bodyText).slice(0, 120) : '');
+      var he = new Error(msg); he.status = resp.status; he.kind = 'http'; throw he;
+    }
+
+    var data;
+    try { data = await resp.json(); }
+    catch (e) { var pe = new Error('返回数据不是有效JSON，请确认接口地址'); pe.kind = 'parse'; throw pe; }
+    return parseModelIds(data);
+  }
+
+  // 发现并去重合并进 provider.models；有 id 则落库。返回 {added, total, newIds}
+  async function ensureModels(provider) {
+    if (!provider || !provider.baseurl) throw new Error('缺少供应商 API 地址');
+    var ids = await discoverModels(provider.baseurl, provider.key);
+    var existing = provider.models || (provider.models = []);
+    var seen = {};
+    existing.forEach(function (m) { if (m && m.id) seen[m.id] = true; });
+    var newIds = [];
+    ids.forEach(function (id) {
+      if (seen[id]) return;
+      seen[id] = true; newIds.push(id);
+      existing.push({ id: id, label: id });
+    });
+    if (provider.id && window.ProviderStore && typeof window.ProviderStore.update === 'function') {
+      try { window.ProviderStore.update(provider.id, { models: existing.slice() }); } catch (e) {}
+    }
+    return { added: newIds.length, total: ids.length, newIds: newIds };
+  }
+
+  function readExistingDomIds() {
+    var set = {};
+    var box = document.getElementById('pf-models');
+    if (!box) return set;
+    var tags = box.querySelectorAll('.model-tag');
+    for (var i = 0; i < tags.length; i++) {
+      var t = String(tags[i].textContent || '').replace(/✕/g, '').trim();
+      if (t) set[t] = true;
+    }
+    return set;
+  }
+
+  // 复用 ui.js 已绑定的 #pf-model-add 把模型写回 formModels（自动去重+渲染）
+  function triggerAddModel(id) {
+    var inp = document.getElementById('pf-model-input');
+    var addBtn = document.getElementById('pf-model-add');
+    if (!inp || !addBtn) return false;
+    inp.value = id;
+    addBtn.click();
+    return true;
+  }
+
+  async function onFetchClick() {
+    var baseurlEl = document.getElementById('pf-baseurl');
+    var keyEl = document.getElementById('pf-key');
+    var btn = document.getElementById('pf-fetch-models');
+    var baseurl = baseurlEl ? baseurlEl.value.trim() : '';
+    var key = keyEl ? keyEl.value.trim() : '';
+    if (!baseurl) { toastMsg('请先填写API地址'); return; }
+
+    var original = btn ? btn.textContent : '🌐 从API获取';
+    if (btn) { btn.disabled = true; btn.textContent = '获取中...'; }
+
+    try {
+      var ids = await discoverModels(baseurl, key);
+      if (!ids.length) { toastMsg('未发现模型，请确认接口返回了模型列表'); return; }
+      var existing = readExistingDomIds();
+      var added = 0;
+      ids.forEach(function (id) {
+        if (existing[id]) return;
+        if (triggerAddModel(id)) { existing[id] = true; added++; }
+      });
+      toastMsg(added > 0
+        ? '已发现' + ids.length + '个模型，新增' + added + '个'
+        : '已发现' + ids.length + '个模型（均已在列表中）');
+    } catch (e) {
+      toastMsg((e && e.message) ? e.message : '获取模型失败');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original; }
+    }
+  }
+
+  // 克隆替换按钮，剥离 ui.js 旧监听，避免双重请求/双重 toast
+  function bindFetchButton() {
+    var btn = document.getElementById('pf-fetch-models');
+    if (!btn) return;
+    var fresh = btn.cloneNode(true);
+    if (btn.parentNode) btn.parentNode.replaceChild(fresh, btn);
+    fresh.addEventListener('click', onFetchClick);
+  }
+
+  // 需在 ui.js initSettings() 绑定之后接管（app.js 于 DOMContentLoaded 启动 UI.init）
+  if (document.readyState === 'complete') bindFetchButton();
+  else window.addEventListener('load', bindFetchButton);
+
+  window.Providers = {
+    discoverModels: discoverModels,
+    ensureModels: ensureModels,
+    parseModelIds: parseModelIds
+  };
 })();

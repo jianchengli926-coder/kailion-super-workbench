@@ -100,6 +100,29 @@
     try { return JSON.parse(text); } catch (e) { throw makeHttpError(resp.status, text); }
   }
 
+  /* ====================== CORS 本地代理 (v2.2.0-super) ======================
+     当浏览器直连 API 中转站被 CORS 拦截时，可在设置页启用本地代理。
+     localStorage: kailion_cors_enabled ('1'/'0'), kailion_cors_address
+     代理脚本见 cors-proxy/server.js（默认 8787），支持 /proxy?url=<目标>。 */
+  function corsConfig() {
+    try {
+      return {
+        enabled: localStorage.getItem('kailion_cors_enabled') === '1',
+        address: (localStorage.getItem('kailion_cors_address') || 'http://localhost:8787').replace(/\/+$/, '')
+      };
+    } catch (e) {
+      return { enabled: false, address: 'http://localhost:8787' };
+    }
+  }
+  // 把目标 URL 改写为代理地址；未启用时原样返回
+  function px(url) {
+    try {
+      const cfg = corsConfig();
+      if (!cfg.enabled) return url;
+      return cfg.address + '/proxy?url=' + encodeURIComponent(url);
+    } catch (e) { return url; }
+  }
+
   /* ====================== 自动重试 + 错误分类（v2.2.0-super） ======================
      中转站 502/522/网络抖动极常见：
        · 5xx / 网络错误(TypeError) / 超时 → 自动重试，最多 retries 次，退避 900ms×次数
@@ -155,7 +178,7 @@
       var abortedByTimeout = false;
       var timer = setTimeout(function () { abortedByTimeout = true; controller.abort(); }, timeoutMs);
       try {
-        var resp = await fetch(url, Object.assign({}, options, { signal: controller.signal }));
+        var resp = await fetch(px(url), Object.assign({}, options, { signal: controller.signal }));
         if (!resp.ok) {
           var text = await resp.text();
           var err = makeHttpError(resp.status, text);
@@ -627,7 +650,7 @@
     let abortedByTimeout = false;
     const timer = setTimeout(() => { abortedByTimeout = true; controller.abort(); }, timeoutMs);
     try {
-      const resp = await fetch(url, {
+      const resp = await fetch(px(url), {
         method: 'POST',
         headers: buildHeaders(provider),
         body: JSON.stringify(body),
@@ -656,7 +679,7 @@
         await sleep(VIDEO_POLL_INTERVAL, controller.signal);
         let pollResp;
         try {
-          pollResp = await fetch(pollUrl, {
+          pollResp = await fetch(px(pollUrl), {
             method: 'GET',
             headers: buildHeaders(provider),
             signal: controller.signal
@@ -808,7 +831,7 @@
     const _alT0 = started;
     let _alErr = null;
     try {
-      const resp = await fetch(url, {
+      const resp = await fetch(px(url), {
         method: 'POST',
         headers: buildHeaders(provider),
         body: JSON.stringify(body),
@@ -839,7 +862,7 @@
         await sleep(TD_POLL_INTERVAL, controller.signal);
         let pollResp;
         try {
-          pollResp = await fetch(pollUrl, {
+          pollResp = await fetch(px(pollUrl), {
             method: 'GET',
             headers: buildHeaders(provider),
             signal: controller.signal
@@ -908,7 +931,7 @@
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), TIMEOUT_MODELS);
     try {
-      const resp = await fetch(url, {
+      const resp = await fetch(px(url), {
         method: 'GET',
         headers: buildHeaders(provider),
         signal: controller.signal
@@ -973,6 +996,7 @@
     testConnection,
     // 工具
     buildHeaders,
-    normalizeBaseUrl
+    normalizeBaseUrl,
+    corsConfig
   };
 })();

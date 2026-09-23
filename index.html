@@ -53,10 +53,18 @@
         <div id="export-menu" class="export-menu hidden">
           <div class="export-item" data-type="json" data-i18n="topbar.exportJson">📄 导出为 JSON</div>
           <div class="export-item" data-type="png" data-i18n="topbar.exportPng">🖼️ 导出为 PNG 图片</div>
+          <div class="export-item" data-type="zip">📦 导出ZIP完整备份</div>
+          <div class="export-item" data-type="share">🔗 导出共享包(无Key)</div>
         </div>
       </div>
       <button id="btn-autolayout" class="btn" data-i18n-title="topbar.autoLayout" title="自动布局">
         <span class="btn-icon">✨</span> <span data-i18n="topbar.autoLayout">自动布局</span>
+      </button>
+      <button id="btn-align-guides" class="btn btn-sm" title="对齐辅助线(开关)">
+        <span class="btn-icon">📐</span> <span>对齐</span>
+      </button>
+      <button id="btn-grid-snap" class="btn btn-sm" title="网格吸附(开关)">
+        <span class="btn-icon">▦</span> <span>网格</span>
       </button>
       <button id="btn-sticky" class="btn btn-sm" data-i18n-title="topbar.stickyTitle" title="添加便签">
         <span class="btn-icon">📝</span> <span data-i18n="topbar.sticky">便签</span>
@@ -131,7 +139,7 @@
       <section id="view-canvas" class="view active">
         <div id="canvas-wrap">
           <div id="canvas-grid"></div>
-          <svg id="canvas-svg"><g id="canvas-links-g"></g></svg>
+          <svg id="canvas-svg"><g id="canvas-links-g"></g><g id="align-guides-g"></g></svg>
           <div id="canvas-nodes"></div>
           <!-- 连线拖拽中的临时线 -->
           <svg id="canvas-temp-svg" style="pointer-events:none"><g id="canvas-temp-g"></g></svg>
@@ -302,6 +310,26 @@
             </div>
           </form>
         </div>
+        <!-- v2.2.0-super：CORS 代理 -->
+        <div class="settings-section">
+          <h3>🌐 CORS 代理</h3>
+          <p class="settings-desc">浏览器直连 API 中转站被 CORS 拦截时，可启动本地代理绕过。</p>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer;">
+            <input type="checkbox" id="cors-enabled"> 启用 CORS 代理
+          </label>
+          <input type="text" id="cors-address" class="input" value="http://localhost:8787" placeholder="代理地址" style="max-width:340px;">
+          <p class="settings-desc" style="margin-top:8px;font-size:12px;opacity:0.7;">启动方法：node cors-proxy/server.js 或 python3 cors-proxy/server.py</p>
+        </div>
+        <!-- v2.2.0-super：MCP 服务器 -->
+        <div class="settings-section">
+          <h3>🔌 MCP 服务器</h3>
+          <p class="settings-desc">配置 MCP (Model Context Protocol) 服务器，扩展 AI 工具能力。纯前端仅保存配置，需在 Electron 端执行。</p>
+          <div id="mcp-server-list" class="mcp-server-list"></div>
+          <div class="backup-row" style="margin-top:8px;">
+            <button id="mcp-add-btn" class="btn btn-sm">➕ 添加 MCP 服务器</button>
+            <button id="mcp-export-btn" class="btn btn-sm">📥 导出配置</button>
+          </div>
+        </div>
         <!-- 主题 -->
         <div class="settings-section">
           <h3 data-i18n="settings.theme">🎨 主题</h3>
@@ -349,6 +377,9 @@
           <h3 data-i18n="settings.stats">📊 数据统计</h3>
           <p class="settings-desc" data-i18n="settings.statsDesc">本地使用数据统计（仅保存在浏览器中）</p>
           <div id="stats-cards" class="stats-cards"></div>
+          <label style="display:flex;align-items:center;gap:8px;margin-top:10px;cursor:pointer;">
+            <input type="checkbox" id="run-gate-enabled" checked> 运行前 API 费用警告（运行包含 API 节点的工作流前弹出确认）
+          </label>
         </div>
         <!-- 节点结果缓存（v0.9.0） -->
         <div class="settings-section">
@@ -371,7 +402,11 @@
             <button id="btn-export-all" class="btn btn-sm btn-primary">📦 导出全部数据</button>
             <button id="btn-export" class="btn btn-sm">📄 仅导出当前工作流</button>
             <button id="btn-import" class="btn btn-sm">📥 导入备份</button>
-            <input type="file" id="import-file" accept=".json" style="display:none">
+            <input type="file" id="import-file" accept=".json,.zip" style="display:none">
+          </div>
+          <div class="backup-row" style="margin-top:8px;">
+            <button id="btn-prune-blobs" class="btn btn-sm">🧹 清理孤儿文件</button>
+            <span id="prune-result" style="font-size:12px;opacity:0.75;"></span>
           </div>
           <p class="settings-desc" style="margin-top:8px;font-size:12px;opacity:0.7;">导出全部数据包含：工作流、API供应商、素材库、提示词库、知识库、收藏节点、主题设置、运行历史等所有配置</p>
         </div>
@@ -379,7 +414,7 @@
         <div class="settings-section">
           <h3 data-i18n="settings.about">关于</h3>
           <p class="settings-desc">
-            <strong data-i18n="brand.product">锴利超级AI工作台</strong> v2.1.2<br>
+            <strong data-i18n="brand.product">锴利超级AI工作台</strong> v2.2.0<br>
             <span data-i18n="brand.company">阳江市锴利国际贸易有限公司</span><br>
             <span data-i18n="settings.aboutDesc">基于原生 HTML/CSS/JS 构建，无外部依赖</span>
           </p>
@@ -417,6 +452,8 @@
   <!-- v1.0.0：运行历史，须在 engine 之后加载 -->
   <script src="assets/js/run-history.js"></script>
   <script src="assets/js/ui.js"></script>
+  <!-- v2.2.0-super：MCP 服务器配置管理（须在 app.js 之前） -->
+  <script src="assets/js/mcp.js"></script>
   <!-- v0.8.0 新增模块 -->
   <script src="assets/js/workflow-templates.js"></script>
   <script src="assets/js/theme-manager.js"></script>

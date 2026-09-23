@@ -137,7 +137,7 @@
     material: '素材库', prompt: '提示词库', kb: '知识库',
     expert: '专家库', digital: '数字人库', topic: '选题库',
     style: '风格库', role: '角色库', scene: '场景库',
-    brand: '品牌库', product: '商品库'
+    brand: '品牌库', product: '商品库', semantic: '语义库'
   };
 
   function switchView(key) {
@@ -1187,11 +1187,28 @@
           msg += `· 缓存使用：${cs.count}/${cs.max} 条（${cs.sizeKB}KB）`;
         }
         reply = msg;
-      } else if (window.Smart && Smart.parseIntent(text)) {
-        // v0.5.0：自然语言意图 → 智能搭建工作流
+      } else if (window.Smart) {
+        // v1.0.0：自然语言意图引擎（25 条规则 + 槽位抽取 + 置信度 + 主动澄清）
+        // 注：以上分支均为「画布操作指令」，保留原有逻辑；走到这里才交给意图引擎
         const intent = Smart.parseIntent(text);
-        Smart.buildWorkflow(intent);
-        reply = `🧠 已识别意图「${intent.name}」，自动搭建工作流：\n· ${intent.template.join(' → ')}\n已切换到画布。`;
+        const SLOT_LBL = { count:'数量', pages:'页数', screens:'屏数', shots:'镜头数', variants:'变体数', ratio:'画幅', duration:'时长', style:'风格', platform:'平台', preset:'预设', lang:'语言', visualLang:'画面语言', tier:'档位' };
+        if (intent.ok && intent.confidence >= 0.55) {
+          Smart.buildWorkflow(intent);
+          const slotsStr = Object.entries(intent.slots || {})
+            .filter(([k, v]) => v !== undefined && v !== '' && v !== false)
+            .map(([k, v]) => (SLOT_LBL[k] || k) + '=' + v).join(' · ') || '默认参数';
+          reply = '🧠 已识别意图「' + intent.label + '」（置信度 ' + Math.round(intent.confidence * 100) + '%），自动搭建工作流：\n'
+            + '· 节点链路：' + (intent.tpl || intent.template || []).join(' → ') + '\n'
+            + '· 参数：' + slotsStr + '\n'
+            + '已切换到画布，可在右侧面板微调参数后点击运行。'
+            + (intent.corrections && intent.corrections.length ? '\n· 已自动纠正：' + intent.corrections.join('；') : '')
+            + (intent.tip ? '\n💡 ' + intent.tip : '');
+        } else if (intent.ok) {
+          // 低置信度：主动澄清反问，不擅自搭画布
+          reply = '🤔 ' + (intent.clarify || '我不太确定你要什么，能再补充一下产出物 / 数量 / 风格吗？');
+        } else {
+          reply = intent.clarify || tx('assistant.fallback', '我收到了：「' + text + '」\n\n目前我可以识别以下指令：\n· 「生成详情页/视频/PPT/图文工作流」\n· 「添加XX节点」（如：加一个 LLM）\n· 「删除选中节点」\n· 「自动布局」\n· 「优化工作流」→ 自动布局+添加便签\n· 「解释工作流」→ 为节点添加说明便签\n· 「帮我调试」→ 检查未连接节点和缺参\n· 「统计」→ 显示工作流统计\n· 「使用说明书 / 帮助」\n· 「清空画布」\n· 「运行」', { text });
+        }
       } else {
         reply = tx('assistant.fallback', '我收到了：「' + text + '」\n\n目前我可以识别以下指令：\n· 「生成详情页/视频/PPT/图文工作流」\n· 「添加XX节点」（如：加一个 LLM）\n· 「删除选中节点」\n· 「自动布局」\n· 「优化工作流」→ 自动布局+添加便签\n· 「解释工作流」→ 为节点添加说明便签\n· 「帮我调试」→ 检查未连接节点和缺参\n· 「统计」→ 显示工作流统计\n· 「使用说明书 / 帮助」\n· 「清空画布」\n· 「运行」', { text });
       }
@@ -1673,6 +1690,16 @@
     document.getElementById('import-file').addEventListener('change', e => {
       const file = e.target.files[0];
       if (!file) return;
+      // v2.2.0：.zip 完整备份分流到 export.js 的 importZIP（含图片回注）
+      if (/\.zip$/i.test(file.name)) {
+        if (window.ExportTools && ExportTools.importZIP) {
+          ExportTools.importZIP(file);
+        } else {
+          toast('ZIP 导入模块尚未加载，请刷新页面后重试');
+        }
+        e.target.value = '';
+        return;
+      }
       const reader = new FileReader();
       reader.onload = ev => {
         try {

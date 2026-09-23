@@ -19,6 +19,7 @@
   const nodesLayer = document.getElementById('canvas-nodes');
   const svgLayer   = document.getElementById('canvas-svg');
   const linksG     = document.getElementById('canvas-links-g');
+  const guidesG    = document.getElementById('align-guides-g'); // 对齐辅助线层
   const tempSvg    = document.getElementById('canvas-temp-svg');
   const tempG      = document.getElementById('canvas-temp-g');
 
@@ -125,6 +126,7 @@
     // SVG 层也做平移（连线坐标基于节点逻辑坐标，用 transform 对齐 g 层）
     if (linksG) linksG.setAttribute('transform', `translate(${x},${y}) scale(${scale})`);
     if (tempG)  tempG.setAttribute('transform',  `translate(${x},${y}) scale(${scale})`);
+    if (guidesG) guidesG.setAttribute('transform', `translate(${x},${y}) scale(${scale})`);
     // 更新缩放标签
     const label = document.getElementById('zoom-label');
     if (label) label.textContent = Math.round(scale * 100) + '%';
@@ -795,6 +797,93 @@
     window.removeEventListener('mouseup', onNoteResizeEnd);
   }
 
+  /* ====================== 对齐辅助线 & 网格吸附 ====================== */
+  const NODE_W = 200;            // 节点宽度（与 getPortPos 一致）
+  const ALIGN_THRESHOLD = 5;     // 对齐吸附阈值(px)
+  const GRID_SIZE = 20;          // 网格吸附步长(px)
+  // 用户偏好：对齐辅助线默认开，网格吸附默认关
+  let alignGuidesEnabled = (function () {
+    try { return localStorage.getItem('kailion_align_guides') !== 'false'; }
+    catch (e) { return true; }
+  })();
+  let gridSnapEnabled = (function () {
+    try { return localStorage.getItem('kailion_align_grid') === 'true'; }
+    catch (e) { return false; }
+  })();
+
+  // 计算当前可见区域在「画布坐标系」中的范围（辅助线贯穿可见区用）
+  function getVisibleCanvasRect() {
+    const w = wrap.clientWidth  || wrap.getBoundingClientRect().width;
+    const h = wrap.clientHeight || wrap.getBoundingClientRect().height;
+    const s = state.view.scale || 1;
+    return {
+      x1: (-state.view.x) / s,
+      y1: (-state.view.y) / s,
+      x2: (w - state.view.x) / s,
+      y2: (h - state.view.y) / s
+    };
+  }
+
+  // 对齐检测：被拖拽选区包围盒 box 与其它节点比对，返回整体平移量与辅助线位置
+  // box: {x,y,w,h}（画布坐标），others: 参考节点数组
+  // 返回 {dx, dy, guideX, guideY}（guideX/Y 为 null 表示该轴无对齐）
+  function checkAlignment(box, others) {
+    const TH = ALIGN_THRESHOLD;
+    const dragX = [box.x, box.x + box.w, box.x + box.w / 2]; // 左/右/水平中心
+    const dragY = [box.y, box.y + box.h, box.y + box.h / 2]; // 上/下/垂直中心
+    let bestDX = null, guideX = null;
+    let bestDY = null, guideY = null;
+    others.forEach(function (o) {
+      const oh = getNodeHeight(o);
+      const refX = [o.x, o.x + NODE_W, o.x + NODE_W / 2];
+      const refY = [o.y, o.y + oh, o.y + oh / 2];
+      refX.forEach(function (rx) {
+        dragX.forEach(function (ex) {
+          const d = rx - ex; // 把被拖边平移到参考线所需的位移
+          if (Math.abs(d) <= TH && (bestDX === null || Math.abs(d) < Math.abs(bestDX))) {
+            bestDX = d; guideX = rx;
+          }
+        });
+      });
+      refY.forEach(function (ry) {
+        dragY.forEach(function (ey) {
+          const d = ry - ey;
+          if (Math.abs(d) <= TH && (bestDY === null || Math.abs(d) < Math.abs(bestDY))) {
+            bestDY = d; guideY = ry;
+          }
+        });
+      });
+    });
+    return { dx: bestDX || 0, dy: bestDY || 0, guideX: guideX, guideY: guideY };
+  }
+
+  // 渲染辅助线：guideX → 垂直红线，guideY → 水平蓝线，贯穿可见区域
+  function renderGuides(guideX, guideY) {
+    if (!guidesG) return;
+    guidesG.innerHTML = '';
+    if (guideX == null && guideY == null) return;
+    const rect = getVisibleCanvasRect();
+    const svgNS = 'http://www.w3.org/2000/svg';
+    if (guideX != null) {
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', guideX); line.setAttribute('y1', rect.y1);
+      line.setAttribute('x2', guideX); line.setAttribute('y2', rect.y2);
+      line.setAttribute('class', 'guide-v');
+      guidesG.appendChild(line);
+    }
+    if (guideY != null) {
+      const line = document.createElementNS(svgNS, 'line');
+      line.setAttribute('x1', rect.x1); line.setAttribute('y1', guideY);
+      line.setAttribute('x2', rect.x2); line.setAttribute('y2', guideY);
+      line.setAttribute('class', 'guide-h');
+      guidesG.appendChild(line);
+    }
+  }
+
+  function clearGuides() {
+    if (guidesG) guidesG.innerHTML = '';
+  }
+
   /* ====================== 交互：节点拖动（支持多选） ====================== */
   let dragNode = null;
   let dragOffset = { x: 0, y: 0 };
@@ -855,6 +944,7 @@
 
     window.addEventListener('mousemove', onNodeMouseMove);
     window.addEventListener('mouseup', onNodeMouseUp);
+    clearGuides(); // 新一轮拖拽开始前清掉上一轮残留的辅助线
   }
 
   /* v1.0.0 性能优化：拖拽使用 rAF 节流，每帧只执行一次 DOM 更新 */
@@ -871,8 +961,54 @@
       if (!ev || !dragNode) return;
       dragMoved = true; // 撤销/重做：本帧确实在移动节点
       const pt = screenToCanvas(ev.clientX, ev.clientY);
-      const newX = Math.round(pt.x - dragOffset.x);
-      const newY = Math.round(pt.y - dragOffset.y);
+      let newX = Math.round(pt.x - dragOffset.x);
+      let newY = Math.round(pt.y - dragOffset.y);
+
+      // ---- 对齐辅助线 & 网格吸附（对齐优先于网格）----
+      // 先按未吸附的目标位置算出选区包围盒，再求整体平移量
+      (function applyDragSnap() {
+        var selIds = [];
+        if (dragIsMulti && dragInitPos) {
+          state.selectedIds.forEach(function (sid) { if (dragInitPos[sid]) selIds.push(sid); });
+        } else {
+          selIds = [dragNode.id];
+        }
+        var mainInit = dragInitPos ? dragInitPos[dragNode.id] : null;
+        var rawDX = (dragIsMulti && dragInitPos) ? newX - (mainInit ? mainInit.x : dragNode.x) : 0;
+        var rawDY = (dragIsMulti && dragInitPos) ? newY - (mainInit ? mainInit.y : dragNode.y) : 0;
+        var b = { minX: Infinity, minY: Infinity, maxX: -Infinity, maxY: -Infinity };
+        selIds.forEach(function (sid) {
+          var n = state.nodes[sid];
+          var bx, by;
+          if (dragIsMulti && dragInitPos) {
+            var init = dragInitPos[sid];
+            bx = init.x + rawDX; by = init.y + rawDY;
+          } else {
+            bx = newX; by = newY;
+          }
+          b.minX = Math.min(b.minX, bx);
+          b.minY = Math.min(b.minY, by);
+          b.maxX = Math.max(b.maxX, bx + NODE_W);
+          b.maxY = Math.max(b.maxY, by + (n ? getNodeHeight(n) : 78));
+        });
+        var others = [];
+        Object.keys(state.nodes).forEach(function (nid) {
+          if (selIds.indexOf(nid) === -1) others.push(state.nodes[nid]);
+        });
+        var sDX = 0, sDY = 0, gX = null, gY = null;
+        if (alignGuidesEnabled && others.length) {
+          var res = checkAlignment(
+            { x: b.minX, y: b.minY, w: b.maxX - b.minX, h: b.maxY - b.minY }, others);
+          sDX = res.dx; sDY = res.dy; gX = res.guideX; gY = res.guideY;
+        }
+        // 网格吸附：仅在该轴未触发对齐时生效（对齐优先）
+        if (gridSnapEnabled) {
+          if (gX == null) sDX = Math.round(b.minX / GRID_SIZE) * GRID_SIZE - b.minX;
+          if (gY == null) sDY = Math.round(b.minY / GRID_SIZE) * GRID_SIZE - b.minY;
+        }
+        newX += sDX; newY += sDY;
+        renderGuides(gX, gY);
+      })();
 
       if (dragIsMulti && dragInitPos) {
         const initMain = dragInitPos[dragNode.id];
@@ -909,6 +1045,7 @@
       if (!dragMoved && dragHistoryPushed) undoStack.pop();
       notifyChange();
     }
+    clearGuides(); // 拖拽结束隐藏对齐辅助线
     dragNode = null;
     dragInitPos = null;
     dragIsMulti = false;
@@ -1782,6 +1919,30 @@
       if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.noteAdded') : '已添加便签，双击可编辑');
     });
   }
+
+  // 对齐辅助线 / 网格吸附开关（工具栏）
+  const btnAlignGuides = document.getElementById('btn-align-guides');
+  const btnGridSnap    = document.getElementById('btn-grid-snap');
+  function syncAlignToggleBtns() {
+    if (btnAlignGuides) btnAlignGuides.classList.toggle('active', alignGuidesEnabled);
+    if (btnGridSnap)    btnGridSnap.classList.toggle('active', gridSnapEnabled);
+  }
+  if (btnAlignGuides) {
+    btnAlignGuides.addEventListener('click', function () {
+      alignGuidesEnabled = !alignGuidesEnabled;
+      try { localStorage.setItem('kailion_align_guides', alignGuidesEnabled ? 'true' : 'false'); } catch (e) {}
+      if (!alignGuidesEnabled) clearGuides();
+      syncAlignToggleBtns();
+    });
+  }
+  if (btnGridSnap) {
+    btnGridSnap.addEventListener('click', function () {
+      gridSnapEnabled = !gridSnapEnabled;
+      try { localStorage.setItem('kailion_align_grid', gridSnapEnabled ? 'true' : 'false'); } catch (e) {}
+      syncAlignToggleBtns();
+    });
+  }
+  syncAlignToggleBtns();
 
   // 注：撤销/重做按钮由 app.js 统一绑定（含快捷键 Ctrl+Z/Ctrl+Y），
   // canvas.js 内部 undoStack 供编程式调用，避免双重绑定导致点一次撤销两步。

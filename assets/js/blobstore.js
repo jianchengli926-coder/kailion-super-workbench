@@ -203,6 +203,68 @@
     });
   }
 
+  /* ---------------- 孤儿文件清理 (v2.2.0-super) ----------------
+     扫描 IndexedDB 中全部 blob，与"仍被引用"的 id 集合对比，
+     删除未被任何地方引用的孤儿 blob。
+     引用来源：
+       1) 当前画布状态 Canvas.getState() 序列化后包含的 id 子串
+       2) localStorage 所有 value 中包含的 id 子串
+       3) 调用方额外传入的 keepIds
+     返回 { removed, freedBytes } */
+  async function listAll() {
+    const db = await open();
+    if (!db) return [];
+    return new Promise(resolve => {
+      let t;
+      try { t = db.transaction(STORE, 'readonly'); } catch { resolve([]); return; }
+      const out = [];
+      const req = t.objectStore(STORE).openCursor();
+      req.onsuccess = () => {
+        const c = req.result;
+        if (c) {
+          out.push({ id: c.value.id, bytes: c.value.bytes || (c.value.blob && c.value.blob.size) || 0 });
+          c.continue();
+        } else resolve(out);
+      };
+      req.onerror = () => resolve(out);
+    });
+  }
+
+  async function pruneBlobs(extraKeepIds) {
+    const all = await listAll();
+    if (!all.length) return { removed: 0, freedBytes: 0 };
+
+    // 收集"仍被引用"的 id：把所有可能的状态序列化成一个大字符串，
+    // 然后对每个 blob id 做子串匹配（blob id 通常是 doc_xxx 或 UUID）。
+    const haystack = [];
+    try {
+      if (window.Canvas && Canvas.getState) {
+        haystack.push(JSON.stringify(Canvas.getState()));
+      }
+    } catch (e) {}
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        try { haystack.push(localStorage.getItem(k) || ''); } catch (e) {}
+      }
+    } catch (e) {}
+    if (extraKeepIds && extraKeepIds.length) haystack.push(JSON.stringify(extraKeepIds));
+    const blob = haystack.join('\n');
+
+    let removed = 0, freedBytes = 0;
+    for (const rec of all) {
+      if (!rec.id) continue;
+      if (blob.indexOf(rec.id) !== -1) continue; // 仍被引用
+      try {
+        await del(rec.id);
+        removed++;
+        freedBytes += rec.bytes || 0;
+      } catch (e) {}
+    }
+    return { removed, freedBytes };
+  }
+
   /* ---------------- 浏览器存储配额 ---------------- */
 
   async function quota() {
@@ -243,6 +305,7 @@
   window.BlobStore = {
     available, open, dataUrlToBlob, blobToDataUrl,
     whenIdle, pending, put, get, url, urls, del, clear,
-    listIds, stats, quota, requestPersist, fmtBytes
+    listIds, listAll, stats, quota, requestPersist, fmtBytes,
+    pruneBlobs
   };
 })();
