@@ -66,8 +66,8 @@ window.NODE_DATA = [
   {
     cat: '3D 生成', catEn: '3D Generation', icon: '🧊', color: '#f59e0b',
     nodes: [
-      ['Wfw3D', 'lux3DGeneratorNode', '3D 网格资产生成：图生3D / 文生3D / 四视图 / 材质重绘，可导出 GLB、PLY、USDZ、OBJ、FBX', 0,
-       'Wfw3D', '3D mesh asset generation: img23D / text23D / four-view / material repaint; export GLB, PLY, USDZ, OBJ, FBX'],
+      ['3D 网格', 'lux3DGeneratorNode', '3D 网格资产生成：图生3D / 文生3D / 四视图 / 材质重绘，可导出 GLB、PLY、USDZ、OBJ、FBX', 0,
+       '3D Mesh', '3D mesh asset generation: img23D / text23D / four-view / material repaint; export GLB, PLY, USDZ, OBJ, FBX'],
       ['AHOLO World', 'ahWorldGeneratorNode', '3DGS 高斯溅射空间：世界重建（图/视频/insv）与世界生成（文+图）', 0,
        'AHOLO World', '3DGS Gaussian splat space: world reconstruction (image/video/insv) and world generation (text+image)'],
       ['3D模型', 'model3DGeneratorNode', '上传图片，AI 分析结构生成可交互的 Three.js 3D 模型代码，支持旋转、拆解、换色', 0,

@@ -94,7 +94,7 @@
       return;
     }
     var blob = new Blob([jsonStr], { type: 'application/json' });
-    downloadBlob(blob, 'lijiancheng-workflow-' + timestamp() + '.json');
+    downloadBlob(blob, 'kaili-workflow-' + timestamp() + '.json');
     toast(window.I18N ? I18N.t('exp.exportedJson') : '已导出 JSON 文件');
   }
 
@@ -241,7 +241,7 @@
     // 5. 导出
     canvas.toBlob(function (blob) {
       if (!blob) { toast(window.I18N ? I18N.t('exp.pngFailed') : 'PNG 导出失败'); return; }
-      downloadBlob(blob, 'lijiancheng-workflow-' + timestamp() + '.png');
+      downloadBlob(blob, 'kaili-workflow-' + timestamp() + '.png');
       toast(window.I18N ? I18N.t('exp.exportedPng') : '已导出 PNG 图片');
     }, 'image/png');
   }

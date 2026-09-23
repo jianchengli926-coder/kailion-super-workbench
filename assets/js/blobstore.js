@@ -6,6 +6,11 @@
    ============================================================ */
 (function () {
   'use strict';
+  // i18n 兜底：I18N 未加载或 key 缺失时回退到中文原文
+  function L(key, zh) {
+    try { if (window.I18N) { var v = I18N.t(key); if (v && v !== key) return v; } } catch (e) {}
+    return zh;
+  }
 
   const DB_NAME = 'kls-blobs';
   const STORE = 'blobs';
@@ -56,7 +61,7 @@
         try { out = fn(os); } catch (e) { reject(e); return; }
         t.oncomplete = () => resolve(out?.result !== undefined ? out.result : out);
         t.onerror = () => reject(t.error);
-        t.onabort = () => reject(t.error || new Error('事务被中止'));
+        t.onabort = () => reject(t.error || new Error(L('bs.aborted','事务被中止')));
       });
     }).catch(() => null);
   }
@@ -82,7 +87,7 @@
     return new Promise((resolve, reject) => {
       const fr = new FileReader();
       fr.onload = () => resolve(fr.result);
-      fr.onerror = () => reject(new Error('读取失败'));
+      fr.onerror = () => reject(new Error(L('bs.readFailed','读取失败')));
       fr.readAsDataURL(blob);
     });
   }

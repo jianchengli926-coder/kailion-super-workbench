@@ -800,7 +800,7 @@
             <div class="tp-title">${esc(t.title)}</div>
             <div class="tp-meta">
               <span class="tag">${esc(t.platform)}</span>
-              <span class="tag ${heatTag(t.heat)}">${window.I18N ? I18N.t('res.heatLabel') : '热度·' + esc(t.heat)}</span>
+              <span class="tag ${heatTag(t.heat)}">${(window.I18N ? I18N.t('res.heatLabel') : '热度·') + esc(t.heat)}</span>
               <span class="tag ${t.status==='已发布'?'tag-success':''}">${esc(t.status)}</span>
               <span class="tp-kw">${esc(t.keywords||'')}</span>
             </div>

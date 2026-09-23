@@ -73,8 +73,8 @@
   }
 
   // i18n 辅助：未加载 I18N 时回退中文原文
-  function tr(key, zh) {
-    return (typeof window.I18N !== 'undefined' && window.I18N) ? I18N.t(key) : zh;
+  function tr(key, zh, vars) {
+    return (typeof window.I18N !== 'undefined' && window.I18N) ? I18N.t(key, vars) : zh;
   }
 
   // 组装完整 URL：normalize(baseurl) + 路径
@@ -98,6 +98,109 @@
   async function readBody(resp) {
     const text = await resp.text();
     try { return JSON.parse(text); } catch (e) { throw makeHttpError(resp.status, text); }
+  }
+
+  /* ====================== 自动重试 + 错误分类（v2.2.0-super） ======================
+     中转站 502/522/网络抖动极常见：
+       · 5xx / 网络错误(TypeError) / 超时 → 自动重试，最多 retries 次，退避 900ms×次数
+       · 401/403/404/429/400 → 立即失败（重试无意义）
+       · 用户主动取消 → 立即失败
+     错误分类后追加中文可执行提示。 */
+
+  // 把错误归类并追加中文提示（直接改写 e.message）
+  function classifyError(e) {
+    if (!e || e.__classified) return e;
+    var status = e.status;
+    var msg = String(e.message || '');
+    var kind = '';
+    if (status === 401) kind = 'auth';
+    else if (status === 403 || /not enabled|not bound|permission|forbidden|group/i.test(msg)) kind = 'auth';
+    else if (status === 429 || /quota|rate limit|insufficient|balance|exceed/i.test(msg)) kind = 'quota';
+    else if (status === 404) kind = /model|deployment/i.test(msg) ? 'model' : 'notfound';
+    else if (/model.*(not exist|not found|unsupported|invalid|does not exist)|no such model/i.test(msg)) kind = 'model';
+    else if (status === 400 || status === 422) kind = 'badrequest';
+    else if (status >= 500) kind = 'server';
+    else if (e instanceof TypeError || /failed to fetch|networkerror|load failed|failed to load/i.test(msg)) kind = 'cors';
+    if (!kind) return e;
+    var keyMap = {
+      auth: 'api.err.auth', quota: 'api.err.quota', cors: 'api.err.cors',
+      server: 'api.err.server', network: 'api.err.network', timeout: 'api.err.timeout',
+      model: 'api.err.model', notfound: 'api.err.notfound', badrequest: 'api.err.badrequest'
+    };
+    var hint = tr(keyMap[kind], '');
+    if (hint && msg.indexOf(hint) === -1) {
+      e.message = msg + '（💡' + hint + '）';
+    }
+    e.kind = kind;
+    e.__classified = true;
+    return e;
+  }
+
+  // 带超时 + 自动重试的 fetch；成功返回 Response（调用方自行 readBody）
+  // opts: { signal, timeoutMs, retries }
+  async function apiFetch(url, options, opts) {
+    opts = opts || {};
+    var retries = (opts.retries != null) ? opts.retries : 3;
+    var timeoutMs = opts.timeoutMs || 30000;
+    var extSignal = opts.signal || null;
+    var lastErr = null;
+
+    for (var attempt = 0; attempt <= retries; attempt++) {
+      if (extSignal && extSignal.aborted) {
+        throw new Error(tr('api.err.abortedByUser', '已中止（用户停止执行）'));
+      }
+      var controller = new AbortController();
+      var onAbortExt = function () { controller.abort(); };
+      if (extSignal) extSignal.addEventListener('abort', onAbortExt, { once: true });
+      var abortedByTimeout = false;
+      var timer = setTimeout(function () { abortedByTimeout = true; controller.abort(); }, timeoutMs);
+      try {
+        var resp = await fetch(url, Object.assign({}, options, { signal: controller.signal }));
+        if (!resp.ok) {
+          var text = await resp.text();
+          var err = makeHttpError(resp.status, text);
+          err.status = resp.status;
+          // 5xx → 退避重试；4xx → 立即失败
+          if (resp.status >= 500 && attempt < retries) {
+            lastErr = err;
+            console.info('[API] HTTP ' + resp.status + '，第' + (attempt + 1) + '次重试，' + (900 * (attempt + 1)) + 'ms 后…');
+            await sleep(900 * (attempt + 1));
+            continue;
+          }
+          throw classifyError(err);
+        }
+        return resp;
+      } catch (e) {
+        if (e.name === 'AbortError') {
+          if (abortedByTimeout) {
+            // 超时 → 退避重试
+            if (attempt < retries) {
+              lastErr = e;
+              console.info('[API] 请求超时，第' + (attempt + 1) + '次重试，' + (900 * (attempt + 1)) + 'ms 后…');
+              await sleep(900 * (attempt + 1));
+              continue;
+            }
+            throw new Error(tr('api.err.timeout', '请求超时（' + Math.round(timeoutMs / 1000) + 's），请检查网络或稍后重试。', { s: Math.round(timeoutMs / 1000) }));
+          }
+          // 用户主动取消
+          throw new Error(tr('api.err.abortedByUser', '已中止（用户停止执行）'));
+        }
+        // 网络错误（TypeError: Failed to fetch）→ 退避重试
+        if (e instanceof TypeError && attempt < retries) {
+          lastErr = e;
+          console.info('[API] 网络错误，第' + (attempt + 1) + '次重试，' + (900 * (attempt + 1)) + 'ms 后…');
+          await sleep(900 * (attempt + 1));
+          continue;
+        }
+        throw e;
+      } finally {
+        clearTimeout(timer);
+        if (extSignal) extSignal.removeEventListener('abort', onAbortExt);
+      }
+    }
+    // 重试用尽
+    if (lastErr) throw classifyError(lastErr);
+    throw new Error(tr('api.err.network', '网络请求失败，请检查网络连接或代理设置。'));
   }
 
   /* ====================== 对话补全 chatCompletion ====================== */
@@ -191,33 +294,21 @@
     }, 0);
 
     const timeoutMs = opts.timeoutMs || TIMEOUT_CHAT;
-    const controller = new AbortController();
-    const extSignal = opts.signal;
-    if (extSignal) {
-      if (extSignal.aborted) controller.abort();
-      else extSignal.addEventListener('abort', () => controller.abort(), { once: true });
-    }
-    let abortedByTimeout = false;
-    const timer = setTimeout(() => { abortedByTimeout = true; controller.abort(); }, timeoutMs);
     try {
-      const resp = await fetch(url, {
+      // v2.2.0-super：apiFetch 内置超时 + 5xx/网络/超时自动重试 + 错误分类
+      const resp = await apiFetch(url, {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify(body),
-        signal: controller.signal
-      });
+        body: JSON.stringify(body)
+      }, { signal: opts.signal, timeoutMs: timeoutMs });
 
       // 流式 SSE 分支
-      if (stream && resp.ok && resp.body) {
+      if (stream && resp.body) {
         _alOut = await consumeSSE(resp, proto, onStreamChunk);
         return _alOut;
       }
 
       // 非流式分支
-      if (!resp.ok) {
-        const text = await resp.text();
-        throw makeHttpError(resp.status, text);
-      }
       const data = await readBody(resp);
       const content = proto.readText(data);
       if (!content) throw new Error(tr('api.err.noContent', '响应中未找到可识别的文本内容'));
@@ -225,15 +316,9 @@
       return _alOut;
     } catch (e) {
       _alErr = e;
-      if (e.name === 'AbortError') {
-        if (abortedByTimeout) {
-          throw new Error('对话补全超时（' + Math.round(timeoutMs / 1000) + 's），请检查网络或供应商可用性。');
-        }
-        throw new Error('已中止（用户停止执行）');
-      }
+      classifyError(e);
       throw e;
     } finally {
-      clearTimeout(timer);
       // ===== APILogger 埋点：记录本次调用 =====
       try {
         if (!opts.silent && window.APILogger) {
@@ -306,86 +391,133 @@
    * @param {Object} params {model, prompt, size, n, quality, style}
    * @returns {Promise<string[]>} 图片 URL / data URI 数组
    */
+  /* ====================== 图片形态探测（v2.2.0-super） ======================
+     各家中转站生图路径/字段差异大，定义多种形态按序尝试，
+     第一个成功后记住形态（localStorage ljc_image_form_<id>），后续直接命中。 */
+  function buildImageForms(provider, params) {
+    var base = normalizeBaseUrl(provider.baseurl);
+    var model = params.model || 'dall-e-3';
+    var prompt = params.prompt || 'a high-quality image';
+    var size = params.size || '1024x1024';
+    var n = params.n || 1;
+    return [
+      {
+        id: 'openai-generations',
+        label: 'OpenAI /images/generations',
+        url: base + '/images/generations',
+        body: { model: model, prompt: prompt, n: n, size: size, quality: params.quality || 'standard', style: params.style || 'vivid' }
+      },
+      {
+        id: 'v1-images-generations',
+        label: '/v1/images/generations',
+        url: base + '/v1/images/generations',
+        body: { model: model, prompt: prompt, n: n, size: size }
+      },
+      {
+        id: 'chat-completions-image',
+        label: 'chat/completions 生图',
+        url: base + '/chat/completions',
+        body: { model: model, messages: [{ role: 'user', content: [{ type: 'text', text: prompt + '\n\n（请直接生成图片，不要只给文字描述）' }] }] }
+      }
+    ];
+  }
+
+  // 从任意生图响应里提取图片 URL / data URI
+  function extractImageUrls(data) {
+    var urls = [];
+    function addItem(it) {
+      if (!it) return;
+      if (it.url) { urls.push(it.url); return; }
+      if (typeof it.image_url === 'string') { urls.push(it.image_url); return; }
+      if (it.b64_json) { urls.push('data:image/png;base64,' + it.b64_json); return; }
+      if (it.inlineData && it.inlineData.data) { urls.push('data:' + (it.inlineData.mimeType || 'image/png') + ';base64,' + it.inlineData.data); return; }
+    }
+    if (!data) return urls;
+    if (Array.isArray(data.data)) data.data.forEach(addItem);
+    if (Array.isArray(data.images)) data.images.forEach(addItem);
+    // chat-completions 风格：choices[0].message.images[] / .content[].image_url
+    if (data.choices && data.choices[0] && data.choices[0].message) {
+      var m = data.choices[0].message;
+      if (Array.isArray(m.images)) m.images.forEach(addItem);
+      if (Array.isArray(m.content)) m.content.forEach(function (c) {
+        if (c && c.type === 'image_url' && c.image_url && c.image_url.url) urls.push(c.image_url.url);
+      });
+    }
+    // Gemini 风格：candidates[0].content.parts[].inlineData
+    if (data.candidates && data.candidates[0] && data.candidates[0].content && Array.isArray(data.candidates[0].content.parts)) {
+      data.candidates[0].content.parts.forEach(function (p) {
+        if (p && p.inlineData) addItem({ inlineData: p.inlineData });
+      });
+    }
+    if (data.url) urls.push(data.url);
+    // 去重
+    var seen = {};
+    return urls.filter(function (u) { if (!u || seen[u]) return false; seen[u] = true; return true; });
+  }
+
   async function imageGeneration(provider, params, opts) {
     params = params || {};
     opts = opts || {};
     if (!provider || !provider.baseurl || !provider.key) {
-      throw new Error('图片供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。');
+      throw new Error(tr('api.err.imageProviderMissing', '图片供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
     }
-    const url = buildUrl(provider.baseurl, '/images/generations');
-    const body = {
-      model: params.model || 'dall-e-3',
-      prompt: params.prompt || 'a high-quality image',
-      size: params.size || '1024x1024',
-      n: params.n || 1,
-      quality: params.quality || 'standard',
-      style: params.style || 'vivid'
-    };
 
     // ===== APILogger 埋点 =====
-    const _alT0 = Date.now();
-    let _alOut = '';
-    let _alErr = null;
+    var _alT0 = Date.now();
+    var _alOut = '';
+    var _alErr = null;
+    var timeoutMs = opts.timeoutMs || TIMEOUT_IMAGE;
+    var lastModel = params.model || 'dall-e-3';
 
-    const timeoutMs = opts.timeoutMs || TIMEOUT_IMAGE;
-    const controller = new AbortController();
-    const extSignal = opts.signal;
-    if (extSignal) {
-      if (extSignal.aborted) controller.abort();
-      else extSignal.addEventListener('abort', () => controller.abort(), { once: true });
+    var forms = buildImageForms(provider, params);
+    // 记住的形态排最前
+    var storageKey = 'ljc_image_form_' + ((provider && provider.id) || 'default');
+    var remembered = null;
+    try { remembered = localStorage.getItem(storageKey); } catch (e) {}
+    if (remembered) {
+      forms.sort(function (a, b) { return a.id === remembered ? -1 : (b.id === remembered ? 1 : 0); });
     }
-    let abortedByTimeout = false;
-    const timer = setTimeout(() => { abortedByTimeout = true; controller.abort(); }, timeoutMs);
+
+    var errors = [];
     try {
-      const resp = await fetch(url, {
-        method: 'POST',
-        headers: buildHeaders(provider),
-        body: JSON.stringify(body),
-        signal: controller.signal
-      });
-      if (!resp.ok) {
-        const text = await resp.text();
-        throw makeHttpError(resp.status, text);
+      for (var i = 0; i < forms.length; i++) {
+        var form = forms[i];
+        try {
+          // apiFetch 内置超时 + 5xx/网络/超时自动重试
+          var resp = await apiFetch(form.url, {
+            method: 'POST',
+            headers: buildHeaders(provider),
+            body: JSON.stringify(form.body)
+          }, { signal: opts.signal, timeoutMs: timeoutMs, retries: 3 });
+          var data = await readBody(resp);
+          var urls = extractImageUrls(data);
+          if (urls.length) {
+            // 成功形态记住，后续直接命中
+            try { localStorage.setItem(storageKey, form.id); } catch (e) {}
+            _alOut = urls.length + ' images';
+            return urls;
+          }
+          errors.push(form.label + '：返回成功但未找到图片（' + JSON.stringify(data).slice(0, 120) + '）');
+        } catch (e) {
+          errors.push(form.label + '：' + (e.message || e));
+          // 鉴权失败试别的形态也没意义
+          if (e.kind === 'auth') break;
+        }
       }
-      const data = await readBody(resp);
-
-      // 统一提取图片项数组
-      let items = [];
-      if (Array.isArray(data && data.data)) {
-        items = data.data;
-      } else if (Array.isArray(data && data.images)) {
-        items = data.images; // 中转站格式 {images:[{url}]}
-      }
-
-      const urls = items.map(item => {
-        if (!item) return null;
-        if (item.url) return item.url;
-        if (item.b64_json) return 'data:image/png;base64,' + item.b64_json;
-        return null;
-      }).filter(Boolean);
-
-      if (!urls.length) throw new Error(tr('api.err.noImageData', '图片 API 未返回可识别的图片数据。'));
-      _alOut = urls.length + ' images';
-      return urls;
+      throw new Error(tr('api.err.imageAllFormsFailed', '所有生图方式都失败了：\n{detail}', { detail: errors.join('\n') }));
     } catch (e) {
       _alErr = e;
-      if (e.name === 'AbortError') {
-        if (abortedByTimeout) {
-          throw new Error('图片生成超时（' + Math.round(timeoutMs / 1000) + 's），生图耗时较长，请稍后重试。');
-        }
-        throw new Error('已中止（用户停止执行）');
-      }
+      classifyError(e);
       throw e;
     } finally {
-      clearTimeout(timer);
       // ===== APILogger 埋点 =====
       try {
         if (window.APILogger) {
           APILogger.log({
             provider: (provider && provider.name) || (provider && provider.id) || 'unknown',
-            model: body.model,
+            model: lastModel,
             type: 'image',
-            inputTokens: 1000, // 图片按约 1000 token 估算
+            inputTokens: 1000,
             outputTokens: 0,
             duration: Date.now() - _alT0,
             status: _alErr ? 'failed' : 'success',
@@ -469,7 +601,7 @@
     params = params || {};
     opts = opts || {};
     if (!provider || !provider.baseurl || !provider.key) {
-      throw new Error('视频供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。');
+      throw new Error(tr('api.err.videoProviderMissing', '视频供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
     }
     const url = buildUrl(provider.baseurl, '/videos/generations');
     const body = {
@@ -514,7 +646,7 @@
       // 2) 异步模式：取 task_id 轮询
       const taskId = extractTaskId(data);
       if (!taskId) {
-        throw new Error('视频 API 未返回可识别的视频地址或任务 ID。');
+        throw new Error(tr('api.err.videoNoData', '视频 API 未返回可识别的视频地址或任务 ID。'));
       }
 
       const pollUrl = buildUrl(provider.baseurl, '/videos/generations/' + encodeURIComponent(taskId));
@@ -545,20 +677,22 @@
           // 状态成功但仍无 URL，继续轮询直到拿到地址
         }
         if (isTaskFailed(pollData)) {
-          const reason = (pollData && (pollData.error || pollData.message)) || '任务失败';
-          throw new Error('视频生成任务失败：' + (typeof reason === 'string' ? reason : JSON.stringify(reason)).slice(0, 200));
+          const reasonRaw = (pollData && (pollData.error || pollData.message)) || '任务失败';
+          const reasonText = (typeof reasonRaw === 'string' ? reasonRaw : JSON.stringify(reasonRaw)).slice(0, 200);
+          throw new Error(tr('api.err.videoTaskFailed', '视频生成任务失败：' + reasonText, { reason: reasonText }));
         }
         // pending / processing：继续轮询
       }
-      throw new Error('视频生成轮询超时（60s），任务仍未完成。');
+      throw new Error(tr('api.err.videoPollTimeout', '视频生成轮询超时（60s），任务仍未完成。'));
     } catch (e) {
       _alErr = e;
       if (e.name === 'AbortError') {
         if (abortedByTimeout) {
-          throw new Error('视频生成超时（' + Math.round(timeoutMs / 1000) + 's），请稍后重试或更换模型。');
+          throw new Error(tr('api.err.videoTimeout', '视频生成超时（' + Math.round(timeoutMs / 1000) + 's），请稍后重试或更换模型。', { s: Math.round(timeoutMs / 1000) }));
         }
-        throw new Error('已中止（用户停止执行）');
+        throw new Error(tr('api.err.abortedByUser', '已中止（用户停止执行）'));
       }
+      classifyError(e);
       throw e;
     } finally {
       clearTimeout(timer);
@@ -644,7 +778,7 @@
     params = params || {};
     opts = opts || {};
     if (!provider || !provider.baseurl || !provider.key) {
-      throw new Error('3D 供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。');
+      throw new Error(tr('api.err.model3DProviderMissing', '3D 供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
     }
     const url = buildUrl(provider.baseurl, '/3d/generations');
     // M3：faceCount 支持 low/medium/high 枚举或纯数值（万）
@@ -695,7 +829,7 @@
       // 2) 异步模式：取 task_id 轮询
       const taskId = extractTaskId(data);
       if (!taskId) {
-        throw new Error('3D API 未返回可识别的模型地址或任务 ID。');
+        throw new Error(tr('api.err.model3DNoData', '3D API 未返回可识别的模型地址或任务 ID。'));
       }
 
       const pollUrl = buildUrl(provider.baseurl, '/3d/generations/' + encodeURIComponent(taskId));
@@ -724,20 +858,22 @@
           // 状态成功但仍无 URL，继续轮询
         }
         if (isTaskFailed(pollData)) {
-          const reason = (pollData && (pollData.error || pollData.message)) || '任务失败';
-          throw new Error('3D 生成任务失败：' + (typeof reason === 'string' ? reason : JSON.stringify(reason)).slice(0, 200));
+          const reasonRaw = (pollData && (pollData.error || pollData.message)) || '任务失败';
+          const reasonText = (typeof reasonRaw === 'string' ? reasonRaw : JSON.stringify(reasonRaw)).slice(0, 200);
+          throw new Error(tr('api.err.model3DTaskFailed', '3D 生成任务失败：' + reasonText, { reason: reasonText }));
         }
         // pending / processing：继续轮询
       }
-      throw new Error('3D 生成轮询超时（90s），任务仍未完成。');
+      throw new Error(tr('api.err.model3DPollTimeout', '3D 生成轮询超时（90s），任务仍未完成。'));
     } catch (e) {
       _alErr = e;
       if (e.name === 'AbortError') {
         if (abortedByTimeout) {
-          throw new Error('3D 生成超时（' + Math.round(timeoutMs / 1000) + 's），请稍后重试或更换模型。');
+          throw new Error(tr('api.err.model3DTimeout', '3D 生成超时（' + Math.round(timeoutMs / 1000) + 's），请稍后重试或更换模型。', { s: Math.round(timeoutMs / 1000) }));
         }
-        throw new Error('已中止（用户停止执行）');
+        throw new Error(tr('api.err.abortedByUser', '已中止（用户停止执行）'));
       }
+      classifyError(e);
       throw e;
     } finally {
       clearTimeout(timer);

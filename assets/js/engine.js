@@ -1244,7 +1244,7 @@
           ctx.drawImage(wmImg, 0, 0, bw, bh);
           // 计算九宫格锚点
           const pad = Math.round(wmSize * 0.8);
-          const lines = wmText.split('\\n');
+          const lines = wmText.split('\n');
           ctx.font = 'bold ' + wmSize + 'px sans-serif';
           ctx.textBaseline = 'middle';
           const mWidth = Math.max.apply(null, lines.map(l => ctx.measureText(l).width));

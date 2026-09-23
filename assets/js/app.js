@@ -98,7 +98,8 @@
         Canvas.setState(data.canvas);
         skipRecord = false;
         if (data.workflowName) {
-          document.getElementById('workflow-name').textContent = data.workflowName;
+          const wfEl = document.getElementById('workflow-name');
+          if (wfEl) wfEl.textContent = data.workflowName;
         }
         return true;
       }
@@ -445,7 +446,8 @@
       const p = Canvas.addNode('promptNode', 180, 200);
       const g = Canvas.addNode('imageGeneratorProNode', 520, 200);
       Canvas.connect(p.id, g.id);
-      document.getElementById('workflow-name').textContent = window.I18N ? I18N.t('app.welcome') : '欢迎使用示例';
+      const wfEl = document.getElementById('workflow-name');
+      if (wfEl) wfEl.textContent = window.I18N ? I18N.t('app.welcome') : '欢迎使用示例';
     }
 
     // 把初始状态作为历史起点

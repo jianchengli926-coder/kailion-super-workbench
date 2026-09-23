@@ -1,5 +1,10 @@
 (function () {
 'use strict';
+// i18n 兜底：I18N 未加载或 key 缺失时回退到中文原文
+function L(key, zh) {
+  try { if (window.I18N) { var v = I18N.t(key); if (v && v !== key) return v; } } catch (e) {}
+  return zh;
+}
 /* ============================================================
    锴利超级AI工作台 · 最小 ZIP 写入器 / Minimal ZIP Writer
    ------------------------------------------------------------
@@ -150,7 +155,7 @@ function readZip(input) {
     if (u8[t] === 0x50 && u8[t + 1] === 0x4b && u8[t + 2] === 0x05 && u8[t + 3] === 0x06) eocd = t;
   }
   if (eocd < 0) eocd = findEocd(dv, u8);
-  if (eocd < 0) throw new Error('这不是一个有效的 ZIP 文件（找不到中央目录）');
+  if (eocd < 0) throw new Error(L('zip.invalidZip', '这不是一个有效的 ZIP 文件（找不到中央目录）'));
 
   const count = dv.getUint16(eocd + 10, true);
   const cdOff = dv.getUint32(eocd + 16, true);
@@ -193,7 +198,7 @@ async function readZipDecompressed(input) {
     if (e.method === 0) { out.push(e); continue; }
     if (e.method === 8) {
       if (typeof DecompressionStream === 'undefined') {
-        throw new Error('这个压缩包用了 DEFLATE，但当前浏览器不支持解压');
+        throw new Error(L('zip.deflateUnsupported', '这个压缩包用了 DEFLATE，但当前浏览器不支持解压'));
       }
       const ds = new DecompressionStream('deflate-raw');
       const stream = new Blob([e.data]).stream().pipeThrough(ds);

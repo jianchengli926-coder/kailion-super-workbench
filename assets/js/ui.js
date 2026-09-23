@@ -1123,7 +1123,7 @@
           const colors = ['#fef08a','#bfdbfe','#bbf7d0','#fbcfe8'];
           nodes.slice(0, 6).forEach((n, i) => {
             if (Canvas.addNote) {
-              const meta = (window.Nodes && Nodes.getNodeMeta) ? Nodes.getNodeMeta(n.type) : null;
+              const meta = (window.NodeDef ? NodeDef.getMeta(n.type) : null);
               const label = meta ? meta.name : n.type;
               const desc = meta ? meta.desc : '未知节点';
               const note = Canvas.addNote(100, yOff, colors[i % 4]);
@@ -1174,7 +1174,7 @@
         const links = Object.values(st.links);
         const catCount = {};
         nodes.forEach(n => {
-          const meta = (window.Nodes && Nodes.getNodeMeta) ? Nodes.getNodeMeta(n.type) : null;
+          const meta = (window.NodeDef ? NodeDef.getMeta(n.type) : null);
           const cat = meta ? meta.cat : '其他';
           catCount[cat] = (catCount[cat] || 0) + 1;
         });
@@ -1640,7 +1640,7 @@
         const blob = new Blob([JSON.stringify(allData, null, 2)], { type: 'application/json' });
         const a = document.createElement('a');
         a.href = URL.createObjectURL(blob);
-        a.download = 'lijiancheng-full-backup-' + new Date().toISOString().slice(0,10) + '.json';
+        a.download = 'kaili-full-backup-' + new Date().toISOString().slice(0,10) + '.json';
         a.click();
         setTimeout(() => URL.revokeObjectURL(a.href), 1000);
         toast(tx('backup.exportedAll', '已导出全部数据（{count}项配置）', { count }));
@@ -1660,7 +1660,7 @@
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'lijiancheng-workflow-' + Date.now() + '.json';
+      a.download = 'kaili-workflow-' + Date.now() + '.json';
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 1000);
       toast(tx('backup.exported', '已导出工作流文件'));

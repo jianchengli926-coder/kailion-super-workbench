@@ -10,15 +10,20 @@
    ============================================================ */
 (function () {
   'use strict';
+  // i18n 兜底：I18N 未加载或 key 缺失时回退到中文原文
+  function L(key, zh) {
+    try { if (window.I18N) { var v = I18N.t(key); if (v && v !== key) return v; } } catch (e) {}
+    return zh;
+  }
 
   /* ---------------- 载入图片 ---------------- */
   function loadImage(src) {
     return new Promise((resolve, reject) => {
-      if (!src) { reject(new Error('没有可用的图片输入')); return; }
+      if (!src) { reject(new Error(L('it.noImageInput','没有可用的图片输入'))); return; }
       const img = new Image();
       img.crossOrigin = 'anonymous';
       img.onload = () => resolve(img);
-      img.onerror = () => reject(new Error('图片加载失败，可能是格式不支持或链接已失效'));
+      img.onerror = () => reject(new Error(L('it.imageLoadFailed','图片加载失败，可能是格式不支持或链接已失效')));
       img.src = src;
     });
   }
@@ -32,7 +37,7 @@
 
   function canvasToBlob(canvas, mime, quality) {
     return new Promise((resolve, reject) => {
-      canvas.toBlob(b => b ? resolve(b) : reject(new Error('当前浏览器无法输出 ' + mime)), mime, quality);
+      canvas.toBlob(b => b ? resolve(b) : reject(new Error(L('it.cannotOutput','当前浏览器无法输出 ') + mime)), mime, quality);
     });
   }
 
@@ -120,7 +125,7 @@
    */
   async function imagesToPdf(images, opt) {
     opt = opt || {};
-    if (!images || !images.length) throw new Error('没有可合并的图片');
+    if (!images || !images.length) throw new Error(L('it.noImagesToMerge','没有可合并的图片'));
     const quality = opt.quality !== undefined ? Number(opt.quality) : 0.92;
     const margin = opt.margin !== undefined ? Number(opt.margin) : MIL;
     const sizeMode = opt.pageSize || 'a4';
@@ -246,7 +251,7 @@
       else if (typeof f.text === 'string') prepared.push({ name: f.name, data: f.text });
     }
     const make = (window.ZipUtil && window.ZipUtil.makeZip) || null;
-    if (!make) throw new Error('ZIP 工具未加载（zip.js）');
+    if (!make) throw new Error(L('it.zipMissing','ZIP 工具未加载（zip.js）'));
     downloadBlob(new Blob([make(prepared)], { type: 'application/zip' }), zipName);
   }
 

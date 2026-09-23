@@ -38,6 +38,71 @@
   let onStateChange = null;   // 状态变化回调（由 app.js 注入，用于撤销/保存）
   let spacePressed = false;   // 空格键按住 → 临时平移模式
 
+  /* ====================== 撤销 / 重做（v2.2.0-super） ======================
+     语义：undoStack 存「变更前的历史状态」。
+     撤销 = 先把当前状态推入 redoStack，再弹出上一个历史状态恢复。
+     视口(view)/选区不进快照，避免撤销时跳视角。 */
+  const undoStack = [];
+  const redoStack = [];
+  const MAX_HISTORY = 50;
+
+  // 深拷贝当前可编辑状态（节点/连线/分组/便签/seq）
+  function takeSnapshot() {
+    return JSON.parse(JSON.stringify({
+      nodes: state.nodes,
+      links: state.links,
+      groups: state.groups,
+      notes: state.notes,
+      seq: state.seq
+    }));
+  }
+
+  // 在「修改发生前」调用：把修改前状态压入 undoStack，返回是否真正压栈（用于拖拽空操作回退）
+  function pushHistory() {
+    const snap = takeSnapshot();
+    const last = undoStack[undoStack.length - 1];
+    if (last && JSON.stringify(last) === JSON.stringify(snap)) return false; // 与上一条相同则去重
+    undoStack.push(snap);
+    if (undoStack.length > MAX_HISTORY) undoStack.shift();
+    redoStack.length = 0; // 新操作清空重做栈
+    return true;
+  }
+
+  // 应用快照（撤销/重做时调用）
+  function applySnapshot(snap) {
+    if (!snap) return;
+    state.nodes = snap.nodes || {};
+    state.links = snap.links || [];
+    state.groups = snap.groups || {};
+    state.notes = snap.notes || {};
+    state.seq = snap.seq || 1;
+    state.selected = null;
+    state.selectedIds.clear();
+    state.groupedIds.clear();
+    render();
+    notifyChange();
+  }
+
+  function undo() {
+    if (!undoStack.length) {
+      if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.nothingToUndo') : '没有可撤销的操作');
+      return;
+    }
+    redoStack.push(takeSnapshot());
+    applySnapshot(undoStack.pop());
+    if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.undone') : '已撤销');
+  }
+
+  function redo() {
+    if (!redoStack.length) {
+      if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.nothingToRedo') : '没有可重做的操作');
+      return;
+    }
+    undoStack.push(takeSnapshot());
+    applySnapshot(redoStack.pop());
+    if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.redone') : '已重做');
+  }
+
   // 分组（Group）配置
   const GROUP_COLORS   = ['#6366f1', '#8b5cf6', '#ec4899', '#10b981', '#f59e0b', '#06b6d4'];
   const GROUP_PAD      = 40;  // 分组包围盒外扩 padding(px)
@@ -408,6 +473,7 @@
       y: y != null ? y : 150 + Math.random() * 150,
       params: params ? { ...params } : {}
     };
+    pushHistory(); // 撤销/重做：记录添加前状态
     state.nodes[id] = node;
     selectNode(id);
     render();
@@ -417,6 +483,7 @@
 
   function removeNode(id) {
     if (!state.nodes[id]) return;
+    pushHistory(); // 撤销/重做：记录删除前状态
     delete state.nodes[id];
     // 删除关联连线
     state.links = state.links.filter(l => l.from.node !== id && l.to.node !== id);
@@ -437,6 +504,7 @@
   // 批量删除：循环内只改数据，统一 render/notifyChange 一次
   function removeNodes(ids) {
     if (!ids || !ids.length) return;
+    pushHistory(); // 撤销/重做：记录批量删除前状态
     const set = new Set(ids);
     ids.forEach(id => {
       if (!state.nodes[id]) return;
@@ -457,6 +525,7 @@
     // 避免重复连线
     const exists = state.links.some(l => l.from.node === fromNode && l.to.node === toNode);
     if (exists) return;
+    pushHistory(); // 撤销/重做：记录连线前状态
     state.links.push({
       id: 'l' + (state.seq++),
       from: { node: fromNode, port: 'out' },
@@ -467,6 +536,7 @@
   }
 
   function clearCanvas() {
+    pushHistory(); // 撤销/重做：记录清空前状态
     state.nodes = {};
     state.links = [];
     state.notes = {};   // v0.9.0 同时清空便签
@@ -481,6 +551,7 @@
   function createGroup(nodeIds, name) {
     const list = (nodeIds || []).filter(id => state.nodes[id]);
     if (!list.length) return null;
+    pushHistory(); // 撤销/重做：记录建组前状态
     // 计算包围盒
     let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
     list.forEach(id => {
@@ -511,6 +582,7 @@
 
   function removeGroup(groupId) {
     if (!state.groups[groupId]) return;
+    pushHistory(); // 撤销/重做：记录删组前状态
     delete state.groups[groupId];
     render();
     notifyChange();
@@ -519,6 +591,7 @@
   function renameGroup(groupId, name) {
     const g = state.groups[groupId];
     if (!g || !name) return;
+    pushHistory(); // 撤销/重做：记录重命名前状态
     g.name = name;
     renderNodes();
     notifyChange();
@@ -527,6 +600,7 @@
   function setGroupColor(groupId, color) {
     const g = state.groups[groupId];
     if (!g || !color) return;
+    pushHistory(); // 撤销/重做：记录改色前状态
     g.color = color;
     renderNodes();
     notifyChange();
@@ -535,6 +609,7 @@
   function toggleGroupCollapse(groupId) {
     const g = state.groups[groupId];
     if (!g) return;
+    pushHistory(); // 撤销/重做：记录折叠前状态
     g.collapsed = !g.collapsed;
     renderNodes();
     notifyChange();
@@ -547,6 +622,7 @@
   /* ====================== 便签（Sticky Notes，v0.9.0） ====================== */
   function addNote(x, y, color) {
     const id = 'note' + (state.seq++);
+    pushHistory(); // 撤销/重做：记录加便签前状态
     const note = {
       id,
       x: x != null ? Math.round(x) : 200,
@@ -565,6 +641,7 @@
 
   function removeNote(id) {
     if (!state.notes[id]) return;
+    pushHistory(); // 撤销/重做：记录删便签前状态
     delete state.notes[id];
     render();
     notifyChange();
@@ -576,6 +653,7 @@
   }
 
   function clearNotes() {
+    pushHistory(); // 撤销/重做：记录清便签前状态
     state.notes = {};
     render();
     notifyChange();
@@ -584,6 +662,7 @@
   function cycleNoteColor(id) {
     const n = state.notes[id];
     if (!n) return;
+    pushHistory(); // 撤销/重做：记录便签变色前状态
     const idx = NOTE_COLORS.indexOf(n.color);
     n.color = NOTE_COLORS[(idx + 1) % NOTE_COLORS.length];
     render();
@@ -722,6 +801,8 @@
   let dragInitPos = null; // {id: {x, y}} 拖动开始时所有选中节点的初始位置
   let dragIsMulti = false;
   let isDragging = false;  // v1.2.0：拖拽中标志，拖拽结束后统一 renderLinks() 重算视口剔除
+  let dragMoved = false;        // 拖拽是否真正移动过（用于撤销空点击）
+  let dragHistoryPushed = false; // mousedown 时是否真的压了历史栈
 
   function onNodeMouseDown(e) {
     // 空格键按住时，任何 mousedown 都进入平移
@@ -758,6 +839,9 @@
     dragNode = node;
     dragOffset = { x: pt.x - node.x, y: pt.y - node.y };
     isDragging = true; // v1.2.0：拖拽开始，拖拽过程只更新 d 属性，不重建 SVG
+    // 撤销/重做：拖拽开始前记录状态（未真正移动则在 mouseup 回退该条）
+    dragMoved = false;
+    dragHistoryPushed = pushHistory();
 
     // 记录多选拖动初始位置
     dragIsMulti = state.selectedIds.size > 1;
@@ -785,6 +869,7 @@
       dragFramePending = false;
       var ev = dragLastEvent;
       if (!ev || !dragNode) return;
+      dragMoved = true; // 撤销/重做：本帧确实在移动节点
       const pt = screenToCanvas(ev.clientX, ev.clientY);
       const newX = Math.round(pt.x - dragOffset.x);
       const newY = Math.round(pt.y - dragOffset.y);
@@ -819,10 +904,16 @@
   }
 
   function onNodeMouseUp() {
-    if (dragNode) notifyChange();
+    if (dragNode) {
+      // 撤销/重做：若只是点击选中而未真正拖动，回退 mousedown 时压入的空快照
+      if (!dragMoved && dragHistoryPushed) undoStack.pop();
+      notifyChange();
+    }
     dragNode = null;
     dragInitPos = null;
     dragIsMulti = false;
+    dragMoved = false;
+    dragHistoryPushed = false;
     isDragging = false; // v1.2.0：拖拽结束，重算连线（含视口剔除）
     renderLinks();
     window.removeEventListener('mousemove', onNodeMouseMove);
@@ -1150,6 +1241,7 @@
   function autoLayout() {
     const nodes = Object.values(state.nodes);
     if (!nodes.length) return false;
+    pushHistory(); // 撤销/重做：记录自动布局前状态
 
     // 计算每个节点的入度
     const inDeg = {};
@@ -1203,6 +1295,18 @@
 
     // 弹窗/遮罩打开时不响应删除快捷键，避免误删画布
     if (document.querySelector('.overlay:not(.hidden)')) return;
+
+    // Ctrl+Z 撤销 / Ctrl+Shift+Z 或 Ctrl+Y 重做（v2.2.0-super）
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'z') {
+      e.preventDefault();
+      if (e.shiftKey) redo(); else undo();
+      return;
+    }
+    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'y') {
+      e.preventDefault();
+      redo();
+      return;
+    }
 
     // Space 键 → 临时平移模式
     if (e.code === 'Space') {
@@ -1274,6 +1378,8 @@
   }
 
   function removeLink(linkId) {
+    if (!state.links.some(l => l.id === linkId)) return;
+    pushHistory(); // 撤销/重做：记录删连线前状态
     state.links = state.links.filter(l => l.id !== linkId);
     renderLinks();
     notifyChange();
@@ -1603,7 +1709,10 @@
   function getNode(id) { return state.nodes[id]; }
   function getSelected() { return state.selected ? state.nodes[state.selected] : null; }
   function updateNodeParams(id, params) {
-    if (state.nodes[id]) state.nodes[id].params = { ...params };
+    if (state.nodes[id]) {
+      pushHistory(); // 撤销/重做：记录改参数前状态
+      state.nodes[id].params = { ...params };
+    }
     notifyChange();
   }
 
@@ -1674,6 +1783,12 @@
     });
   }
 
+  // 工具栏撤销/重做按钮（v2.2.0-super）
+  const btnUndo = document.getElementById('btn-undo');
+  if (btnUndo) btnUndo.addEventListener('click', () => undo());
+  const btnRedo = document.getElementById('btn-redo');
+  if (btnRedo) btnRedo.addEventListener('click', () => redo());
+
   // 初始渲染
   render();
 
@@ -1695,7 +1810,9 @@
     createGroup, removeGroup, renameGroup, setGroupColor,
     toggleGroupCollapse, getGroups,
     // 便签（Sticky Notes）API（v0.9.0）
-    addNote, removeNote, getNotes, clearNotes
+    addNote, removeNote, getNotes, clearNotes,
+    // 撤销/重做 API（v2.2.0-super）
+    undo, redo
   };
 
   // v2.1.0-super：监听 LLM 流式输出事件，贴到节点底部
