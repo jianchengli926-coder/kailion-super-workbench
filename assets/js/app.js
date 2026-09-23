@@ -12,9 +12,9 @@
 (function () {
   'use strict';
 
-  const SAVE_KEY = 'ljc_workbench_state';
+  const SAVE_KEY = 'kailion_workbench_state';
   const HISTORY_LIMIT = 50;
-  const RECENT_KEY = 'ljc_recent_workflows'; // v1.2.0 最近工作流
+  const RECENT_KEY = 'kailion_recent_workflows'; // v1.2.0 最近工作流
   const RECENT_LIMIT = 5;
 
   // 便捷取元素，缺失时返回 null 供调用方判空
@@ -33,17 +33,17 @@
         let cleaned = 0;
         // a) 运行历史保留最新10条
         try {
-          const h = JSON.parse(localStorage.getItem('ljc_run_history') || '[]');
-          if (Array.isArray(h) && h.length > 10) { _origSetItem('ljc_run_history', JSON.stringify(h.slice(0, 10))); cleaned++; }
+          const h = JSON.parse(localStorage.getItem('kailion_run_history') || '[]');
+          if (Array.isArray(h) && h.length > 10) { _origSetItem('kailion_run_history', JSON.stringify(h.slice(0, 10))); cleaned++; }
         } catch (e2) {}
         // b) API 日志保留最新50条
         try {
-          const l = JSON.parse(localStorage.getItem('ljc_api_log') || '[]');
-          if (Array.isArray(l) && l.length > 50) { _origSetItem('ljc_api_log', JSON.stringify(l.slice(0, 50))); cleaned++; }
+          const l = JSON.parse(localStorage.getItem('kailion_api_log') || '[]');
+          if (Array.isArray(l) && l.length > 50) { _origSetItem('kailion_api_log', JSON.stringify(l.slice(0, 50))); cleaned++; }
         } catch (e2) {}
         // c) 节点缓存保留最新10条
         try {
-          const c = JSON.parse(localStorage.getItem('ljc_node_cache') || '{}');
+          const c = JSON.parse(localStorage.getItem('kailion_node_cache') || '{}');
           if (c && typeof c === 'object') {
             const keys = Object.keys(c);
             if (keys.length > 10) {
@@ -581,10 +581,10 @@
       }
       // 导入资源库/素材等（best-effort，直接写入 resources.js 使用的 key）
       const SEED_KEY_MAP = {
-        materials: 'ljc_materials',
-        prompts: 'ljc_prompts',
-        knowledge: 'ljc_kb_docs',
-        workflows: 'ljc_workflow_versions'
+        materials: 'kailion_materials',
+        prompts: 'kailion_prompts',
+        knowledge: 'kailion_kb_docs',
+        workflows: 'kailion_workflow_versions'
       };
       Object.keys(SEED_KEY_MAP).forEach(function (k) {
         if (data[k]) {
@@ -651,8 +651,6 @@
     pushHistory();
 
     updateUndoRedoButtons();
-    console.log(`%c🚀 ${window.BRAND.product} 启动完成`,
-      'background:linear-gradient(135deg,#6366f1,#ec4899);color:#fff;padding:4px 10px;border-radius:4px');
   }
 
   // 暴露

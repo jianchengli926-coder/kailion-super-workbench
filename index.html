@@ -414,7 +414,7 @@
         <div class="settings-section">
           <h3 data-i18n="settings.about">关于</h3>
           <p class="settings-desc">
-            <strong data-i18n="brand.product">锴利超级AI工作台</strong> v2.2.0<br>
+            <strong data-i18n="brand.product">锴利超级AI工作台</strong> v2.2.2<br>
             <span data-i18n="brand.company">阳江市锴利国际贸易有限公司</span><br>
             <span data-i18n="settings.aboutDesc">基于原生 HTML/CSS/JS 构建，无外部依赖</span>
           </p>
@@ -424,6 +424,85 @@
   </div>
 
   <!-- ============ 脚本（按依赖顺序） ============ -->
+  <!-- v2.2.2：localStorage 键前缀迁移（ljc_ → kailion_）。必须在任何业务模块（含 super-data.js 播种）之前同步执行，否则老用户数据会被默认种子覆盖。幂等：仅在 kailion_migrated_v2 标记缺失时运行，且只在新键为空时拷贝，绝不覆盖已有数据。 -->
+  <script>
+  (function () {
+    var MIGRATION_FLAG = 'kailion_migrated_v2';
+    try { if (localStorage.getItem(MIGRATION_FLAG)) return; } catch (e0) {}
+
+    // 静态键映射：旧键 → 新键
+    var KEY_MAP = {
+      'ljc_workbench_state': 'kailion_workbench_state',
+      'ljc_recent_workflows': 'kailion_recent_workflows',
+      'ljc_workbench_providers': 'kailion_workbench_providers',
+      'ljc_workflow_versions': 'kailion_workflow_versions',
+      'ljc_theme': 'kailion_theme',
+      'ljc_custom_theme': 'kailion_custom_theme',
+      'ljc_lang': 'kailion_lang',
+      'ljc_node_cache': 'kailion_node_cache',
+      'ljc_favorite_nodes': 'kailion_favorite_nodes',
+      'ljc_node_visibility': 'kailion_node_visibility',
+      'ljc_hidden_nodes': 'kailion_hidden_nodes',
+      'ljc_lib_visibility': 'kailion_lib_visibility',
+      'ljc_favorite_images': 'kailion_favorite_images',
+      'ljc_image_history': 'kailion_image_history',
+      'ljc_notify_sound': 'kailion_notify_sound',
+      'ljc_skills': 'kailion_skills',
+      'ljc_batch_tasks': 'kailion_batch_tasks',
+      'ljc_cron_tasks': 'kailion_cron_tasks',
+      'ljc_api_log': 'kailion_api_log',
+      'ljc_api_pricing': 'kailion_api_pricing',
+      'ljc_run_history': 'kailion_run_history',
+      'ljc_materials': 'kailion_materials',
+      'ljc_prompts': 'kailion_prompts',
+      'ljc_kb_docs': 'kailion_kb_docs',
+      'ljc_experts': 'kailion_experts',
+      'ljc_digital_humans': 'kailion_digital_humans',
+      'ljc_topics': 'kailion_topics',
+      'ljc_styles': 'kailion_styles',
+      'ljc_roles': 'kailion_roles',
+      'ljc_scenes': 'kailion_scenes',
+      'ljc_brand_asset': 'kailion_brand_asset',
+      'ljc_products': 'kailion_products',
+      'ljc_node_templates': 'kailion_node_templates',
+      'ljc_market_mine': 'kailion_market_mine',
+      'ljc_search_history': 'kailion_search_history',
+      'ljc_stats': 'kailion_stats',
+      'ljc_smart_history': 'kailion_smart_history'
+    };
+
+    var migrated = 0;
+    function copyIfNeeded(oldKey, newKey) {
+      try {
+        var val = localStorage.getItem(oldKey);
+        if (val !== null && localStorage.getItem(newKey) === null) {
+          localStorage.setItem(newKey, val);
+          migrated++;
+        }
+      } catch (e) {}
+    }
+
+    // 1) 静态映射键
+    Object.keys(KEY_MAP).forEach(function (oldKey) { copyIfNeeded(oldKey, KEY_MAP[oldKey]); });
+
+    // 2) 动态键家族兜底扫描（如 ljc_image_form_<id>、ljc_seeded_<key>），按前缀替换
+    try {
+      var existing = [];
+      for (var i = 0; i < localStorage.length; i++) {
+        var k = localStorage.key(i);
+        if (k && k.indexOf('ljc_') === 0) existing.push(k);
+      }
+      existing.forEach(function (oldKey) {
+        if (KEY_MAP[oldKey]) return; // 静态键已处理
+        copyIfNeeded(oldKey, 'kailion_' + oldKey.slice(4));
+      });
+    } catch (e) {}
+
+    // 3) 打标记（迁移只跑一次）
+    try { localStorage.setItem(MIGRATION_FLAG, '1'); } catch (e) {}
+    console.info('[Migration] 迁移了 ' + migrated + ' 个 localStorage 键（ljc_ → kailion_）');
+  })();
+  </script>
   <script src="assets/js/nodes-data.js"></script>
   <!-- v2.0.0-super：三工作台合并数据（专家/提示词/SKU/数字人/风格等） -->
   <script src="assets/js/super-data.js"></script>

@@ -43,6 +43,35 @@ const CORS_HEADERS = {
   'Access-Control-Max-Age': '86400',
 };
 
+/* ---------- 目标域名白名单 ----------
+ * 安全说明：本代理仅监听 localhost，只为本机工作台使用。
+ * 为避免被当成开放代理滥用，只允许转发到下列常见 AI API 域名与本地回环地址。
+ * 需要新增目标时，把域名追加进此 Set 即可。 */
+const ALLOWED_TARGET_HOSTS = new Set([
+  'api.openai.com',
+  'api.anthropic.com',
+  'generativelanguage.googleapis.com',
+  'open.bigmodel.cn',
+  'api.deepseek.com',
+  'ark.cn-beijing.volces.com',
+  'dashscope.aliyuncs.com',
+  'api.siliconflow.cn',
+  'api.tripo3d.ai',
+  'api.meshy.ai',
+  'localhost',
+  '127.0.0.1',
+]);
+
+function isTargetAllowed(hostname) {
+  if (!hostname) return false;
+  if (ALLOWED_TARGET_HOSTS.has(hostname)) return true;
+  // 允许白名单主域的直接子域（例如 api.open.bigmodel.cn），但不匹配 - 分隔的伪装域
+  for (const allowed of ALLOWED_TARGET_HOSTS) {
+    if (hostname.endsWith('.' + allowed)) return true;
+  }
+  return false;
+}
+
 /* ---------- 逐跳 (hop-by-hop) 头，转发时需剔除 ---------- */
 const HOP_BY_HOP = new Set([
   'connection',
@@ -141,6 +170,17 @@ const server = http.createServer((req, res) => {
   }
   if (targetUrl.protocol !== 'http:' && targetUrl.protocol !== 'https:') {
     sendJson(res, 400, { error: 'Only http/https targets supported', target: targetRaw });
+    return;
+  }
+
+  /* 目标域名白名单校验：转发请求之前拦截，不在白名单的目标一律 403 */
+  if (!isTargetAllowed(targetUrl.hostname)) {
+    sendJson(res, 403, {
+      error: 'Forbidden',
+      message: '目标域名不在白名单中',
+      target: targetRaw,
+      allowed: Array.from(ALLOWED_TARGET_HOSTS),
+    });
     return;
   }
 

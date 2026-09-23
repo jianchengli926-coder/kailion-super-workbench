@@ -3,9 +3,9 @@
  * 暴露：window.Tasks { init() }
  *
  * localStorage:
- *   ljc_batch_tasks   [{id,name,workflows,concurrency,dataSource,status,progress,
+ *   kailion_batch_tasks   [{id,name,workflows,concurrency,dataSource,status,progress,
  *                        currentStep,totalSteps,createdAt,startedAt,finishedAt}]
- *   ljc_cron_tasks    [{id,name,cron,workflow,nextRun,lastRun,runCount,status,createdAt}]
+ *   kailion_cron_tasks    [{id,name,cron,workflow,nextRun,lastRun,runCount,status,createdAt}]
  *
  * 说明：
  *   - cron 解析器支持任意值、每 n 分钟(step)、单值、列表、区间、区间步长
@@ -15,8 +15,8 @@
 (function () {
   'use strict';
 
-  const BATCH_KEY = 'ljc_batch_tasks';
-  const CRON_KEY  = 'ljc_cron_tasks';
+  const BATCH_KEY = 'kailion_batch_tasks';
+  const CRON_KEY  = 'kailion_cron_tasks';
   const TICK_MS   = 60000; // 每分钟检查一次
   const MAX_SEARCH_DAYS = 366;
 

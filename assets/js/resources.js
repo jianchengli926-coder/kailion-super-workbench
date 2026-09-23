@@ -4,16 +4,16 @@
  * 暴露：window.Resources { render(key) }
  *
  * localStorage:
- *   ljc_materials  素材 [{id,name,cat,data(size),addedAt}]
- *   ljc_prompts    提示词 [{id,title,content,cat,addedAt}]
- *   ljc_kb_docs    知识库 [{id,name,size,summary,addedAt}]
+ *   kailion_materials  素材 [{id,name,cat,data(size),addedAt}]
+ *   kailion_prompts    提示词 [{id,title,content,cat,addedAt}]
+ *   kailion_kb_docs    知识库 [{id,name,size,summary,addedAt}]
  */
 (function () {
   'use strict';
 
-  const MAT_KEY = 'ljc_materials';
-  const PRM_KEY = 'ljc_prompts';
-  const KB_KEY  = 'ljc_kb_docs';
+  const MAT_KEY = 'kailion_materials';
+  const PRM_KEY = 'kailion_prompts';
+  const KB_KEY  = 'kailion_kb_docs';
 
   const MAT_CATS = ['全部', '产品图', '场景图', '图标', '背景', '其他'];
   const PRM_CATS = ['文案写作', '图像生成', '视频生成', '代码开发', '数据分析', '其他'];
@@ -34,7 +34,7 @@
   }
   // Bug-UI-08: 播种标记位。一旦播种过（或判定无需播种），后续不再自动灌回预置数据。
   function seedOnce(key, seeds) {
-    var flag = 'ljc_seeded_' + key;
+    var flag = 'kailion_seeded_' + key;
     try { if (localStorage.getItem(flag)) return; } catch (e) {}
     try { if (!load(key).length) save(key, seeds); } catch (e) {}
     try { localStorage.setItem(flag, '1'); } catch (e) {}
@@ -61,9 +61,9 @@
 
   /* ---------- 预置提示词 ---------- */
   function seedPrompts() {
-    if (localStorage.getItem('ljc_seeded_' + PRM_KEY)) return;
+    if (localStorage.getItem('kailion_seeded_' + PRM_KEY)) return;
     const list = load(PRM_KEY);
-    if (list.length) { try { localStorage.setItem('ljc_seeded_' + PRM_KEY, '1'); } catch (e) {} return; }
+    if (list.length) { try { localStorage.setItem('kailion_seeded_' + PRM_KEY, '1'); } catch (e) {} return; }
     const seeds = [
       { title: '产品主图生成', cat: '图像生成', content: '生成一张高端商业产品主图，纯白色背景，柔和侧光，产品居中，细节锐利，8K 画质，电商风格。', addedAt: Date.now() - 86400000 * 3 },
       { title: '详情页卖点文案', cat: '文案写作', content: '请围绕产品核心卖点，输出 5 个电商详情页卖点标题，每个卖点配 2 行说明，突出材质、工艺与使用场景。', addedAt: Date.now() - 86400000 * 2 },
@@ -73,7 +73,7 @@
     ];
     seeds.forEach(s => s.id = uid());
     save(PRM_KEY, seeds);
-    try { localStorage.setItem('ljc_seeded_' + PRM_KEY, '1'); } catch (e) {}
+    try { localStorage.setItem('kailion_seeded_' + PRM_KEY, '1'); } catch (e) {}
   }
 
   /* ====================== 总入口 ====================== */
@@ -461,14 +461,14 @@
      v0.5.0 新增 7 个资源库
      ============================================================ */
   const KEYS = {
-    expert:   'ljc_experts',
-    digital:  'ljc_digital_humans',
-    topic:    'ljc_topics',
-    style:    'ljc_styles',
-    role:     'ljc_roles',
-    scene:    'ljc_scenes',
-    brand:    'ljc_brand_asset',
-    product:  'ljc_products'
+    expert:   'kailion_experts',
+    digital:  'kailion_digital_humans',
+    topic:    'kailion_topics',
+    style:    'kailion_styles',
+    role:     'kailion_roles',
+    scene:    'kailion_scenes',
+    brand:    'kailion_brand_asset',
+    product:  'kailion_products'
   };
 
   function seedAll() {
@@ -1303,7 +1303,7 @@
   var SEM_SUBS = [
     { id: 'synonyms', title: '同义词库', icon: '🔁', phWord: '主词（如：好）', phList: '同义词，逗号分隔（如：优秀,出色,卓越）' },
     { id: 'keywords', title: '关键词库', icon: '🔑', phWord: '主题（如：五金刀剪）', phList: '关键词，逗号分隔（如：菜刀,不锈钢,5Cr15MoV,HRC）' },
-    { id: 'entities', title: '实体库', icon: '🏷️', phWord: '实体名（如：KaiLionCrafts）', phList: '属性 KEY=VALUE，每行一个（如：country=中国）' }
+    { id: 'entities', title: '实体库', icon: '🏷️', phWord: '实体名（如：您的品牌）', phList: '属性 KEY=VALUE，每行一个（如：country=中国）' }
   ];
 
   function renderSemantic(root) {

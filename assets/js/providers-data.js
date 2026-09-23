@@ -122,7 +122,7 @@
   ];
 
   /* ====================== 存储 Key（与 ui.js / engine.js 保持一致） ====================== */
-  const DEFAULT_PROVIDER_KEY = 'ljc_workbench_providers';
+  const DEFAULT_PROVIDER_KEY = 'kailion_workbench_providers';
 
   /* ====================== ProviderStore 本地存取 ====================== */
   // 落库对象格式：{id, name, baseurl, key, category, protocol, models:[{id,label}], isDefault}
@@ -239,7 +239,6 @@
       const existing = localStorage.getItem(DEFAULT_PROVIDER_KEY);
       if (existing && existing !== '[]' && existing !== 'null') return; // 已有数据，不覆盖
       save(BUILTIN_PROVIDERS.map(p => Object.assign({}, p)));
-      console.info('[ProviderStore] 已自动填入2个预置中转站（豆包/智谱）');
     } catch (e) {
       console.warn('[ProviderStore] 内置供应商种子写入失败：', e);
     }
@@ -431,7 +430,6 @@
     try {
       if (window.UI && typeof window.UI.toast === 'function') { window.UI.toast(msg); return; }
     } catch (e) {}
-    try { console.log('[Providers] ' + msg); } catch (e) {}
   }
 
   // 从任意返回体提取模型 ID：兼容 OpenAI data[].id / Gemini models[].name / 通用 items / 裸数组

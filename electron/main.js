@@ -188,7 +188,7 @@ function createMenu() {
         },
         { type: 'separator' },
         {
-          label: '官方网站',
+          label: '锴利品牌官网',
           click: () => shell.openExternal('https://kailioncrafts.com/')
         },
         {

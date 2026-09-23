@@ -534,7 +534,7 @@
       { key: 'count', label: '挖掘数量', type: 'number', min: 5, max: 50, value: 10 }
     ],
     brandIPGeneratorNode: [
-      { key: 'brandName', label: '品牌名称', type: 'text', placeholder: '如：KaiLionCrafts' },
+      { key: 'brandName', label: '品牌名称', type: 'text', placeholder: '如：您的品牌' },
       { key: 'industry', label: '所属行业', type: 'text', placeholder: '如：五金刀剪外贸' },
       { key: 'output', label: '输出内容', type: 'select', options: [
         { value: 'positioning', label: '品牌定位' }, { value: 'civi', label: 'CI / VI 视觉' },
@@ -733,7 +733,7 @@
     '最大结果数': 'np.maxResults', '自动总结': 'np.autoSummarize',
     '平台': 'np.topicPlatform', '关键词': 'np.keyword', '如：返乡创业': 'np.keywordPh',
     '挖掘数量': 'np.digCount', '品牌名称': 'np.brandNameField',
-    '如：KaiLionCrafts': 'np.brandNamePh', '如：五金刀剪外贸': 'np.industryPh',
+    '如：您的品牌': 'np.brandNamePh', '如：五金刀剪外贸': 'np.industryPh',
     '输出内容': 'np.output', '垂直领域': 'np.niche',
     '如：AI 外贸获客': 'np.nichePh', '目标受众': 'np.targetAudience',
     '如：中小外贸老板': 'np.targetAudiencePh',

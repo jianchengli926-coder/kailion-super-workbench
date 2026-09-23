@@ -3,7 +3,7 @@
  * 快捷键：Ctrl+K（Mac 为 Cmd+K）打开/关闭。
  * 搜索范围：节点 / 工作流模板 / 市场示例 / 资源库 / 使用说明书章节。
  * 结果分组展示，每组最多 5 条，键盘 ↑↓ Enter Esc 导航。
- * 最近搜索记录持久化到 localStorage('ljc_search_history')，最多 10 条。
+ * 最近搜索记录持久化到 localStorage('kailion_search_history')，最多 10 条。
  *
  * 暴露：window.Search = { open, close, toggle, render, indexData }
  * 模块自包含：通过 window 对象安全访问 Canvas / App / Marketplace / Manual 等。
@@ -11,7 +11,7 @@
 (function () {
   'use strict';
 
-  var HISTORY_KEY = 'ljc_search_history';
+  var HISTORY_KEY = 'kailion_search_history';
   var MAX_HISTORY = 10;
   var GROUP_LIMIT = 5; // 每组默认显示条数
 
@@ -164,44 +164,44 @@
 
   /* ====================== 自包含样式 ====================== */
   function ensureStyle() {
-    if (document.getElementById('ljc-search-style')) return;
+    if (document.getElementById('kaili-search-style')) return;
     var s = document.createElement('style');
-    s.id = 'ljc-search-style';
+    s.id = 'kaili-search-style';
     s.textContent = [
-      '.ljc-search-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.55);',
+      '.kaili-search-overlay { position: fixed; inset: 0; z-index: 9999; background: rgba(0,0,0,.55);',
       '  display: flex; justify-content: center; align-items: flex-start; padding-top: 12vh;',
       '  backdrop-filter: blur(2px); }',
-      '.ljc-search-panel { width: 500px; max-width: calc(100vw - 32px); background: var(--bg-panel-solid, #161630);',
+      '.kaili-search-panel { width: 500px; max-width: calc(100vw - 32px); background: var(--bg-panel-solid, #161630);',
       '  border: 1px solid var(--border-strong, rgba(255,255,255,.18)); border-radius: 12px;',
       '  box-shadow: 0 20px 60px rgba(0,0,0,.5); overflow: hidden;',
       '  font-family: var(--font, sans-serif); color: var(--text-1, #f1f5f9); }',
-      '.ljc-search-box { display: flex; align-items: center; gap: 10px; padding: 12px 14px;',
+      '.kaili-search-box { display: flex; align-items: center; gap: 10px; padding: 12px 14px;',
       '  border-bottom: 1px solid var(--border, rgba(255,255,255,.1)); }',
-      '.ljc-search-box .ico { font-size: 15px; opacity: .7; }',
-      '.ljc-search-box input { flex: 1; border: none; outline: none; background: transparent;',
+      '.kaili-search-box .ico { font-size: 15px; opacity: .7; }',
+      '.kaili-search-box input { flex: 1; border: none; outline: none; background: transparent;',
       '  font-size: 15px; color: var(--text-1, #fff); }',
-      '.ljc-search-box input::placeholder { color: var(--text-3, #64748b); }',
-      '.ljc-search-box kbd { font-size: 10px; padding: 2px 6px; border-radius: 4px;',
+      '.kaili-search-box input::placeholder { color: var(--text-3, #64748b); }',
+      '.kaili-search-box kbd { font-size: 10px; padding: 2px 6px; border-radius: 4px;',
       '  background: var(--bg-card, rgba(255,255,255,.06)); color: var(--text-2, #94a3b8);',
       '  border: 1px solid var(--border, rgba(255,255,255,.15)); font-family: var(--mono, monospace); }',
-      '.ljc-search-results { max-height: 50vh; overflow-y: auto; padding: 8px; }',
-      '.ljc-sg-title { font-size: 11px; font-weight: 600; color: var(--text-3, #64748b);',
+      '.kaili-search-results { max-height: 50vh; overflow-y: auto; padding: 8px; }',
+      '.kaili-sg-title { font-size: 11px; font-weight: 600; color: var(--text-3, #64748b);',
       '  padding: 8px 8px 4px; text-transform: uppercase; letter-spacing: .5px; }',
-      '.ljc-sitem { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: pointer; }',
-      '.ljc-sitem:hover, .ljc-sitem.sel { background: var(--bg-hover, rgba(255,255,255,.07)); }',
-      '.ljc-sitem .si { font-size: 14px; }',
-      '.ljc-sitem .st { flex: 1; min-width: 0; }',
-      '.ljc-sitem .st b { font-size: 13px; font-weight: 600; display: block; }',
-      '.ljc-sitem .st span { font-size: 11px; color: var(--text-2, #94a3b8);',
+      '.kaili-sitem { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 7px; cursor: pointer; }',
+      '.kaili-sitem:hover, .kaili-sitem.sel { background: var(--bg-hover, rgba(255,255,255,.07)); }',
+      '.kaili-sitem .si { font-size: 14px; }',
+      '.kaili-sitem .st { flex: 1; min-width: 0; }',
+      '.kaili-sitem .st b { font-size: 13px; font-weight: 600; display: block; }',
+      '.kaili-sitem .st span { font-size: 11px; color: var(--text-2, #94a3b8);',
       '  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }',
-      '.ljc-smore { font-size: 11px; color: var(--primary, #6366f1); padding: 4px 10px 8px; cursor: pointer; }',
-      '.ljc-smore:hover { text-decoration: underline; }',
-      '.ljc-history { padding: 8px; }',
-      '.ljc-history .hchip { display: inline-block; font-size: 12px; margin: 4px; padding: 4px 10px;',
+      '.kaili-smore { font-size: 11px; color: var(--primary, #6366f1); padding: 4px 10px 8px; cursor: pointer; }',
+      '.kaili-smore:hover { text-decoration: underline; }',
+      '.kaili-history { padding: 8px; }',
+      '.kaili-history .hchip { display: inline-block; font-size: 12px; margin: 4px; padding: 4px 10px;',
       '  border-radius: 14px; background: var(--bg-card, rgba(255,255,255,.06)); cursor: pointer;',
       '  border: 1px solid var(--border, rgba(255,255,255,.12)); }',
-      '.ljc-history .hchip:hover { border-color: var(--primary, #6366f1); }',
-      '.ljc-empty { padding: 24px; text-align: center; font-size: 13px; color: var(--text-3, #64748b); }'
+      '.kaili-history .hchip:hover { border-color: var(--primary, #6366f1); }',
+      '.kaili-empty { padding: 24px; text-align: center; font-size: 13px; color: var(--text-3, #64748b); }'
     ].join('\n');
     document.head.appendChild(s);
   }
@@ -213,19 +213,19 @@
     if (overlay) return overlay;
 
     overlay = document.createElement('div');
-    overlay.className = 'ljc-search-overlay';
+    overlay.className = 'kaili-search-overlay';
     overlay.innerHTML =
-      '<div class="ljc-search-panel">' +
-      '  <div class="ljc-search-box">' +
+      '<div class="kaili-search-panel">' +
+      '  <div class="kaili-search-box">' +
       '    <span class="ico">🔍</span>' +
-      '    <input type="text" id="ljc-search-input" placeholder="搜索节点、工作流、市场示例、资源库…" autocomplete="off">' +
+      '    <input type="text" id="kaili-search-input" placeholder="搜索节点、工作流、市场示例、资源库…" autocomplete="off">' +
       '    <kbd>Ctrl K</kbd>' +
       '  </div>' +
-      '  <div class="ljc-search-results" id="ljc-search-results"></div>' +
+      '  <div class="kaili-search-results" id="kaili-search-results"></div>' +
       '</div>';
 
-    inputEl = overlay.querySelector('#ljc-search-input');
-    resultsEl = overlay.querySelector('#ljc-search-results');
+    inputEl = overlay.querySelector('#kaili-search-input');
+    resultsEl = overlay.querySelector('#kaili-search-results');
 
     // 点击遮罩空白处关闭
     overlay.addEventListener('mousedown', function (e) {
@@ -251,10 +251,10 @@
     flatItems = [];
     selectedIdx = -1;
     if (!list.length) {
-      resultsEl.innerHTML = '<div class="ljc-empty">输入关键词开始搜索</div>';
+      resultsEl.innerHTML = '<div class="kaili-empty">输入关键词开始搜索</div>';
       return;
     }
-    var html = '<div class="ljc-sg-title">最近搜索</div><div class="ljc-history">';
+    var html = '<div class="kaili-sg-title">最近搜索</div><div class="kaili-history">';
     list.forEach(function (t) {
       html += '<span class="hchip" data-term="' + escapeHtml(t) + '">🕘 ' + escapeHtml(t) + '</span>';
     });
@@ -287,7 +287,7 @@
     flatItems = [];
     selectedIdx = -1;
     if (!groupOrder.length) {
-      resultsEl.innerHTML = '<div class="ljc-empty">没有找到「' + escapeHtml(term) + '」相关结果</div>';
+      resultsEl.innerHTML = '<div class="kaili-empty">没有找到「' + escapeHtml(term) + '」相关结果</div>';
       return;
     }
 
@@ -295,29 +295,29 @@
     groupOrder.forEach(function (g) {
       var items = groups[g];
       var limit = expandedGroups[g] ? items.length : Math.min(GROUP_LIMIT, items.length);
-      html += '<div class="ljc-sg-title">' + escapeHtml(g) + ' · ' + items.length + '</div>';
+      html += '<div class="kaili-sg-title">' + escapeHtml(g) + ' · ' + items.length + '</div>';
       for (var i = 0; i < limit; i++) {
         var it = items[i];
         var fid = flatItems.length;
         flatItems.push(it);
-        html += '<div class="ljc-sitem" data-i="' + fid + '">' +
+        html += '<div class="kaili-sitem" data-i="' + fid + '">' +
           '<span class="si">' + escapeHtml(it.icon) + '</span>' +
           '<div class="st"><b>' + escapeHtml(it.title) + '</b><span>' + escapeHtml(it.sub) + '</span></div>' +
           '</div>';
       }
       if (items.length > GROUP_LIMIT) {
         var expanded = !!expandedGroups[g];
-        html += '<div class="ljc-smore" data-group="' + g + '">' +
+        html += '<div class="kaili-smore" data-group="' + g + '">' +
           (expanded ? '收起' : '查看更多（' + (items.length - GROUP_LIMIT) + ' 条）') + '</div>';
       }
     });
     resultsEl.innerHTML = html;
 
     // 绑定点击
-    resultsEl.querySelectorAll('.ljc-sitem').forEach(function (row) {
+    resultsEl.querySelectorAll('.kaili-sitem').forEach(function (row) {
       row.addEventListener('click', function () { execute(Number(row.getAttribute('data-i'))); });
     });
-    resultsEl.querySelectorAll('.ljc-smore').forEach(function (row) {
+    resultsEl.querySelectorAll('.kaili-smore').forEach(function (row) {
       row.addEventListener('click', function () {
         var g = row.getAttribute('data-group');
         expandedGroups[g] = !expandedGroups[g];
@@ -330,7 +330,7 @@
 
   /** 高亮第 idx 项（键盘导航） */
   function highlight(idx) {
-    var rows = resultsEl.querySelectorAll('.ljc-sitem');
+    var rows = resultsEl.querySelectorAll('.kaili-sitem');
     rows.forEach(function (r, i) { r.classList.toggle('sel', i === idx); });
     if (rows[idx]) rows[idx].scrollIntoView({ block: 'nearest' });
     selectedIdx = idx;

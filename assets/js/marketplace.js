@@ -6,14 +6,14 @@
  * 职责：
  *  - 内置 16 个精选示例工作流（覆盖电商/视频/品牌/办公/图文/开发/翻译/数据/漫剧/社媒/3D 等）
  *  - 分类自动去重 + "全部" + "我的"（用户发布的本地工作流）
- *  - 发布当前画布工作流到本地市场（localStorage: ljc_market_mine）
+ *  - 发布当前画布工作流到本地市场（localStorage: kailion_market_mine）
  *  - 导入示例工作流到画布
  *  - 按名称/描述/标签搜索、按分类筛选、按节点数排序
  */
 (function () {
   'use strict';
 
-  const MINE_KEY = 'ljc_market_mine';
+  const MINE_KEY = 'kailion_market_mine';
 
   /* ====================== 内置示例工作流 ======================
    * 节点 type 全部来自 nodes-data.js 真实节点

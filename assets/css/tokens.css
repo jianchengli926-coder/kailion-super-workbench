@@ -6,14 +6,11 @@
   /* 品牌主色：靛蓝 → 紫 → 品红 渐变 */
   --primary: #6366f1;
   --primary-dark: #4f46e5;
-  --secondary: #8b5cf6;
   --accent: #ec4899;
   --gradient-brand: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
   --gradient-btn: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
 
   /* 背景：深空蓝紫 */
-  --bg-start: #0f0f23;
-  --bg-end: #1a1a2e;
   --bg-app: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
   --bg-panel: rgba(20, 20, 45, 0.85);
   --bg-panel-solid: #161630;
@@ -36,10 +33,7 @@
   --border-strong: rgba(255, 255, 255, 0.18);
 
   /* 状态色 */
-  --success: #10b981;
-  --warning: #f59e0b;
   --danger: #ef4444;
-  --info: #06b6d4;
 
   /* 画布网格 */
   --canvas-grid: rgba(255, 255, 255, 0.03);
@@ -133,8 +127,6 @@ input, textarea, select { font-family: inherit; font-size: 13px; }
    ============================================================ */
 [data-theme="light"] {
   /* 背景：浅灰白 → 白 */
-  --bg-start: #f5f5f7;
-  --bg-end: #ffffff;
   --bg-app: linear-gradient(135deg, #f5f5f7 0%, #ffffff 100%);
   --bg-panel: rgba(255, 255, 255, 0.92);
   --bg-panel-solid: #ffffff;

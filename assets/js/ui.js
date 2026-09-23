@@ -18,7 +18,10 @@
   /* ====================== i18n 安全封装 ====================== */
   // 取翻译；I18N 不可用时回退到 fallback（原中文）或 key
   function tx(key, fallback, vars) {
-    if (window.I18N) return I18N.t(key, vars);
+    if (window.I18N) {
+      const v = I18N.t(key, vars);
+      if (v !== key) return v;
+    }
     return fallback != null ? fallback : key;
   }
   // 取中文名 / 英文名（数据数组或对象带 nameEn）
@@ -47,7 +50,7 @@
   }
 
   /* ====================== v1.2.0 节点收藏 ====================== */
-  const FAV_KEY = 'ljc_favorite_nodes';
+  const FAV_KEY = 'kailion_favorite_nodes';
   function getFavorites() {
     try { const a = JSON.parse(localStorage.getItem(FAV_KEY) || '[]'); return Array.isArray(a) ? a : []; }
     catch (e) { return []; }
@@ -191,7 +194,7 @@
   }
 
   /* ====================== 左侧导航 ====================== */
-  const LIB_VIS_KEY = 'ljc_lib_visibility';
+  const LIB_VIS_KEY = 'kailion_lib_visibility';
   // 核心三项不可隐藏
   const LOCKED_LIBS = ['canvas', 'nodes', 'workflow'];
 
@@ -309,9 +312,9 @@
   // 记录每个分类是否折叠
   const catCollapsed = {};
 
-  // 节点可见性持久化：{ type: true/false }，key = ljc_node_visibility
-  const VIS_KEY = 'ljc_node_visibility';
-  const OLD_HIDDEN_KEY = 'ljc_hidden_nodes';
+  // 节点可见性持久化：{ type: true/false }，key = kailion_node_visibility
+  const VIS_KEY = 'kailion_node_visibility';
+  const OLD_HIDDEN_KEY = 'kailion_hidden_nodes';
   // 出厂默认可见性：NODE_DATA 节点数组第 4 个元素（索引 3）
   function defaultVisMap() {
     const map = {};
@@ -326,7 +329,7 @@
         Object.keys(saved).forEach(t => { if (t in map) map[t] = !!saved[t]; });
       }
     } catch (e) {}
-    // 迁移旧 key ljc_hidden_nodes（被隐藏的 type 数组）
+    // 迁移旧 key kailion_hidden_nodes（被隐藏的 type 数组）
     try {
       const old = JSON.parse(localStorage.getItem(OLD_HIDDEN_KEY) || '[]');
       if (Array.isArray(old)) old.forEach(t => { if (t in map) map[t] = false; });
@@ -1637,17 +1640,17 @@
     // ===== v1.2.1 全量数据导出/导入 =====
     // 需要导出的所有 localStorage key
     const ALL_BACKUP_KEYS = [
-      'ljc_workbench_state', 'ljc_recent_workflows', 'ljc_workflow_versions',
-      'ljc_workbench_providers', 'ljc_node_cache', 'ljc_favorite_images',
-      'ljc_image_history', 'ljc_api_log', 'ljc_api_pricing', 'ljc_run_history',
-      'ljc_materials', 'ljc_prompts', 'ljc_kb_docs', 'ljc_experts',
-      'ljc_digital_humans', 'ljc_topics', 'ljc_styles', 'ljc_roles',
-      'ljc_scenes', 'ljc_brand_asset', 'ljc_products', 'ljc_skills',
-      'ljc_node_templates', 'ljc_favorite_nodes', 'ljc_hidden_nodes',
-      'ljc_node_visibility', 'ljc_lib_visibility', 'ljc_market_mine',
-      'ljc_batch_tasks', 'ljc_cron_tasks', 'ljc_stats', 'ljc_search_history',
-      'ljc_smart_history', 'ljc_theme', 'ljc_custom_theme', 'ljc_lang',
-      'ljc_notify_sound'
+      'kailion_workbench_state', 'kailion_recent_workflows', 'kailion_workflow_versions',
+      'kailion_workbench_providers', 'kailion_node_cache', 'kailion_favorite_images',
+      'kailion_image_history', 'kailion_api_log', 'kailion_api_pricing', 'kailion_run_history',
+      'kailion_materials', 'kailion_prompts', 'kailion_kb_docs', 'kailion_experts',
+      'kailion_digital_humans', 'kailion_topics', 'kailion_styles', 'kailion_roles',
+      'kailion_scenes', 'kailion_brand_asset', 'kailion_products', 'kailion_skills',
+      'kailion_node_templates', 'kailion_favorite_nodes', 'kailion_hidden_nodes',
+      'kailion_node_visibility', 'kailion_lib_visibility', 'kailion_market_mine',
+      'kailion_batch_tasks', 'kailion_cron_tasks', 'kailion_stats', 'kailion_search_history',
+      'kailion_smart_history', 'kailion_theme', 'kailion_custom_theme', 'kailion_lang',
+      'kailion_notify_sound'
     ];
 
     // 导出全部数据

@@ -20,8 +20,8 @@
   }
 
   /* ====================== 常量与存储 ====================== */
-  const LOG_KEY = 'ljc_api_log';
-  const PRICING_KEY = 'ljc_api_pricing';
+  const LOG_KEY = 'kailion_api_log';
+  const PRICING_KEY = 'kailion_api_pricing';
   const MAX_LOGS = 200;
 
   // 默认模型定价：$ / 1M tokens（input / output）

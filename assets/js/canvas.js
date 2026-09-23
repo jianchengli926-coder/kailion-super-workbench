@@ -1585,9 +1585,9 @@
           renderLinks();
         } else if (act === 'template') {
           try {
-            const tpl = JSON.parse(localStorage.getItem('ljc_node_templates') || '[]');
+            const tpl = JSON.parse(localStorage.getItem('kailion_node_templates') || '[]');
             tpl.push({ type: node.type, params: node.params, name: node.name, savedAt: Date.now() });
-            localStorage.setItem('ljc_node_templates', JSON.stringify(tpl));
+            localStorage.setItem('kailion_node_templates', JSON.stringify(tpl));
             if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.templateSaved') : '已保存为节点模板');
           } catch (err) { if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.saveFailed') : '保存失败'); }
         } else if (act === 'saveSkill') {

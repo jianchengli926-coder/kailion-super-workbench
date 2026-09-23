@@ -5,7 +5,7 @@
  * 设计：
  *  - 自包含 IIFE，不依赖任何其他模块（nodes-data.js 之后加载即可）
  *  - 内置 zh / en 两套字典，点分命名法（common.* / topbar.* / sidebar.* / ...）
- *  - 语言持久化到 localStorage（key: ljc_lang），默认 zh
+ *  - 语言持久化到 localStorage（key: kailion_lang），默认 zh
  *  - t(key, vars) 支持 {var} 插值；缺失 key 回退到 zh，再回退到 key 本身
  *  - setLang 切换后自动触发所有注册回调并执行 applyToDOM()
  *  - applyToDOM() 扫描 [data-i18n]（textContent）与 [data-i18n-placeholder]（placeholder）
@@ -13,7 +13,7 @@
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'ljc_lang';
+  var STORAGE_KEY = 'kailion_lang';
   var DEFAULT_LANG = 'zh';
 
   /* ====================== 翻译字典 ====================== */
@@ -375,6 +375,7 @@
     'provider.dupModel': '该模型已在列表中',
     'provider.needBaseUrl': '请先填写 API Base URL',
     'provider.fetching': '拉取中...',
+    'provider.fetchFail': '拉取模型失败：',
     'provider.fetchedAdded': '已追加 {count} 个模型',
     'provider.allExist': '模型均已在列表中',
     'provider.nothingFetched': '未拉取到模型列表',
@@ -798,6 +799,18 @@
     'res.detailFlowName': '详情页生成工作流',
     'res.detailFlowDone': '已生成：提示词 → 详情页生成',
 
+    /* ---------- resources.js 语义库 (v2.2.2) ---------- */
+    'res.new': '新增',
+    'res.semTitle': '🧠 语义库',
+    'res.semSub': '同义词 / 关键词 / 命名实体，供 AI 节点做语义扩展与检索',
+    'res.semSearch': '搜索…',
+    'res.semAdd': '➕ 新增',
+    'res.semEmpty': '暂无数据，点击右上角「新增」添加',
+    'res.semUncategorized': '未分类',
+    'res.semDeleted': '已删除',
+    'res.semTypeLabel': '类型（如：品牌/产品/人物）',
+    'res.semNameRequired': '请填写名称',
+
     /* ---------- 节点参数 labels ---------- */
     'np.provider': 'API供应商',
     'np.model': '模型',
@@ -957,7 +970,7 @@
     'np.keywordPh': '如：返乡创业',
     'np.digCount': '挖掘数量',
     'np.brandNameField': '品牌名称',
-    'np.brandNamePh': '如：KaiLionCrafts',
+    'np.brandNamePh': '如：您的品牌',
     'np.industryPh': '如：五金刀剪外贸',
     'np.output': '输出内容',
     'np.niche': '垂直领域',
@@ -1072,6 +1085,15 @@
     'coach.nodeEmptyPrompt': '提示词内容为空',
     'coach.nodeNoModel': '未选择模型',
     'coach.canvasNotReady': 'Canvas 未就绪，无法执行诊断',
+    'coach.autoFix': '🔧 一键修复',
+    'coach.fixThis': '修复',
+    'coach.manualRequired': '需手动处理',
+    'coach.fixDone': '已修复 {n} 个问题',
+    'coach.fixSkipped': '{n} 个问题需手动处理',
+    'coach.fixEmptyPrompt': '已填入默认提示词',
+    'coach.fixConnected': '已自动连接节点',
+    'coach.fixBrokenRemoved': '已清理断开的连线',
+    'coach.fixModelSelected': '已自动选择模型',
 
     /* ---------- v2.0.0-super 技能库 ---------- */
     'skills.title': '🛠️ 技能库',
@@ -1668,6 +1690,7 @@
     'provider.dupModel': 'This model is already in the list',
     'provider.needBaseUrl': 'Please fill in the API Base URL first',
     'provider.fetching': 'Fetching...',
+    'provider.fetchFail': 'Failed to fetch models:',
     'provider.fetchedAdded': 'Appended {count} model(s)',
     'provider.allExist': 'All models are already in the list',
     'provider.nothingFetched': 'No model list fetched',
@@ -2091,6 +2114,18 @@
     'res.detailFlowName': 'Detail Page Generation Workflow',
     'res.detailFlowDone': 'Generated: Prompt → Detail Page',
 
+    /* ---------- resources.js Semantic Library (v2.2.2) ---------- */
+    'res.new': 'New',
+    'res.semTitle': '🧠 Semantic Library',
+    'res.semSub': 'Synonyms / keywords / named entities for AI nodes to expand and retrieve',
+    'res.semSearch': 'Search…',
+    'res.semAdd': '➕ Add',
+    'res.semEmpty': 'No data yet. Click Add in the top-right to add.',
+    'res.semUncategorized': 'Uncategorized',
+    'res.semDeleted': 'Deleted',
+    'res.semTypeLabel': 'Type (e.g. brand/product/person)',
+    'res.semNameRequired': 'Please enter a name',
+
     /* ---------- Node param labels ---------- */
     'np.provider': 'API Provider',
     'np.model': 'Model',
@@ -2250,7 +2285,7 @@
     'np.keywordPh': 'e.g.: returning home entrepreneurship',
     'np.digCount': 'Discovery Count',
     'np.brandNameField': 'Brand Name',
-    'np.brandNamePh': 'e.g.: KaiLionCrafts',
+    'np.brandNamePh': 'e.g.: YourBrand',
     'np.industryPh': 'e.g.: hardware knives & scissors trade',
     'np.output': 'Output Content',
     'np.niche': 'Niche',
@@ -2365,6 +2400,15 @@
     'coach.nodeEmptyPrompt': 'Prompt text is empty',
     'coach.nodeNoModel': 'No model selected',
     'coach.canvasNotReady': 'Canvas not ready, cannot run diagnosis',
+    'coach.autoFix': '🔧 Auto Fix',
+    'coach.fixThis': 'Fix',
+    'coach.manualRequired': 'Manual required',
+    'coach.fixDone': 'Fixed {n} issues',
+    'coach.fixSkipped': '{n} issues require manual attention',
+    'coach.fixEmptyPrompt': 'Filled default prompt',
+    'coach.fixConnected': 'Nodes auto-connected',
+    'coach.fixBrokenRemoved': 'Removed broken links',
+    'coach.fixModelSelected': 'Model auto-selected',
 
     /* ---------- v2.0.0-super Skills library ---------- */
     'skills.title': '🛠️ Skills Library',

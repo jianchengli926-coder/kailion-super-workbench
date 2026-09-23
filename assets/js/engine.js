@@ -20,7 +20,7 @@
 (function () {
   'use strict';
 
-  const FAV_KEY = 'ljc_favorite_images';
+  const FAV_KEY = 'kailion_favorite_images';
   const LOG_LIMIT = 200;
   const MAX_CONCURRENCY = 3; // 并行调度最大并发数
   let logEl = null;
@@ -217,7 +217,7 @@
   }
 
   /* ====================== 图片生成历史（localStorage，最多 20 条） ====================== */
-  const IMG_HISTORY_KEY = 'ljc_image_history';
+  const IMG_HISTORY_KEY = 'kailion_image_history';
   const IMG_HISTORY_MAX = 20;
   function getImageHistory() {
     try { return JSON.parse(localStorage.getItem(IMG_HISTORY_KEY) || '[]') || []; }
@@ -793,7 +793,7 @@
    * 长时间运行标题栏进度 + 失败节点明细 toast
    */
   let _audioCtx = null;
-  // 播放提示音（无需外部音频文件）。声音开关：localStorage ljc_notify_sound === '1'
+  // 播放提示音（无需外部音频文件）。声音开关：localStorage kailion_notify_sound === '1'
   function playBeep(freq, durationSec) {
     try {
       const AC = window.AudioContext || window.webkitAudioContext;
@@ -815,7 +815,7 @@
     } catch (e) { /* 音频不可用静默降级 */ }
   }
   function soundEnabled() {
-    try { return localStorage.getItem('ljc_notify_sound') === '1'; } catch (e) { return false; }
+    try { return localStorage.getItem('kailion_notify_sound') === '1'; } catch (e) { return false; }
   }
   // 桌面通知；权限不足或被拒绝时静默降级（toast 已在 UI 层展示）
   function sendDesktopNotify(title, body) {
@@ -917,7 +917,7 @@
         + (failN ? '，失败 ' + failN + ' 节点' : '');
       sendDesktopNotify(titles[effStatus] || titles.success, body);
 
-      // 声音（默认关闭，由 localStorage ljc_notify_sound 控制）
+      // 声音（默认关闭，由 localStorage kailion_notify_sound 控制）
       if (soundEnabled()) {
         if (effStatus === 'success') playBeep(880, 0.1);
         else if (effStatus === 'failed') playBeep(220, 0.2);

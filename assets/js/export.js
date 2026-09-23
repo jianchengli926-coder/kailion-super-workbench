@@ -49,7 +49,6 @@
 
   function toast(msg) {
     if (window.UI && UI.toast) UI.toast(msg);
-    else console.log(msg);
   }
 
   function timestamp() {

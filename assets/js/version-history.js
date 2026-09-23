@@ -1,13 +1,13 @@
 /**
  * version-history.js — 工作流版本历史管理
  * 依赖：Canvas.getState / Canvas.setState（全局）、UI.toast（可选）
- * 存储：localStorage('ljc_workflow_versions')，最多保留 20 个（FIFO 淘汰最旧）
+ * 存储：localStorage('kailion_workflow_versions')，最多保留 20 个（FIFO 淘汰最旧）
  * 暴露：window.VersionHistory
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'ljc_workflow_versions';
+  var STORAGE_KEY = 'kailion_workflow_versions';
   var MAX_VERSIONS = 20;
 
   /* ---------- 工具函数 ---------- */

@@ -11,13 +11,13 @@
  *  - 缓存 key：节点 type + 参数哈希（简单 JSON.stringify + djb2 哈希）
  *  - 图片/视频/3D 结果只缓存 URL 和元数据，不缓存二进制
  *
- * localStorage key: ljc_node_cache
+ * localStorage key: kailion_node_cache
  * 数据结构：{ [cacheKey]: { type, paramsHash, result, ts, hits } }
  */
 (function () {
   'use strict';
 
-  const CACHE_KEY = 'ljc_node_cache';
+  const CACHE_KEY = 'kailion_node_cache';
   const MAX_ENTRIES = 50;
   const MAX_SIZE_BYTES = 4 * 1024 * 1024; // 单条结果最大 4MB（localStorage 总上限约 5MB）
 

@@ -3,13 +3,13 @@
  * 依赖：canvas.js（window.Canvas）、nodes.js（window.NodeDef）
  * 暴露：window.Skills = { render, saveFromSelection, load, remove, rename, getList }
  *
- * 存储：localStorage key = ljc_skills
+ * 存储：localStorage key = kailion_skills
  *   [{ id, name, desc, nodes:[{type,x,y,params}], links:[{from,to(下标)}], createdAt }]
  */
 (function () {
   'use strict';
 
-  const SKILLS_KEY = 'ljc_skills';
+  const SKILLS_KEY = 'kailion_skills';
 
   function t(key, vars) {
     if (window.I18N) return I18N.t(key, vars);

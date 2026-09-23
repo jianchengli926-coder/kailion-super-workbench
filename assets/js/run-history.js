@@ -19,7 +19,7 @@
   }
 
   /* ====================== 常量与存储 ====================== */
-  const STORAGE_KEY = 'ljc_run_history';
+  const STORAGE_KEY = 'kailion_run_history';
   const MAX_RECORDS = 50;
 
   function loadAll() {

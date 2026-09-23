@@ -1,14 +1,14 @@
 /**
  * stats.js — 数据统计面板
  * 依赖：Canvas.getState（全局，可选）
- * 存储：localStorage('ljc_stats')
+ * 存储：localStorage('kailion_stats')
  * 结构：{ runCount, imageCount, textChars, workflowCount, nodeCount, linkCount, lastRunTime }
  * 暴露：window.Stats
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'ljc_stats';
+  var STORAGE_KEY = 'kailion_stats';
   var OVERLAY_ID = 'stats-overlay';
   var activeEscHandler = null;  // 当前面板的 Esc 监听句柄，关闭时统一移除
 

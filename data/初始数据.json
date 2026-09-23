@@ -23,7 +23,7 @@
       "name": "智谱中转站",
       "nameEn": "Zhipu Relay",
       "baseurl": "https://open.bigmodel.cn/api/paas/v4",
-      "key": "ffc4da9047c24fe28e7ac8f03bad592f.vKSWMuobEC1CetTZ",
+      "key": "",
       "category": "universal",
       "protocol": "openai",
       "isDefault": false,

@@ -196,7 +196,6 @@
           // 5xx → 退避重试；4xx → 立即失败
           if (resp.status >= 500 && attempt < retries) {
             lastErr = err;
-            console.info('[API] HTTP ' + resp.status + '，第' + (attempt + 1) + '次重试，' + (900 * (attempt + 1)) + 'ms 后…');
             await sleep(900 * (attempt + 1));
             continue;
           }
@@ -209,7 +208,6 @@
             // 超时 → 退避重试
             if (attempt < retries) {
               lastErr = e;
-              console.info('[API] 请求超时，第' + (attempt + 1) + '次重试，' + (900 * (attempt + 1)) + 'ms 后…');
               await sleep(900 * (attempt + 1));
               continue;
             }
@@ -221,7 +219,6 @@
         // 网络错误（TypeError: Failed to fetch）→ 退避重试
         if (e instanceof TypeError && attempt < retries) {
           lastErr = e;
-          console.info('[API] 网络错误，第' + (attempt + 1) + '次重试，' + (900 * (attempt + 1)) + 'ms 后…');
           await sleep(900 * (attempt + 1));
           continue;
         }
@@ -433,7 +430,7 @@
    */
   /* ====================== 图片形态探测（v2.2.0-super） ======================
      各家中转站生图路径/字段差异大，定义多种形态按序尝试，
-     第一个成功后记住形态（localStorage ljc_image_form_<id>），后续直接命中。 */
+     第一个成功后记住形态（localStorage kailion_image_form_<id>），后续直接命中。 */
   function buildImageForms(provider, params) {
     var base = normalizeBaseUrl(provider.baseurl);
     var model = params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'dall-e-3';
@@ -514,7 +511,7 @@
 
     var forms = buildImageForms(provider, params);
     // 记住的形态排最前
-    var storageKey = 'ljc_image_form_' + ((provider && provider.id) || 'default');
+    var storageKey = 'kailion_image_form_' + ((provider && provider.id) || 'default');
     var remembered = null;
     try { remembered = localStorage.getItem(storageKey); } catch (e) {}
     if (remembered) {

@@ -222,8 +222,8 @@ window.NODE_DATA = [
        'Inquiry Reply Engine', 'Paste buyer RFQ; auto-detect buyer type and generate English B2B reply'],
       ['出口合规包', 'klCertPackNode', '按目标市场跑 FDA / LFGB / REACH / Prop 65 合规清单与警示语', 1,
        'Export Compliance Pack', 'Run FDA / LFGB / REACH / Prop 65 checklist and warning labels by target market'],
-      ['独立站文案', 'klSiteCopyNode', '生成 kailioncrafts.com 页面文案，注入 SEO 与结构化数据', 1,
-       'Site Copy', 'Generate kailioncrafts.com page copy with SEO and structured data injection'],
+      ['独立站文案', 'klSiteCopyNode', '生成独立站页面文案，注入 SEO 与结构化数据', 1,
+       'Site Copy', 'Generate landing page copy with SEO and structured data injection'],
       ['供应商评分', 'klSupplierScoreNode', '把询盘结果汇总为加权评分表并给出议价建议', 1,
        'Supplier Scorecard', 'Aggregate RFQ results into a weighted scorecard with negotiation advice']
     ]
@@ -274,7 +274,7 @@ window.WORKFLOW_CATS = [
    'Cross-border Supply Chain', 'Cross-border sourcing, RFQ, listing and distribution pipeline']
 ];
 
-/** 资源库入口（15类，v0.5.0 起后7项已实化，默认可见；运行时可用 ljc_lib_visibility 覆盖） */
+/** 资源库入口（15类，v0.5.0 起后7项已实化，默认可见；运行时可用 kailion_lib_visibility 覆盖） */
 window.RESOURCE_LIBS = [
   { key: 'canvas',   name: '画布',   nameEn: 'Canvas',          icon: '🖼️', visible: 1 },
   { key: 'nodes',    name: '节点库', nameEn: 'Node Library',    icon: '🧩', visible: 1 },

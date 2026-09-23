@@ -2,7 +2,7 @@
  * 锴利超级AI工作台 - 合并资源库数据
  * 数据来源：
  *   1. KaiLionCreator工作台/js/data/library.js（12专家 / 10提示词 / 6 SKU / 5数字人 / 6风格 / 6角色 / 8场景 / 8选题 / 6知识库）
- *   2. KaiLionCrafts工作台.html EXPERT_LIBRARY + PROMPT_LIBRARY（30专家 / 27提示词）
+ *   2. 超级工作台 EXPERT_LIBRARY + PROMPT_LIBRARY（30专家 / 27提示词）
  * 去重规则：专家按 name 去重，提示词按 name 去重。
  * 暴露：window.SUPER_DATA
  */
@@ -26,7 +26,7 @@
     { id: 'e-site',       name: '独立站建站专家',   role: '独立站建站',     category: '站点',     icon: '🌍', desc: 'WordPress / Elementor 信息架构、转化路径与落地页设计。', source: 'creator' }
   ];
 
-  // 来源2：KaiLionCrafts工作台.html EXPERT_LIBRARY（30 位，按 name 去重后 29 位）
+  // 来源2：超级工作台 EXPERT_LIBRARY（30 位，按 name 去重后 29 位）
   // 「供应链专家」已在 creators 中存在，此处跳过。
   var crafts = [
     // 营销增长
@@ -83,7 +83,7 @@
     { id: 'p-10', name: '品牌 IP 形象',       category: 'IP',   text: '拟人化的狮子形象，身着深色工装围裙，手持一把菜刀，金色鬃毛，工业金属质感点缀，3D 渲染，正面三视图，卡通与写实结合', source: 'creator' }
   ];
 
-  // 来源2：KaiLionCrafts工作台.html PROMPT_LIBRARY（27 条）
+  // 来源2：超级工作台 PROMPT_LIBRARY（27 条）
   var craftsPrompts = [
     // 电商产品图
     { id: 'cp-01', name: '金色五金工具特写', category: '电商产品图', text: '一把金色不锈钢剪刀，放在深色木质工作台上，暖色侧光从左侧45度照射，金属质感强烈，刀刃反光清晰，商业产品摄影，8K高清，背景虚化，f/2.8光圈', source: 'crafts' },
@@ -145,7 +145,7 @@
 
   /* ============ 风格（6 种） ============ */
   var styles = [
-    { id: 's-1', name: '品牌金调',     desc: '深石墨底 + 香槟金高光，KaiLionCrafts 主视觉', swatch: ['#101216', '#C9A227', '#F3E4B0'] },
+    { id: 's-1', name: '品牌金调',     desc: '深石墨底 + 香槟金高光，锴利主视觉', swatch: ['#101216', '#C9A227', '#F3E4B0'] },
     { id: 's-2', name: '影棚白底',     desc: '纯白背景 + 三点布光，平台主图合规首选',       swatch: ['#FFFFFF', '#E8E8E8', '#8A8A8A'] },
     { id: 's-3', name: '厨房实景',     desc: '木质与石材肌理，暖调生活气息',               swatch: ['#8B5E34', '#D9C7A7', '#3E2A1B'] },
     { id: 's-4', name: '工业硬核',     desc: '冷灰金属 + 高对比，突出制造与工艺',           swatch: ['#2B3038', '#7C8794', '#0E1014'] },
@@ -194,7 +194,7 @@
     { id: 'k-3', name: '阳江产业带地图',   desc: '本地主要刀剪工厂分布、擅长工艺、起订量区间与合作注意事项。', size: '9 KB' },
     { id: 'k-4', name: 'B2B 询盘应答手册', desc: '按买家类型拆解的回复框架、报价话术、常见异议处理与跟进节奏。', size: '24 KB' },
     { id: 'k-5', name: '平台规则摘录',   desc: 'TikTok Shop / Shopee / TEMU / OZON / 美客多 厨房类目上新与文案合规要求。', size: '16 KB' },
-    { id: 'k-6', name: '品牌视觉规范',   desc: 'KaiLionCrafts Logo 使用、主辅色、字体、图片风格与版式规范。', size: '6 KB' }
+    { id: 'k-6', name: '品牌视觉规范',   desc: '锴利品牌 Logo 使用、主辅色、字体、图片风格与版式规范。', size: '6 KB' }
   ];
 
   /* ============ 暴露 ============ */
@@ -218,7 +218,7 @@
       scenesCount: scenes.length,
       topicsCount: topics.length,
       knowledgeCount: knowledge.length,
-      sources: ['KaiLionCreator/library.js', 'KaiLionCrafts工作台.html']
+      sources: ['super-data.js', '超级工作台']
     }
   };
 
@@ -238,39 +238,38 @@
       try { localStorage.setItem(flag, '1'); } catch (e) {}
     }
     // 专家：icon→emoji, role→specialty
-    seedOnce('ljc_experts', experts.map(function (e, i) {
+    seedOnce('kailion_experts', experts.map(function (e, i) {
       return { id: e.id, emoji: e.icon || '👤', name: e.name, specialty: e.role || '', desc: e.desc || '', systemPrompt: '', addedAt: now - i * 60000 };
     }));
     // 提示词：name→title, text→content, category→cat
-    seedOnce('ljc_prompts', prompts.map(function (p, i) {
+    seedOnce('kailion_prompts', prompts.map(function (p, i) {
       return { id: p.id, title: p.name, content: p.text, cat: p.category || '其他', addedAt: now - i * 60000 };
     }));
     // 数字人：avatar→emoji
-    seedOnce('ljc_digital_humans', digitalHumans.map(function (d, i) {
+    seedOnce('kailion_digital_humans', digitalHumans.map(function (d, i) {
       return { id: d.id, name: d.name, emoji: d.avatar || '🧑‍💻', desc: d.desc || '', voiceStyle: '', personality: '', systemPrompt: '', addedAt: now - i * 60000 };
     }));
     // 风格：swatch→colors
-    seedOnce('ljc_styles', styles.map(function (st, i) {
+    seedOnce('kailion_styles', styles.map(function (st, i) {
       return { id: st.id, name: st.name, desc: st.desc || '', colors: st.swatch || [], prompt: '', addedAt: now - i * 60000 };
     }));
     // 角色：img→emoji, desc→background
-    seedOnce('ljc_roles', roles.map(function (r, i) {
+    seedOnce('kailion_roles', roles.map(function (r, i) {
       return { id: r.id, name: r.name, emoji: r.img || '🎭', personality: '', background: r.desc || '', speechStyle: '', systemPrompt: '', addedAt: now - i * 60000 };
     }));
     // 场景：img→emoji, nodes 留空（用户手动加载画布模板）
-    seedOnce('ljc_scenes', scenes.map(function (sc, i) {
+    seedOnce('kailion_scenes', scenes.map(function (sc, i) {
       return { id: sc.id, name: sc.name, emoji: sc.img || '🏞️', desc: sc.desc || '', nodes: [], addedAt: now - i * 60000 };
     }));
     // 选题：name→title, hot(数字)→heat(高/中/低)
-    seedOnce('ljc_topics', topics.map(function (t, i) {
+    seedOnce('kailion_topics', topics.map(function (t, i) {
       var heat = t.hot >= 90 ? '高' : (t.hot >= 80 ? '中' : '低');
       return { id: t.id, title: t.name, platform: t.platform || '抖音', heat: heat, keywords: '', status: '待创作', addedAt: now - i * 60000 };
     }));
     // 商品
-    seedOnce('ljc_products', products.map(function (pr, i) {
+    seedOnce('kailion_products', products.map(function (pr, i) {
       return { id: pr.id, name: pr.name, image: '', price: pr.price || '', sellingPoints: '', targetAudience: '', platform: '', addedAt: now - i * 60000 };
     }));
-    console.info('[SUPER_DATA] 合并资源已自动迁移到资源库（专家' + experts.length + '/提示词' + prompts.length + '/商品' + products.length + '等）');
   } catch (e) {
     console.warn('[SUPER_DATA] 自动迁移失败（不影响主流程）：', e);
   }

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "AI助手面板实际可见(position:fixed)",
+    "ok": true,
+    "detail": "size=340x419"
+  },
+  {
+    "name": "便签按钮添加canvas-note",
+    "ok": true,
+    "detail": "便签数=1"
+  },
+  {
+    "name": "添加两个节点",
+    "ok": true,
+    "detail": "节点数=5"
+  },
+  {
+    "name": "连线SVG容器存在",
+    "ok": true,
+    "detail": "当前连线数=2"
+  },
+  {
+    "name": "Delete删除选中节点",
+    "ok": true,
+    "detail": "无异常"
+  },
+  {
+    "name": "对齐辅助线SVG容器",
+    "ok": true
+  },
+  {
+    "name": "智能工作台(smart)视图加载",
+    "ok": true,
+    "detail": "内容=1163字符"
+  },
+  {
+    "name": "技能库(skill)视图加载",
+    "ok": true,
+    "detail": "内容=1397字符"
+  },
+  {
+    "name": "管理资源库弹窗",
+    "ok": true
+  },
+  {
+    "name": "双击节点库卡片添加到画布",
+    "ok": true,
+    "detail": "添加后画布节点数=6"
+  }
+]

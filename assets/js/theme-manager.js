@@ -1,20 +1,20 @@
 /**
  * 锴利超级AI工作台 - 主题管理器
- * 支持 'dark' | 'light' | 'system' 三种主题，持久化到 localStorage('ljc_theme')。
+ * 支持 'dark' | 'light' | 'system' 三种主题，持久化到 localStorage('kailion_theme')。
  * 通过在 document.documentElement 上设置 data-theme 属性切换亮色 / 深色变量。
  *
  * 扩展功能（v0.10.0）：
  *  - 6 套预设主题（深空蓝紫 / 暗夜绿 / 暖橙 / 玫瑰粉 / 科技青 / 极简灰）
  *  - 自定义品牌色：主色调 / 强调色 / 背景起始 / 背景结束 / 侧栏背景 / 画布网格
  *  - 通过 documentElement.style.setProperty 覆盖 CSS 变量，深浅模式均生效
- *  - 自定义颜色持久化到 localStorage('ljc_custom_theme')
+ *  - 自定义颜色持久化到 localStorage('kailion_custom_theme')
  *  - renderCustomizer(container) 自包含渲染主题自定义面板
  */
 (function () {
   'use strict';
 
-  var STORAGE_KEY = 'ljc_theme';
-  var CUSTOM_KEY = 'ljc_custom_theme';
+  var STORAGE_KEY = 'kailion_theme';
+  var CUSTOM_KEY = 'kailion_custom_theme';
   var VALID = ['dark', 'light', 'system'];
   var mql = window.matchMedia('(prefers-color-scheme: dark)');
 
@@ -358,7 +358,7 @@
 
   /* ====================== 主题自定义面板渲染 ====================== */
   var customizerCbs = []; // 颜色变更后通知已渲染面板刷新选中态
-  var STYLE_ID = 'ljc-theme-customizer-style';
+  var STYLE_ID = 'kaili-theme-customizer-style';
 
   /** 注入面板自包含样式（仅一次） */
   function ensureStyle() {
@@ -366,25 +366,25 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = [
-      '.ljc-tc-panel { font-family: var(--font, sans-serif); color: var(--text-1, #f1f5f9); }',
-      '.ljc-tc-panel h4 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }',
-      '.ljc-tc-presets { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }',
-      '.ljc-tc-preset { position: relative; border: 2px solid transparent; border-radius: 8px; padding: 8px; cursor: pointer;',
+      '.kaili-tc-panel { font-family: var(--font, sans-serif); color: var(--text-1, #f1f5f9); }',
+      '.kaili-tc-panel h4 { margin: 0 0 10px; font-size: 14px; font-weight: 600; }',
+      '.kaili-tc-presets { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }',
+      '.kaili-tc-preset { position: relative; border: 2px solid transparent; border-radius: 8px; padding: 8px; cursor: pointer;',
       '  background: var(--bg-card, rgba(255,255,255,0.04)); transition: border-color .15s, transform .1s; }',
-      '.ljc-tc-preset:hover { transform: translateY(-1px); }',
-      '.ljc-tc-preset.active { border-color: var(--primary, #6366f1); }',
-      '.ljc-tc-preset .sw { height: 34px; border-radius: 5px; margin-bottom: 6px; }',
-      '.ljc-tc-preset .lb { font-size: 12px; font-weight: 600; }',
-      '.ljc-tc-divider { height: 1px; background: var(--border, rgba(255,255,255,0.1)); margin: 12px 0; }',
-      '.ljc-tc-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; font-size: 12px; }',
-      '.ljc-tc-row input[type=color] { width: 46px; height: 28px; border: none; border-radius: 5px; cursor: pointer;',
+      '.kaili-tc-preset:hover { transform: translateY(-1px); }',
+      '.kaili-tc-preset.active { border-color: var(--primary, #6366f1); }',
+      '.kaili-tc-preset .sw { height: 34px; border-radius: 5px; margin-bottom: 6px; }',
+      '.kaili-tc-preset .lb { font-size: 12px; font-weight: 600; }',
+      '.kaili-tc-divider { height: 1px; background: var(--border, rgba(255,255,255,0.1)); margin: 12px 0; }',
+      '.kaili-tc-row { display: flex; align-items: center; justify-content: space-between; padding: 5px 0; font-size: 12px; }',
+      '.kaili-tc-row input[type=color] { width: 46px; height: 28px; border: none; border-radius: 5px; cursor: pointer;',
       '  background: none; padding: 0; }',
-      '.ljc-tc-row input[type=color]::-webkit-color-swatch-wrapper { padding: 2px; }',
-      '.ljc-tc-row input[type=color]::-webkit-color-swatch { border: 1px solid var(--border, rgba(255,255,255,0.2)); border-radius: 4px; }',
-      '.ljc-tc-reset { width: 100%; margin-top: 12px; padding: 7px 0; border-radius: 7px; font-size: 12px; cursor: pointer;',
+      '.kaili-tc-row input[type=color]::-webkit-color-swatch-wrapper { padding: 2px; }',
+      '.kaili-tc-row input[type=color]::-webkit-color-swatch { border: 1px solid var(--border, rgba(255,255,255,0.2)); border-radius: 4px; }',
+      '.kaili-tc-reset { width: 100%; margin-top: 12px; padding: 7px 0; border-radius: 7px; font-size: 12px; cursor: pointer;',
       '  background: var(--bg-card, rgba(255,255,255,0.06)); color: var(--text-1, #fff);',
       '  border: 1px solid var(--border, rgba(255,255,255,0.15)); }',
-      '.ljc-tc-reset:hover { border-color: var(--danger, #ef4444); color: var(--danger, #ef4444); }'
+      '.kaili-tc-reset:hover { border-color: var(--danger, #ef4444); color: var(--danger, #ef4444); }'
     ].join('\n');
     document.head.appendChild(style);
   }
@@ -405,20 +405,20 @@
 
     function paint() {
       var cur = custom || normalizeColors(PRESETS[0]);
-      var html = '<div class="ljc-tc-panel">';
+      var html = '<div class="kaili-tc-panel">';
       html += '<h4>🎨 主题外观</h4>';
       // 预设卡片
-      html += '<div class="ljc-tc-presets">';
+      html += '<div class="kaili-tc-presets">';
       PRESETS.forEach(function (p) {
         var activeCls = activePreset === p.id ? ' active' : '';
         var swBg = 'linear-gradient(135deg,' + p.primary + ' 0%,' + p.accent + ' 100%),linear-gradient(135deg,' + p.bgStart + ',' + p.bgEnd + ')';
-        html += '<div class="ljc-tc-preset' + activeCls + '" data-preset="' + p.id + '" title="' + p.label + '">' +
+        html += '<div class="kaili-tc-preset' + activeCls + '" data-preset="' + p.id + '" title="' + p.label + '">' +
           '<div class="sw" style="background:' + swBg + ';"></div>' +
           '<div class="lb">' + p.label + '</div></div>';
       });
       html += '</div>';
       // 自定义颜色
-      html += '<div class="ljc-tc-divider"></div><h4>自定义颜色</h4>';
+      html += '<div class="kaili-tc-divider"></div><h4>自定义颜色</h4>';
       var rows = [
         ['primary', '主色调'],
         ['accent', '强调色'],
@@ -428,15 +428,15 @@
         ['canvasBg', '画布网格']
       ];
       rows.forEach(function (r) {
-        html += '<label class="ljc-tc-row"><span>' + r[1] + '</span>' +
+        html += '<label class="kaili-tc-row"><span>' + r[1] + '</span>' +
           '<input type="color" data-field="' + r[0] + '" value="' + cur[r[0]] + '"></label>';
       });
-      html += '<button class="ljc-tc-reset" id="ljc-tc-reset">重置为默认</button>';
+      html += '<button class="kaili-tc-reset" id="kaili-tc-reset">重置为默认</button>';
       html += '</div>';
       container.innerHTML = html;
 
       // 绑定事件
-      container.querySelectorAll('.ljc-tc-preset').forEach(function (card) {
+      container.querySelectorAll('.kaili-tc-preset').forEach(function (card) {
         card.addEventListener('click', function () { applyPreset(card.getAttribute('data-preset')); });
       });
       container.querySelectorAll('input[type=color]').forEach(function (inp) {
@@ -444,7 +444,7 @@
           setCustomColor(inp.getAttribute('data-field'), inp.value);
         });
       });
-      var resetBtn = container.querySelector('#ljc-tc-reset');
+      var resetBtn = container.querySelector('#kaili-tc-reset');
       if (resetBtn) resetBtn.addEventListener('click', function () { resetCustomColors(); });
     }
 
@@ -454,7 +454,7 @@
      */
     function refresh() {
       var cur = custom || normalizeColors(PRESETS[0]);
-      container.querySelectorAll('.ljc-tc-preset').forEach(function (card) {
+      container.querySelectorAll('.kaili-tc-preset').forEach(function (card) {
         card.classList.toggle('active', card.getAttribute('data-preset') === activePreset);
       });
       container.querySelectorAll('input[type=color]').forEach(function (inp) {

@@ -1374,6 +1374,12 @@ input[type="color"].color-input { padding: 3px; height: 38px; cursor: pointer; }
 .coach-title { font-size: 13px; font-weight: 600; }
 .coach-fix { font-size: 12px; color: var(--text-2, #9aa); margin: 4px 0 6px 24px; }
 .coach-jump { margin-left: 24px; }
+/* v2.2.2-super：AI 教练自动修复按钮 */
+.coach-autofix { width: 100%; margin: 0 0 10px 0; }
+.coach-actions { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; margin: 6px 0 0 24px; }
+.coach-actions .coach-jump { margin-left: 0; }
+.coach-fix-btn { background: rgba(16,185,129,.16); border-color: rgba(16,185,129,.45); color: #34d399; }
+.coach-manual { font-size: 12px; color: var(--text-2, #9aa); }
 
 /* 技能库 */
 #view-skills .skills-subtitle { color: var(--text-2, #9aa); margin: 8px 4px 16px; font-size: 13px; }
