@@ -363,7 +363,7 @@
         } catch (e) { continue; } // 忽略心跳 / 非 JSON 行
         // 服务端在流中返回错误事件（如 401/模型错误），不再静默吞掉
         if (j.error) {
-          throw new Error(typeof j.error === 'string' ? j.error : (j.error.message || 'API stream error'));
+          throw new Error(typeof j.error === 'string' ? j.error : (j.error.message || tr('api.err.streamError', 'API 流式响应错误')));
         }
         let delta = '';
         if (proto && typeof proto.readDelta === 'function') {

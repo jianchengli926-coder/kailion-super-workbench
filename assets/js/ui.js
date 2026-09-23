@@ -1151,7 +1151,7 @@
           const isolated = nodes.filter(n => !connectedIds.has(n.id));
           const missingParams = [];
           nodes.forEach(n => {
-            const fields = (window.Nodes && Nodes.PARAM_FIELDS) ? Nodes.PARAM_FIELDS[n.type] : null;
+            const fields = (window.NodeDef && NodeDef.getFields) ? NodeDef.getFields(n.type) : null;
             if (fields) {
               fields.forEach(f => {
                 if (f.required && (!n.params || n.params[f.key] === undefined || n.params[f.key] === '')) {
@@ -1893,13 +1893,13 @@
         if (sumEl) sumEl.textContent = '';
       } else if (evt === 'nodestart') {
         if (stepEl) stepEl.textContent = '⚡ ' + tx('stepper.running') + '：' + (data.name || '');
-        if (progText) progText.textContent = tx('stepper.currentNode', { name: data.name || '' });
+        if (progText) progText.textContent = tx('stepper.currentNode', null, { name: data.name || '' });
       } else if (evt === 'rundone') {
         const secs = ((data.durationMs || 0) / 1000).toFixed(1);
         if (stepEl) {
           stepEl.textContent = (data.fail > 0 ? '⚠️ ' + tx('stepper.failed') : '✅ ' + tx('stepper.done'));
         }
-        if (sumEl) sumEl.textContent = tx('stepper.summary', { ok: data.ok, fail: data.fail, sec: secs });
+        if (sumEl) sumEl.textContent = tx('stepper.summary', null, { ok: data.ok, fail: data.fail, sec: secs });
         clearTimeout(_stepperTimer);
         _stepperTimer = setTimeout(() => box.classList.add('hidden'), 5000);
       }

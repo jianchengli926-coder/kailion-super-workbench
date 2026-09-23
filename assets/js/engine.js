@@ -572,7 +572,7 @@
     if (src.indexOf('data:') === 0) {
       const a = document.createElement('a');
       a.href = src;
-      a.download = 'image-' + Date.now() + '.png';
+      a.download = 'kaili-image-' + Date.now() + '.png';
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -581,7 +581,7 @@
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'image-' + Date.now() + '.png';
+        a.download = 'kaili-image-' + Date.now() + '.png';
         document.body.appendChild(a);
         a.click();
         a.remove();

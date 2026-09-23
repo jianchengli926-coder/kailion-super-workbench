@@ -1,6 +1,6 @@
 /**
  * 锴利超级AI工作台 - 节点数据（74节点 / 14分类）
- * 数据来源：原 WfwCreator Agent tutorial.html NODES 数组
+ * 数据来源：原工作流引擎 tutorial.html NODES 数组
  * 格式：{ cat: 分类名, catEn: 英文分类名, icon: 图标emoji, color: 分类色,
  *        nodes: [[名称, type, 描述, 出厂可见, 英文名, 英文描述], ...] }
  * 说明：v2.0.0-super 起每个节点数组扩展为 6 元素；新增字段在末尾，不影响 nodes.js 解构索引 0-3。

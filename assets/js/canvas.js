@@ -1783,11 +1783,8 @@
     });
   }
 
-  // 工具栏撤销/重做按钮（v2.2.0-super）
-  const btnUndo = document.getElementById('btn-undo');
-  if (btnUndo) btnUndo.addEventListener('click', () => undo());
-  const btnRedo = document.getElementById('btn-redo');
-  if (btnRedo) btnRedo.addEventListener('click', () => redo());
+  // 注：撤销/重做按钮由 app.js 统一绑定（含快捷键 Ctrl+Z/Ctrl+Y），
+  // canvas.js 内部 undoStack 供编程式调用，避免双重绑定导致点一次撤销两步。
 
   // 初始渲染
   render();

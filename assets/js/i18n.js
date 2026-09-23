@@ -587,6 +587,7 @@
     'api.err.notfound': '接口路径不存在，部分中转站在根路径而非 /v1，或用了不同的路径名。',
     'api.err.badrequest': '请求参数被拒，常见原因：模型名不对、size/画幅取值不被接受。',
     'api.err.imageAllFormsFailed': '所有生图方式都失败了：\n{detail}',
+    'api.err.streamError': 'API 流式响应错误',
 
     /* ---------- tasks.js ---------- */
     'tasks.batchTitle': '⚡ 批量并行任务',
@@ -1862,6 +1863,7 @@
     'api.err.notfound': 'Endpoint path not found. Some relays serve at root instead of /v1, or use a different path.',
     'api.err.badrequest': 'Request rejected. Often wrong model name or unsupported size/aspect values.',
     'api.err.imageAllFormsFailed': 'All image-generation endpoints failed:\n{detail}',
+    'api.err.streamError': 'API stream response error',
 
     /* ---------- tasks.js ---------- */
     'tasks.batchTitle': '⚡ Batch Parallel Tasks',
