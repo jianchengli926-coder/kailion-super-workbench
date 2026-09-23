@@ -1,0 +1,2805 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>锴利超级AI工作台 - 全场景人-多Agent协同工作台</title>
+    <meta name="description" content="锴利超级AI工作台 是全场景人-多Agent协同工作台：说一句话或拖拽节点，自动编排图片、视频、PPT、漫剧、电商、3D、IP 全场景 AI 创作流水线。60+ AI 节点、19 大模型、14 类资源库协同作战，新增跨境电商选品-发布全链路（1688 云牛顿 × 妙手 ERP）、GEO 生成式引擎优化、3D 模型生成与转换。从灵感到成片、从选品到上架一站式交付，一个人就是一支 AI 内容团队。本地部署、数据私有，支持 MCP 开放生态。">
+    <meta name="theme-color" content="#0f0f23">
+    <!-- 社交分享预览（OG / Twitter Card） -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="锴利超级AI工作台">
+    <meta property="og:title" content="锴利超级AI工作台 - 全场景人-多Agent协同工作台">
+    <meta property="og:description" content="60+ AI 节点、19 大模型协同作战：跨境电商选品-发布全链路、GEO 优化、3D 生成、视频复刻。本地部署、数据私有，一个人就是一支 AI 内容团队。">
+    <meta property="og:image" content="../assets/img/logo.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="锴利超级AI工作台 - 全场景人-多Agent协同工作台">
+    <meta name="twitter:description" content="60+ AI 节点、19 大模型：从选品到上架、从灵感到成片一站式 AI 创作流水线。">
+    <meta name="twitter:image" content="../assets/img/logo.png">
+    <!-- 结构化数据：软件信息 + FAQ（GEO：让 AI 引擎可引用） -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "锴利超级AI工作台",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "Windows",
+        "description": "全场景人-多Agent协同工作台：60+ AI 节点、19 大模型，支持跨境电商选品-发布全链路、GEO 生成式引擎优化、3D 生成与格式互转、视频复刻。本地部署、数据私有。",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "CNY" },
+        "featureList": "AI 节点工作流编排, 图像生成, 视频生成, 跨境电商选品发布, GEO 优化, 3D 模型生成与转换, 视频复刻, 本地部署"
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        "mainEntity": [
+            { "@type": "Question", "name": "我的创作数据存在哪里？安全吗？", "acceptedAnswer": { "@type": "Answer", "text": "所有数据（工作流、14 类资源库、生成的作品）都保存在你的电脑本地，不上传任何服务器。断网也能正常使用，创意资产完全私有。" } },
+            { "@type": "Question", "name": "需要注册账号或付费订阅吗？", "acceptedAnswer": { "@type": "Answer", "text": "桌面客户端完全免费下载。使用 AI 生成功能时，只需在供应商管理中配置你自己的 API Key（OpenAI / Gemini / Claude 等），按你的用量计费，无任何平台抽成。" } },
+            { "@type": "Question", "name": "支持哪些 AI 模型？", "acceptedAnswer": { "@type": "Answer", "text": "图像生成支持 Banana Pro、Z-Image、GPT Image、DALL-E、SeeDream、Flux、Agnes Image 等 8 大模型；视频支持 Sora、Veo、Kling、Seedance、MiniMax、Omni、Grok Video 等 8 大模型；文本对话支持 OpenAI / Claude / Gemini 三大协议，均可在供应商管理中添加自定义线路。" } },
+            { "@type": "Question", "name": "不会写代码、不会搭流程，能用吗？", "acceptedAnswer": { "@type": "Answer", "text": "完全可以。打开智能工作台直接说需求，比如生成海鲜电商详情页，AI 会自动解析意图、搭建工作流并执行；也可以从工作流库直接加载预设模板，改改参数就能跑。" } },
+            { "@type": "Question", "name": "妙手 ERP / 1688 云牛顿功能需要什么前置条件？", "acceptedAnswer": { "@type": "Answer", "text": "妙手 ERP 功能需要你自己的妙手开放平台 AppKey / AppSecret 并配置 IP 白名单；1688 云牛顿功能需要你的 1688 采购账号授权。询盘外呼等敏感操作默认设有人工确认闸门。" } },
+            { "@type": "Question", "name": "能否接入我的外部系统或自动化流程？", "acceptedAnswer": { "@type": "Answer", "text": "支持。内置 HTTP API 服务器（17 个 REST 端点）可供外部程序调用；通过 MCP 协议可连接任意外部工具；飞书机器人支持在群聊里直接下达创作需求。" } }
+        ]
+    }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #8b5cf6;
+            --accent-color: #ec4899;
+            --bg-gradient-start: #0f0f23;
+            --bg-gradient-end: #1a1a2e;
+            --card-bg: rgba(30, 30, 50, 0.8);
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --border-color: rgba(255, 255, 255, 0.1);
+            --success: #22c55e;
+            --cyan: #06b6d4;
+            --orange: #f97316;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* ===== 导航 ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(15, 15, 35, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        nav .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+        }
+
+        nav .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        nav .logo img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+        }
+
+        nav .logo span.brand-name {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        nav ul li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover {
+            color: var(--text-primary);
+        }
+
+        nav .nav-cta {
+            padding: 8px 20px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: #fff !important;
+            font-weight: 600;
+        }
+
+        /* 导航栏：配套小工具入口（与「免费下载」做出视觉区分，避免误读为下载客户端） */
+        nav .nav-tool {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 13px;
+            border-radius: 8px;
+            border: 1px solid rgba(6, 182, 212, 0.45);
+            background: rgba(6, 182, 212, 0.1);
+            color: #67e8f9;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: background 0.3s, border-color 0.3s, color 0.3s;
+        }
+
+        nav .nav-tool:hover {
+            background: rgba(6, 182, 212, 0.22);
+            border-color: rgba(6, 182, 212, 0.8);
+            color: #a5f3fc;
+        }
+
+        nav .nav-tool svg {
+            flex: 0 0 auto;
+        }
+
+        /* ===== Hero ===== */
+        .hero {
+            padding: 150px 0 90px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background:
+                radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 45%),
+                radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 55%);
+            animation: pulse 10s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 30%, transparent 75%);
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(99, 102, 241, 0.4);
+            background: rgba(99, 102, 241, 0.12);
+            color: #a5b4fc;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 28px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .badge .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 8px rgba(34, 197, 94, 0.8);
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero h1 {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 24px;
+            line-height: 1.25;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--accent-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 19px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 780px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .download-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn {
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: var(--primary-color);
+        }
+
+        .hero-trust {
+            margin-top: 30px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            justify-content: center;
+            gap: 26px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-trust span {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.3px;
+        }
+
+        .hero-trust span::before {
+            content: '·';
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .hero-trust span:first-child::before {
+            content: '';
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 70px;
+            margin-top: 80px;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .number {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-item .label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* ===== 通用区块 ===== */
+        section {
+            padding: 90px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 60px;
+            font-size: 16px;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-subtitle .highlight {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* ===== 为什么选 ===== */
+        .why {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .why-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .why-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 36px;
+            transition: all 0.3s;
+            width: calc((100% - 90px) / 4);
+            flex-shrink: 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .why-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color), var(--accent-color));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .why-card:hover::before {
+            opacity: 1;
+        }
+
+        .why-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .why-card .feature-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .why-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .why-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .why-card .tag {
+            display: inline-block;
+            margin-top: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: rgba(99, 102, 241, 0.15);
+            color: #a5b4fc;
+        }
+
+        @media (max-width: 1000px) {
+            .why-card { width: calc((100% - 30px) / 2); }
+        }
+
+        @media (max-width: 600px) {
+            .why-card { width: 100%; }
+        }
+
+        /* ===== 应用场景 ===== */
+        .scene-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .scene-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 36px;
+            transition: all 0.3s;
+            width: calc((100% - 30px) / 2);
+            flex-shrink: 0;
+        }
+
+        .scene-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary-color);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.2);
+        }
+
+        .scene-card .scene-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 22px;
+        }
+
+        .scene-card .scene-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .scene-card h3 {
+            font-size: 20px;
+            color: var(--text-primary);
+        }
+
+        .scene-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            font-size: 13.5px;
+            line-height: 1.7;
+        }
+
+        .scene-row .scene-label {
+            flex-shrink: 0;
+            width: 56px;
+            text-align: right;
+            font-weight: 600;
+            padding-top: 1px;
+        }
+
+        .scene-row .scene-label.pain { color: var(--orange); }
+        .scene-row .scene-label.cap  { color: var(--cyan); }
+        .scene-row .scene-label.task { color: var(--success); }
+
+        .scene-row .scene-desc {
+            color: var(--text-secondary);
+        }
+
+        .scene-row .scene-desc strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .scene-card .scene-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .scene-card .scene-tags span {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        @media (max-width: 900px) {
+            .scene-card { width: 100%; }
+        }
+
+        /* ===== 功能特性 ===== */
+        .features {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .features-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s;
+            width: calc((100% - 60px) / 3);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 900px) {
+            .feature-card { width: calc((100% - 30px) / 2); }
+        }
+
+        @media (max-width: 600px) {
+            .feature-card { width: 100%; }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            font-size: 24px;
+        }
+
+        .feature-icon.purple { background: rgba(139, 92, 246, 0.2); color: var(--secondary-color); }
+        .feature-icon.blue   { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+        .feature-icon.pink   { background: rgba(236, 72, 153, 0.2); color: var(--accent-color); }
+        .feature-icon.green  { background: rgba(34, 197, 94, 0.2); color: var(--success); }
+        .feature-icon.orange { background: rgba(249, 115, 22, 0.2); color: var(--orange); }
+        .feature-icon.cyan   { background: rgba(6, 182, 212, 0.2); color: var(--cyan); }
+
+        .feature-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .feature-card .feature-meta {
+            font-size: 12px;
+            color: var(--primary-color);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin-bottom: 8px;
+        }
+
+        .feature-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== 最新功能 ===== */
+        .latest {
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.06) 0%, transparent 100%);
+        }
+
+        .latest-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            background: rgba(236, 72, 153, 0.1);
+            color: #f9a8d4;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 auto 18px;
+            display: flex;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .latest-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 10px;
+        }
+
+        .latest-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(236, 72, 153, 0.2);
+            border-radius: 16px;
+            padding: 32px;
+            transition: all 0.3s;
+            width: calc((100% - 30px) / 2);
+            flex-shrink: 0;
+        }
+
+        .latest-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.15);
+        }
+
+        .latest-card .latest-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+            font-size: 24px;
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--accent-color);
+        }
+
+        .latest-card h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .latest-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .latest-card .latest-points {
+            list-style: none;
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .latest-card .latest-points li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .latest-card .latest-points li::before {
+            content: '✓';
+            color: var(--accent-color);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 900px) {
+            .latest-card { width: 100%; }
+        }
+
+        /* ===== 智能进化内核 ===== */
+        .evolution {
+            background: linear-gradient(180deg, rgba(236, 72, 153, 0.06) 0%, rgba(99, 102, 241, 0.02) 100%);
+        }
+
+        .evo-banner {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            border-radius: 999px;
+            border: 1px solid rgba(236, 72, 153, 0.4);
+            background: rgba(236, 72, 153, 0.1);
+            color: #f9a8d4;
+            font-size: 13px;
+            font-weight: 600;
+            margin: 0 auto 18px;
+            display: flex;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .feature-card.evo {
+            border-color: rgba(236, 72, 153, 0.22);
+        }
+
+        .feature-card.evo .feature-meta {
+            color: var(--accent-color);
+        }
+
+        .feature-card.evo:hover {
+            border-color: var(--accent-color);
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.18);
+        }
+
+        .feature-card .latest-points {
+            list-style: none;
+            margin-top: 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .feature-card .latest-points li {
+            font-size: 13px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .feature-card .latest-points li::before {
+            content: '✓';
+            color: var(--accent-color);
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* ===== 使用流程 ===== */
+        .steps-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            margin-top: 10px;
+        }
+
+        .step-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px 28px;
+            transition: all 0.3s;
+            width: calc((100% - 72px) / 4);
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .step-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cyan);
+            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15);
+        }
+
+        .step-card .step-num {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: #fff;
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .step-card h3 {
+            font-size: 17px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .step-card p {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .step-card .step-arrow {
+            position: absolute;
+            top: 50%;
+            right: -22px;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 18px;
+            z-index: 2;
+        }
+
+        @media (max-width: 1000px) {
+            .step-card { width: calc((100% - 24px) / 2); }
+            .step-card .step-arrow { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .step-card { width: 100%; }
+        }
+
+        /* ===== 适用人群 ===== */
+        .audience {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .audience-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+
+        .audience-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 28px;
+            transition: all 0.3s;
+            width: calc((100% - 48px) / 3);
+            flex-shrink: 0;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+        }
+
+        .audience-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--success);
+            box-shadow: 0 10px 40px rgba(34, 197, 94, 0.12);
+        }
+
+        .audience-card .audience-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .audience-card h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+            color: var(--text-primary);
+        }
+
+        .audience-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 900px) {
+            .audience-card { width: calc((100% - 24px) / 2); }
+        }
+
+        @media (max-width: 600px) {
+            .audience-card { width: 100%; }
+        }
+
+        /* ===== FAQ ===== */
+        .faq {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .faq-list {
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+
+        .faq-item:hover {
+            border-color: var(--primary-color);
+        }
+
+        .faq-item .faq-q {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding: 18px 22px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            user-select: none;
+        }
+
+        .faq-item .faq-q .faq-toggle {
+            color: var(--primary-color);
+            font-size: 18px;
+            transition: transform 0.3s;
+            flex-shrink: 0;
+        }
+
+        .faq-item.open .faq-q .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        .faq-item .faq-a {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease;
+        }
+
+        .faq-item.open .faq-a {
+            max-height: 400px;
+        }
+
+        .faq-item .faq-a p {
+            padding: 0 22px 18px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* ===== 回到顶部 ===== */
+        .back-to-top {
+            position: fixed;
+            right: 24px;
+            bottom: 24px;
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-to-top.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.6);
+        }
+
+        /* ===== 滚动淡入动画 ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal {
+                opacity: 1;
+                transform: none;
+                transition: none;
+            }
+        }
+
+        /* ===== 移动端汉堡菜单 ===== */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 8px 10px;
+            cursor: pointer;
+            color: var(--text-primary);
+        }
+
+        /* 导航项增至 10 个后，1200px 以下的可用宽度不足以容纳整行，
+           提前收起为汉堡菜单，避免链接被挤成两行或溢出 */
+        @media (max-width: 1200px) {
+            .nav-toggle {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                gap: 0;
+                background: rgba(15, 15, 35, 0.97);
+                backdrop-filter: blur(10px);
+                border-bottom: 1px solid var(--border-color);
+                padding: 10px 0;
+            }
+
+            nav ul.open {
+                display: flex;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 12px 24px;
+                font-size: 15px;
+            }
+
+            nav .nav-cta {
+                display: block;
+                margin: 8px 24px;
+                text-align: center;
+            }
+
+            nav ul li a.nav-tool {
+                display: flex;
+                justify-content: center;
+                margin: 8px 24px;
+            }
+        }
+
+        /* ===== 下载 ===== */
+        .download-section {
+            padding: 90px 0;
+            text-align: center;
+        }
+
+        .download-card {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .download-option {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            transition: all 0.3s;
+        }
+
+        .download-option:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-color);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .download-option .os-icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .download-option h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .download-option p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .download-option .version {
+            font-size: 13px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .update-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.3px;
+        }
+
+        .download-stats {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .download-count {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 4px 10px;
+            border-radius: 12px;
+            color: var(--primary-color);
+            font-weight: 500;
+        }
+
+        .file-size {
+            color: var(--text-secondary);
+        }
+
+        /* ===== 联系我们 ===== */
+        .contact {
+            padding: 100px 0;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 40px;
+            align-items: start;
+            margin-top: 50px;
+        }
+
+        .contact-info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            gap: 16px;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .contact-info-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .contact-info-card .label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .contact-info-card .value {
+            display: block;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            word-break: break-all;
+        }
+
+        .contact-info-card a.value {
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-info-card a.value:hover {
+            color: var(--primary-color);
+        }
+
+        .contact-form-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .contact-form-card h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .contact-form-card .form-desc {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .contact-form-card .form-group {
+            margin-bottom: 16px;
+        }
+
+        .contact-form-card label {
+            display: block;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .contact-form-card input,
+        .contact-form-card select,
+        .contact-form-card textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            background: rgba(15, 15, 35, 0.6);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .contact-form-card input:focus,
+        .contact-form-card select:focus,
+        .contact-form-card textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .contact-form-card select option {
+            background: var(--bg-gradient-end);
+            color: var(--text-primary);
+        }
+
+        .contact-form-card textarea {
+            resize: vertical;
+            min-height: 96px;
+        }
+
+        .form-success {
+            display: none;
+            margin-top: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            background: rgba(34, 197, 94, 0.12);
+            border: 1px solid rgba(34, 197, 94, 0.4);
+            color: var(--success);
+            font-size: 14px;
+        }
+
+        .form-success.show {
+            display: block;
+        }
+
+        /* ===== 页脚 ===== */
+        .footer {
+            padding: 60px 0 40px;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px 30px;
+            margin-bottom: 30px;
+            list-style: none;
+        }
+
+        .footer-links li a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links li a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .hero { padding: 130px 0 60px; }
+            .hero h1 { font-size: 34px; }
+            .hero p { font-size: 16px; }
+            .hero-stats { gap: 30px; }
+            .stat-item .number { font-size: 28px; }
+            .section-title { font-size: 28px; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .contact-form-card { padding: 24px; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="../assets/img/logo.png" alt="锴利超级AI工作台 Logo">
+                <span class="brand-name">锴利超级AI工作台</span>
+            </a>
+            <ul id="navMenu">
+                <li><a href="#why">产品优势</a></li>
+                <li><a href="#steps">使用流程</a></li>
+                <li><a href="#scenes">应用场景</a></li>
+                <li><a href="#features">功能特性</a></li>
+                <li><a href="#evolution">智能进化</a></li>
+                <li><a href="#latest">最新功能</a></li>
+                <li><a href="#faq">常见问题</a></li>
+                <li><a href="#contact">联系我们</a></li>
+                <li><a href="../index.html">返回工作台</a></li>
+                <li><a href="tutorial.html">入门教程</a></li>
+                <li><a href="#" target="_blank" rel="noopener" class="nav-tool">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="3"/>
+                        <circle cx="8.5" cy="8.5" r="1.6"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>图片下载器</a></li>
+                <li>
+            </ul>
+            <button class="nav-toggle" id="navToggle" aria-label="菜单" aria-expanded="false">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"/>
+                    <line x1="3" y1="12" x2="21" y2="12"/>
+                    <line x1="3" y1="18" x2="21" y2="18"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- ========== Hero ========== -->
+    <section class="hero">
+        <div class="container">
+            <div class="badge"><span class="dot"></span> v0.3.1 已发布 · 跨境电商全链路 + GEO 优化全新上线</div>
+            <h1><span class="gradient">一个人，就是一个多AGENT协同团队</span></h1>
+            <p>说一句话，或拖拽节点——AI 自动编排图片、视频、PPT、漫剧、电商、3D、IP 全场景创作流水线。60+ AI 节点、19 大模型、14 类资源库协同作战：从 1688 云牛顿选品到 TikTok / Shopee / TEMU 多平台上架，从内容创作到 GEO 生成式引擎优化，一站式交付，让每一位创作者都拥有自己的 AI 超级团队。</p>
+            <div class="download-buttons">
+                <a href="#download" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                        <polyline points="7 10 12 15 17 10"/>
+                        <line x1="12" y1="15" x2="12" y2="3"/>
+                    </svg>
+                    免费下载
+                </a>
+                <a href="#features" class="btn btn-secondary">探索功能特性</a>
+            </div>
+            <div class="hero-trust">
+                <span>安装包仅 10MB 级</span>
+                <span>数据完全本地私有</span>
+                <span>无需注册，开箱即用</span>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="number">60+</div>
+                    <div class="label">AI 功能节点</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number">19</div>
+                    <div class="label">主流 AI 模型</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number">14</div>
+                    <div class="label">专业资源库</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number">9</div>
+                    <div class="label">创作场景</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 为什么选 ========== -->
+    <section class="why" id="why">
+        <div class="container">
+            <h2 class="section-title">为什么选择 锴利超级AI工作台</h2>
+            <p class="section-subtitle">不是又一个 AI 工具，而是把散落各处的 AI 能力<strong class="highlight">聚合、编排、沉淀</strong>成一整套内容生产流水线</p>
+            <div class="why-grid">
+                <div class="why-card">
+                    <div class="feature-icon purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3>一句话，工作流自动生成</h3>
+                    <p>说人话就能干活。智能工作台解析你的意图，自动拆解节点、连接画布、直接执行；意图不清晰时主动反问澄清，不再"一句话说错全盘重来"。</p>
+                    <span class="tag">意图预测引擎</span>
+                </div>
+                <div class="why-card">
+                    <div class="feature-icon blue">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    <h3>全场景内容流水线</h3>
+                    <p>60+ AI 节点覆盖图像、视频、文本、PPT、漫剧、电商、3D、IP 全链路，拖拽编排或一句话自动生成，从灵感到成片、从选品到上架一站式交付。</p>
+                    <span class="tag">8 图像 + 8 视频 + 3 LLM 协议</span>
+                </div>
+                <div class="why-card">
+                    <div class="feature-icon green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>本地优先 · 数据私有</h3>
+                    <p>Tauri 桌面原生应用，14 类资源库与创作数据全部保存在本地，断网也能用。你的创意资产，不上传别人的服务器。</p>
+                    <span class="tag">轻量 · 低内存 · 离线可用</span>
+                </div>
+                <div class="why-card">
+                    <div class="feature-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h3>开放可扩展生态</h3>
+                    <p>MCP 协议接入任意外部工具，飞书机器人协同办公，内置 HTTP API 供外部程序调用，批量并行与定时任务让流水线 7×24 自动运转。</p>
+                    <span class="tag">MCP · 飞书 · REST API</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 使用流程 ========== -->
+    <section class="steps" id="steps">
+        <div class="container">
+            <h2 class="section-title">四步上手，即刻创作</h2>
+            <p class="section-subtitle">从下载到出片，全程不超过 5 分钟</p>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-num">1</div>
+                    <h3>下载安装</h3>
+                    <p>Windows 平台支持，安装包仅 10MB 级，本地原生运行，无需浏览器。</p>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">2</div>
+                    <h3>配置供应商</h3>
+                    <p>在「供应商管理」添加 OpenAI / Gemini / Claude 等 API 供应商，为各节点指定默认模型。</p>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">3</div>
+                    <h3>创建内容</h3>
+                    <p>从左侧拖拽节点编排工作流，或在工作台一句话说出需求，AI 自动生成并执行。</p>
+                    <div class="step-arrow">→</div>
+                </div>
+                <div class="step-card">
+                    <div class="step-num">4</div>
+                    <h3>复用 & 沉淀</h3>
+                    <p>工作流一键保存到工作流库，批量并行、定时任务 7×24 自动运转，越用越顺手。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 应用场景 ========== -->
+    <section class="scenes" id="scenes">
+        <div class="container">
+            <h2 class="section-title">覆盖每一种创作场景</h2>
+            <p class="section-subtitle">自媒体 / 电商 / IP 工作室 / 营销团队 / 办公职场，都能找到自己那条<span class="highlight">可复用的工作流</span></p>
+            <div class="scene-grid">
+                <div class="scene-card">
+                    <div class="scene-head">
+                        <div class="scene-icon" style="background: rgba(236,72,153,0.15);">🎬</div>
+                        <h3>短视频 / 漫剧创作</h3>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label pain">痛点</div>
+                        <div class="scene-desc">选题没头绪、分镜全靠脑补、剪辑费时费力，一人难撑整个剧组</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label cap">能力</div>
+                        <div class="scene-desc"><strong>8 大平台热点选题</strong> + AI 导演台脚本解析 + 分镜脚本生成 + 角色场景图生成</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label task">典型任务</div>
+                        <div class="scene-desc">输入剧本或灵感 → 自动生成分镜 → 生成画面 → 组装导出成片</div>
+                    </div>
+                    <div class="scene-tags">
+                        <span>热点分析</span><span>分镜脚本</span><span>角色库</span><span>场景库</span><span>视频组装</span>
+                    </div>
+                </div>
+                <div class="scene-card">
+                    <div class="scene-head">
+                        <div class="scene-icon" style="background: rgba(249,115,22,0.15);">🛒</div>
+                        <h3>跨境电商选品-发布全链路</h3>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label pain">痛点</div>
+                        <div class="scene-desc">选品靠感觉、询价靠人肉、上架内容手工搬运，多平台规格不一、铺货慢</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label cap">能力</div>
+                        <div class="scene-desc"><strong>1688 云牛顿找品 + 批量询盘</strong> → 妙手 ERP 批量采集 → AI 生成标题/描述/图片回写 → <strong>TikTok / Shopee / TEMU / OZON / 美客多 一键多平台发布</strong></div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label task">典型任务</div>
+                        <div class="scene-desc">粘贴一个商品链接 → 自动找品比价 → AI 重写详情 → 批量铺货上架，设计成本降低 80%</div>
+                    </div>
+                    <div class="scene-tags">
+                        <span>云牛顿找品</span><span>批量询盘</span><span>妙手采集</span><span>详情回写</span><span>多平台发布</span>
+                    </div>
+                </div>
+                <div class="scene-card">
+                    <div class="scene-head">
+                        <div class="scene-icon" style="background: rgba(139,92,246,0.15);">✨</div>
+                        <h3>品牌 / 个人 IP 打造</h3>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label pain">痛点</div>
+                        <div class="scene-desc">IP 形象不统一、内容不成体系、人设难以持续运营</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label cap">能力</div>
+                        <div class="scene-desc"><strong>品牌 IP 20+ 模块全案</strong>（定位/CI VI/形象/表情包）+ <strong>AIP 个人 IP 22 模块</strong>系统化打造</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label task">典型任务</div>
+                        <div class="scene-desc">输入品牌信息 → 一键生成全案设定 → 批量产出视觉内容</div>
+                    </div>
+                    <div class="scene-tags">
+                        <span>品牌 IP</span><span>个人 IP</span><span>表情包</span><span>内容矩阵</span>
+                    </div>
+                </div>
+                <div class="scene-card">
+                    <div class="scene-head">
+                        <div class="scene-icon" style="background: rgba(6,182,212,0.15);">📊</div>
+                        <h3>办公文档提效</h3>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label pain">痛点</div>
+                        <div class="scene-desc">周报、PPT、方案、表格占用大量重复时间，格式来回调</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label cap">能力</div>
+                        <div class="scene-desc"><strong>PPT / Word / Excel / HTML / 3D 模型</strong>一键生成，12 种文档格式互转，可编辑文字导出</div>
+                    </div>
+                    <div class="scene-row">
+                        <div class="scene-label task">典型任务</div>
+                        <div class="scene-desc">说主题 → 自动生成大纲 → 一键导出可编辑 PPTX</div>
+                    </div>
+                    <div class="scene-tags">
+                        <span>PPT 生成</span><span>文档转换</span><span>HTML 网页</span><span>3D 模型</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 适用人群 ========== -->
+    <section class="audience" id="audience">
+        <div class="container">
+            <h2 class="section-title">适合谁用</h2>
+            <p class="section-subtitle">不写代码，也能拥有自己的 AI 内容生产流水线</p>
+            <div class="audience-grid">
+                <div class="audience-card">
+                    <div class="audience-icon" style="background: rgba(236,72,153,0.15);">🎥</div>
+                    <div>
+                        <h3>自媒体 & 短视频创作者</h3>
+                        <p>热点选题、漫剧分镜、口播文案、配图配视频，一人完成整个内容团队的工作。</p>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon" style="background: rgba(249,115,22,0.15);">🛒</div>
+                    <div>
+                        <h3>跨境电商卖家 & 电商运营</h3>
+                        <p>1688 找品询盘、妙手采集、详情页批量生成、多平台铺货上架，选品到上架的效率翻倍。</p>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon" style="background: rgba(139,92,246,0.15);">✨</div>
+                    <div>
+                        <h3>IP 工作室 & 品牌团队</h3>
+                        <p>品牌 IP 全案、个人 IP 打造、表情包与视觉内容批量产出，体系化运营。</p>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon" style="background: rgba(6,182,212,0.15);">📊</div>
+                    <div>
+                        <h3>办公职场 & 团队</h3>
+                        <p>PPT、报告、表格、网页一键生成，定时任务自动跑，解放重复劳动。</p>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon" style="background: rgba(34,197,94,0.15);">🧑‍💻</div>
+                    <div>
+                        <h3>开发 & 技术团队</h3>
+                        <p>MCP 工具接入、HTTP API 集成、飞书机器人协同，把 AI 能力嵌入自己的系统。</p>
+                    </div>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon" style="background: rgba(99,102,241,0.15);">🚀</div>
+                    <div>
+                        <h3>AI 应用创业者</h3>
+                        <p>用工作流快速验证 AI 内容产品，沉淀可复用的流程资产，低成本试错。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 功能特性 ========== -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">功能特性</h2>
+            <p class="section-subtitle">从单点 AI 能力到全链路工作流，一站式解决内容生产需求</p>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">WORKFLOW</div>
+                    <h3>可视化节点编辑器</h3>
+                    <p>45+ AI 节点拖拽式工作流设计，覆盖输入/绘图/视频/文本/电商/IP/漫剧/PPT 全分类，支持撤销/重做、复制粘贴、自动布局，所见即所得。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <circle cx="8.5" cy="8.5" r="1.5"/>
+                            <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">IMAGE · 8 MODELS</div>
+                    <h3>AI 图片生成</h3>
+                    <p>Banana Pro、Z-Image、GPT Image、DALL-E、SeeDream、Flux、Agnes Image 等 8 大模型，文生图/图生图/风格迁移，支持 4K 超清输出。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="23 7 16 12 23 17 23 7"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">VIDEO · 8 MODELS</div>
+                    <h3>AI 视频生成</h3>
+                    <p>Sora、Veo、Kling、Seedance、MiniMax、Omni、Grok Video、Agnes Video 共 8 大模型，文生视频/图生视频/视频转视频全覆盖。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">LLM · 3 PROTOCOLS</div>
+                    <h3>LLM 深度思考 & 工具调用</h3>
+                    <p>OpenAI / Claude / Gemini 三大协议，支持深度思考、多轮对话、多模态输入（图片/PDF/文件），集成 MCP 工具与知识库调用。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon cyan">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">INTELLIGENT</div>
+                    <h3>AI 助手全屏对话</h3>
+                    <p>侧边栏 AI 助手支持全屏模式，工具调用/工作流生成/知识库搜索/专家调用/技能执行一站式体验，聊天就能完成创作。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">COLLABORATION</div>
+                    <h3>专家与数字人协作</h3>
+                    <p>30+ 预设专家多轮讨论、分阶段协作；多数字人以顺序/并行/讨论/混合 4 种模式协同，协作过程自动沉淀经验、更新能力画像。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="23 7 16 12 23 17 23 7"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">STORY</div>
+                    <h3>漫剧 / 视频分镜全链路</h3>
+                    <p>导演台脚本解析 → 视频大纲 → 分镜脚本 → 角色/场景图生成 → 分镜视频 → 组装导出，支持图片/视频双模式，一人也能做完整漫剧。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20.59 13.41 13.42 20.58a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+                            <circle cx="7" cy="7" r="1.2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">SCRIPT</div>
+                    <h3>带货脚本</h3>
+                    <p>把一件商品编译成可批量投放的短视频脚本矩阵：连一张商品图即自动反推名称/描述/卖点/人群/场景，再按功能·效果·情绪·信任·差异化·转化六维拆解卖点并绑定证据，最后以「视频模板 × 前三秒钩子」正交枚举出多个变体，每个变体自带完整分镜（时长/景别/运镜/口播/字幕）与高信息密度画面提示词，大纲与提示词可直接接视频分镜与 Seedance / Kling / Veo 等生成节点。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <line x1="7" y1="8" x2="17" y2="8"/>
+                            <line x1="7" y1="12" x2="17" y2="12"/>
+                            <line x1="7" y1="16" x2="12" y2="16"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">IMAGE TEXT</div>
+                    <h3>图文生成</h3>
+                    <p>主题一句话，标题、正文、话题标签与 N 屏配图一次产出，且第 k 段正文天然对应第 k 张图。内置小红书图文 / 电商种草 / 朋友圈九宫格 / 公众号图文 / 抖音图文五套平台预设，自动匹配画幅、屏数与平台写法约束；支持内容策略（内容目标 / 文案框架 / 前三秒钩子 / 行动号召）、视觉控制（主体 / 色彩情绪 / 大字位置）与合规审查档位，配图与文案供应商可独立配置，单屏还能全屏编辑实时改、实时写回。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 7h-9"/>
+                            <path d="M14 17H5"/>
+                            <rect x="2" y="7" width="18" height="10" rx="2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">ECOMMERCE</div>
+                    <h3>跨境电商全链路</h3>
+                    <p>1688 云牛顿找品/询盘 → 妙手 ERP 批量采集 → 13+ 平台详情页解析与竞品复刻 → AI 生成标题描述回写 → TikTok / Shopee / TEMU / OZON / 美客多 多平台一键发布，选品到上架一站打通。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">BRAND IP</div>
+                    <h3>品牌 IP 全案生成</h3>
+                    <p>根据品牌信息生成 20+ 大模块 IP 全案设定：核心定位、CI VI 系统、多视角形象、表情包、运营规划，支持异步模式进度跟踪。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon cyan">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">AIP</div>
+                    <h3>个人IP / 超级个体</h3>
+                    <p>基于 AIP 方法论的 6 大层级 22 个模块全链路方案：个人定位、价值交集、受众画像、内容矩阵、能力飞轮、增长闭环，AI 一键生成。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon blue">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">OFFICE</div>
+                    <h3>全场景办公文档生成</h3>
+                    <p>AI 一键生成 Word 文档、Excel 表格、HTML 网页、3D 交互模型、PPT 演示文稿，支持预览和下载，12 种文档格式互转。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">14 RESOURCE LIBRARIES</div>
+                    <h3>14 大专业资源库</h3>
+                    <p>角色、场景、品牌、风格、专家、数字人、技能、商品、知识、素材、提示词、选题、工作流、语义 14 类资源库，全维度储备、自定义扩展。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                            <path d="M9 3v18"/>
+                            <path d="M15 9l6-6"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">MCP · OPEN</div>
+                    <h3>MCP 外部工具调用</h3>
+                    <p>通过 MCP 协议连接任意外部工具：数据库查询、API 调用、网页抓取、飞书机器人集成，能力无限扩展，支持自定义 Skill 创建。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">AUTOMATION</div>
+                    <h3>批量并行 & 定时任务</h3>
+                    <p>工作流引擎拓扑排序、依赖解析、批量并行执行；cron 定时任务调度，7×24 自动运转；AI 工作流自动生成 + 智能优化建议。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">TOOLCHAIN</div>
+                    <h3>图像 / 文档处理工具链</h3>
+                    <p>12 种文档格式互转、图像格式转换、图片转 PDF、宫格分割、图片文字去除（自适应修复）、HTML 代码生成、3D 模型生成。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon cyan">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">GEO</div>
+                    <h3>GEO 生成式引擎优化</h3>
+                    <p>Generative Engine Optimization：不止 SEO，让品牌与内容更容易被 ChatGPT / Perplexity / Gemini 等 AI 引擎检索和引用，抢占 AI 时代的搜索入口。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">3D PIPELINE</div>
+                    <h3>3D 生成与格式互转</h3>
+                    <p>Lux3D 文生 3D / 图生 3D，GLB / OBJ / STL / PLY / 3MF 五种格式互转，远程直链转换直出 3MF 打印文件，3D 生成到 3D 打印一站完成。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="23 7 16 12 23 17 23 7"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                            <path d="M21 3l-6 6"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">VIDEO REPLICA</div>
+                    <h3>视频复刻</h3>
+                    <p>上传视频或粘贴链接，AI 解析分镜结构，自动生成复刻 prompt，重构同款视频内容——爆款拆解与二创效率倍增。</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M9 12l2 2 4-4"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">COMPLIANCE</div>
+                    <h3>多模态内容审查</h3>
+                    <p>发布前多模态合规审查与风险评估，图文内容自动过检，跨境多平台内容风险前置拦截，减少下架与封号损失。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 最新功能 ========== -->
+    <section class="latest" id="latest">
+        <div class="container">
+            <div class="latest-banner">🚀 最新上线功能</div>
+            <h2 class="section-title">让 AI 更懂你，也更能干</h2>
+            <p class="section-subtitle">从"说一句话自动干活"到"从选品到上架全自动"，锴利超级AI工作台 的能力半径持续扩张</p>
+            <div class="latest-grid">
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M2 12h20"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <h3>跨境电商选品-发布全链路</h3>
+                    <p>1688 云牛顿 × 妙手 ERP 深度融合：找品、询盘、采集、内容生成、多平台发布，一条工作流跑通跨境生意全流程。</p>
+                    <ul class="latest-points">
+                        <li>云牛顿找品：文字/链接找品，自动返回候选商品与采购建议</li>
+                        <li>批量询盘：对候选商品批量发起询价/议价/交期询盘（人工闸门确认外呼）</li>
+                        <li>妙手采集 + AI 回写：AI 生成的标题/描述/图片一键进入发布管道</li>
+                        <li>一个节点发布到 TikTok / Shopee / TEMU / OZON / 美客多</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="M21 21l-4.3-4.3"/>
+                        </svg>
+                    </div>
+                    <h3>GEO 生成式引擎优化</h3>
+                    <p>AI 搜索时代的新流量入口：优化内容结构与引用价值，让品牌更容易被 ChatGPT / Perplexity / Gemini 回答时引用。</p>
+                    <ul class="latest-points">
+                        <li>内容 GEO 诊断与优化建议一键生成</li>
+                        <li>面向生成式引擎的语义结构重写</li>
+                        <li>抢占"AI 时代的搜索排名"先发优势</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                        </svg>
+                    </div>
+                    <h3>3D 生成与格式互转</h3>
+                    <p>Lux3D 文生 3D / 图生 3D 接入，GLB / OBJ / STL / PLY / 3MF 五种格式互转，直出 3MF 打印文件，3D 内容到 3D 打印一站完成。</p>
+                    <ul class="latest-points">
+                        <li>Lux3D 生成 API 上游打通</li>
+                        <li>五种主流 3D 格式任意互转</li>
+                        <li>远程直链转换，自动下载落盘</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polygon points="23 7 16 12 23 17 23 7"/>
+                            <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
+                        </svg>
+                    </div>
+                    <h3>视频复刻 & 内容审查</h3>
+                    <p>上传视频或粘贴链接，AI 解析分镜结构生成复刻 prompt；发布前多模态合规审查，风险前置拦截。</p>
+                    <ul class="latest-points">
+                        <li>爆款视频结构化拆解，二创效率倍增</li>
+                        <li>图文多模态过检，降低下架/封号风险</li>
+                        <li>审查结果直连内容修正工作流</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                    </div>
+                    <h3>智能工作台</h3>
+                    <p>全新 UnifiedWorkbench 工作台：一句话输入 → 意图解析 → 自动建画布 → 直接执行，4 步执行面板全程可视化。</p>
+                    <ul class="latest-points">
+                        <li>「生成海鲜详情页」这类需求，一键命中行业工作流</li>
+                        <li>执行过程 4 步 stepper 透明可见，随时暂停</li>
+                        <li>历史记录自动沉淀，一键重跑</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4"/>
+                            <path d="M12 8h.01"/>
+                        </svg>
+                    </div>
+                    <h3>意图预测智能进化</h3>
+                    <p>意图解析引擎全面升级：真实置信度评估、参数槽位校验、自动澄清反问，跑错一次的成本趋近于零。</p>
+                    <ul class="latest-points">
+                        <li>低置信度自动澄清：「要横屏还是竖屏？」</li>
+                        <li>非法参数（比例/时长/页数）生成前自动纠正</li>
+                        <li>越用越懂你：画像记忆 + 执行反馈回流</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                            <circle cx="9" cy="7" r="4"/>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                        </svg>
+                    </div>
+                    <h3>AI 教练 · 智能分析</h3>
+                    <p>小锴助手新增"智能分析"教练能力：执行完自动检测画布结构、语义、质量评分，一键应用优化建议。</p>
+                    <ul class="latest-points">
+                        <li>工作流结构检测：断边 / 孤立节点自动修复</li>
+                        <li>Prompt 智能优化，出图出文质量提升</li>
+                        <li>「要不要我优化这工作流？」主动提示</li>
+                    </ul>
+                </div>
+                <div class="latest-card">
+                    <div class="latest-icon">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <polyline points="12 6 12 12 16 14"/>
+                        </svg>
+                    </div>
+                    <h3>自动化 & 开放接口</h3>
+                    <p>从单次创作到 7×24 流水线：批量并行执行、cron 定时任务、HTTP API 服务器、飞书机器人协同。</p>
+                    <ul class="latest-points">
+                        <li>定时任务：每天早上 8 点自动跑选题+出图</li>
+                        <li>17 个 REST 端点，外部程序直接调用</li>
+                        <li>飞书群聊里发需求，机器人帮你干活</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 智能进化内核 ========== -->
+    <section class="evolution" id="evolution">
+        <div class="container">
+            <div class="evo-banner">🧠 智能进化内核 · 让 AI 自己长大</div>
+            <h2 class="section-title">从「会用工具」到「会造工具、会进化」</h2>
+            <p class="section-subtitle">锴利超级AI工作台 不只是编排流水线，更在长出自有的<span class="highlight">能力器官</span>——造工具、选工具、深度思考、记忆协作、自我迭代，且每一步都让人握最终权</p>
+            <div class="features-grid">
+                <div class="feature-card evo">
+                    <div class="feature-icon pink">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2-2 2.6-2.6z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">TOOLFORGE</div>
+                    <h3>AI 工具工厂</h3>
+                    <p>当现有节点 / 技能都覆盖不了你的需求，AI 助手会主动"造工具"：缺口探测 → 生成规格 → 真跑验证 → 注册为可复用技能，跨重启长期保留。</p>
+                    <ul class="latest-points">
+                        <li>缺口探测：识别"该造工具而非搭长工作流"的场景</li>
+                        <li>真跑验证：先实跑通过再注册，杜绝空壳工具</li>
+                        <li>默认关闭，等你一键启用，安全可控</li>
+                    </ul>
+                </div>
+                <div class="feature-card evo">
+                    <div class="feature-icon cyan">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">MCP INTELLIGENCE</div>
+                    <h3>AI 智能选 MCP</h3>
+                    <p>不再手动翻配置。说出意图，AI 自动匹配并预填 MCP 模板（包名 / 参数 / 协议），只向你要令牌；匹配不到时用工具工厂自举兜底。</p>
+                    <ul class="latest-points">
+                        <li>意图识别：读文件 / 抓网页 / 联网搜索一键对位</li>
+                        <li>只索凭据：可推断字段全自动，敏感信息才问你</li>
+                        <li>自举兜底：未知能力自动锻造为自定义工具</li>
+                    </ul>
+                </div>
+                <div class="feature-card evo">
+                    <div class="feature-icon purple">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.2 1 2V18h6v-1.3c0-.8.4-1.5 1-2A7 7 0 0 0 12 2z"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">DEEP THINKING</div>
+                    <h3>深度思考模式</h3>
+                    <p>答案不再是第一反应。AI 按"分析 → 规划 → 执行 → 反思"四阶段结构化推理，带 critic 自检与子问题分解，复杂问题想透再答。</p>
+                    <ul class="latest-points">
+                        <li>四阶段可见：思考过程透明呈现</li>
+                        <li>自我质疑：预判遗漏、反例与偏见</li>
+                        <li>子问题分解：难任务拆开逐个击破</li>
+                    </ul>
+                </div>
+                <div class="feature-card evo">
+                    <div class="feature-icon green">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M12 8v4M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">SELF-EVOLVING</div>
+                    <h3>数字人记忆与进化</h3>
+                    <p>多数字人带持久记忆协作，经验与能力画像随每次协作自动沉淀。开启"自主进化"后，以你的品牌契合度为真实闸门自我迭代，结构级改动须经你审批。</p>
+                    <ul class="latest-points">
+                        <li>经验沉淀：协作过程自动长成能力画像</li>
+                        <li>以品牌契合度为闸门，不靠 AI 自夸</li>
+                        <li>结构级进化默认待审，人始终握最终权</li>
+                    </ul>
+                </div>
+                <div class="feature-card evo">
+                    <div class="feature-icon orange">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 11l3 3L22 4"/>
+                            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">TASK ENGINE</div>
+                    <h3>任务引擎与复盘</h3>
+                    <p>把大目标拆成可验收的子任务，自动推进；每轮执行后对照验收标准复盘，沉淀案例库与人格记忆，越做越顺、越做越快。</p>
+                    <ul class="latest-points">
+                        <li>OKR 式拆解：大目标 → 可校验子任务</li>
+                        <li>复盘归档：成功即入库，下次更便宜</li>
+                        <li>反馈回流：数据驱动调优执行参数</li>
+                    </ul>
+                </div>
+                <div class="feature-card evo">
+                    <div class="feature-icon blue">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="7"/>
+                            <path d="M21 21l-4.3-4.3"/>
+                            <path d="M11 8v6M8 11h6"/>
+                        </svg>
+                    </div>
+                    <div class="feature-meta">GAP SCANNER</div>
+                    <h3>差距自感知与自举</h3>
+                    <p>真正进化的标志不是"你喊它造才造"，而是能主动发现自己的能力缺口。系统周期扫描"你反复想做、现有节点 / 技能却覆盖不了"的意图簇，聚类计数达阈值就自动派单锻造（self-discovered），缺口自己发现、自己补。</p>
+                    <ul class="latest-points">
+                        <li>意图聚类：相似需求自动归并，识别真实能力缺口</li>
+                        <li>阈值触发：反复出现才动手，避免一次性念头空烧</li>
+                        <li>自举升级：缺的能力自己造，跨重启持续累积</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FAQ ========== -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2 class="section-title">常见问题</h2>
+            <p class="section-subtitle">关于安装、数据与使用的疑问，这里都有答案</p>
+            <div class="faq-list">
+                <div class="faq-item">
+                    <div class="faq-q">我的创作数据存在哪里？安全吗？<span class="faq-toggle">+</span></div>
+                    <div class="faq-a"><p>所有数据（工作流、14 类资源库、生成的作品）都保存在你的电脑本地，不上传任何服务器。断网也能正常使用，创意资产完全私有。</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">需要注册账号或付费订阅吗？<span class="faq-toggle">+</span></div>
+                    <div class="faq-a"><p>桌面客户端完全免费下载。使用 AI 生成功能时，只需在「供应商管理」中配置你自己的 API Key（OpenAI / Gemini / Claude 等），按你的用量计费，无任何平台抽成。</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">支持哪些 AI 模型？<span class="faq-toggle">+</span></div>
+                    <div class="faq-a"><p>图像生成支持 Banana Pro、Z-Image、GPT Image、DALL-E、SeeDream、Flux、Agnes Image 等 8 大模型；视频支持 Sora、Veo、Kling、Seedance、MiniMax、Omni、Grok Video 等 8 大模型；文本对话支持 OpenAI / Claude / Gemini 三大协议，均可在供应商管理中添加自定义线路。</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">不会写代码、不会搭流程，能用吗？<span class="faq-toggle">+</span></div>
+                    <div class="faq-a"><p>完全可以。打开「智能工作台」直接说需求，比如"生成海鲜电商详情页"，AI 会自动解析意图、搭建工作流并执行；也可以从工作流库直接加载预设模板，改改参数就能跑。</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">妙手 ERP / 1688 云牛顿功能需要什么前置条件？<span class="faq-toggle">+</span></div>
+                    <div class="faq-a"><p>妙手 ERP 功能需要你自己的妙手开放平台 AppKey / AppSecret 并配置 IP 白名单；1688 云牛顿功能需要你的 1688 采购账号授权。询盘外呼等敏感操作默认设有人工确认闸门，AI 不会未经你确认擅自操作。</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-q">能否接入我的外部系统或自动化流程？<span class="faq-toggle">+</span></div>
+                    <div class="faq-a"><p>支持。内置 HTTP API 服务器（17 个 REST 端点）可供外部程序调用；通过 MCP 协议可连接任意外部工具；飞书机器人支持在群聊里直接下达创作需求。</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 下载 ========== -->
+    <section class="download-section" id="download">
+        <div class="container">
+            <h2 class="section-title">免费下载</h2>
+            <p class="section-subtitle">Windows 平台支持 · 本地安装 · 数据完全私有</p>
+            <div class="download-card">
+                <div class="download-option">
+                    <div class="os-icon">🖥️</div>
+                    <h3>Windows</h3>
+                    <p>支持 Windows 10 及以上版本</p>
+                    <div class="version" id="versionDisplay">版本 v0.3.1.8</div>
+                    <div class="update-time" id="updateTime">📅 更新时间：加载中...</div>
+                    <div class="download-stats">
+                        <span id="downloadCount" class="download-count">📥 累计下载 0 次</span>
+                    </div>
+                    <button id="downloadBtn" class="btn btn-primary" style="cursor: pointer; position: relative; z-index: 100;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        下载安装包
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== 联系我们 ========== -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">联系我们</h2>
+            <p class="section-subtitle">工具使用、商务合作、OPC 孵化咨询，随时找到我们</p>
+            <div class="contact-grid">
+                <div>
+                    <div class="contact-info-card">
+                        <div class="contact-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="label">咨询热线</span>
+                            <a class="value" href="tel:18589224864">18589224864</a>
+                        </div>
+                    </div>
+                    <div class="contact-info-card">
+                        <div class="contact-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/>
+                                <path d="m22 7-10 6L2 7"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="label">商务邮箱</span>
+                            <a class="value" href="mailto:871722910@qq.com">871722910@qq.com</a>
+                        </div>
+                    </div>
+                    <div class="contact-info-card">
+                        <div class="contact-icon">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                                <circle cx="12" cy="10" r="3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <span class="label">公司地址</span>
+                            <span class="value">阳江市阳东区穗禾科技园</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form-card">
+                    <h3>留下你的需求</h3>
+                    <p class="form-desc">提交后将保存到后台并通知我们，会在 1 个工作日内回复</p>
+                    <form class="contact-form" id="contactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cf-name">您的姓名 *</label>
+                                <input type="text" id="cf-name" name="name" placeholder="请输入您的姓名" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cf-contact">联系方式 *</label>
+                                <input type="text" id="cf-contact" name="contact" placeholder="手机 / 微信 / 邮箱" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cf-topic">感兴趣的内容</label>
+                            <select id="cf-topic" name="topic">
+                                <option value="锴利超级AI工作台 使用咨询">锴利超级AI工作台 使用咨询</option>
+                                <option value="跨境电商全链路合作">跨境电商全链路合作</option>
+                                <option value="品牌 / 个人IP打造">品牌 / 个人IP打造</option>
+                                <option value="短视频 / 漫剧创作">短视频 / 漫剧创作</option>
+                                <option value="OPC 一人公司孵化">OPC 一人公司孵化</option>
+                                <option value="其他商务合作">其他商务合作</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cf-message">留言内容</label>
+                            <textarea id="cf-message" name="message" rows="4" placeholder="请描述您的需求..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                            提交咨询
+                        </button>
+                        <div class="form-success" id="formSuccess">✓ 提交成功！我们会在 1 个工作日内通过您留下的联系方式回复</div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <ul class="footer-links">
+                <li><a href="#why">产品优势</a></li>
+                <li><a href="#steps">使用流程</a></li>
+                <li><a href="#scenes">应用场景</a></li>
+                <li><a href="#features">功能特性</a></li>
+                <li><a href="#evolution">智能进化</a></li>
+                <li><a href="#latest">最新功能</a></li>
+                <li><a href="#faq">常见问题</a></li>
+                <li><a href="#contact">联系我们</a></li>
+                <li><a href="#" target="_blank" rel="noopener">图片下载器</a></li>
+            </ul>
+            <p>锴利超级AI工作台 - 全场景人-多Agent协同工作台</p>
+            <p style="margin-top:10px;font-size:13px;color:var(--text-secondary);opacity:0.7;">© 2026 阳江市锴利国际贸易有限公司</p>
+        </div>
+    </footer>
+
+    <button class="back-to-top" id="backToTop" aria-label="回到顶部">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="18 15 12 9 6 15"/>
+        </svg>
+    </button>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== 移动端汉堡菜单 =====
+            var navToggle = document.getElementById('navToggle');
+            var navMenu = document.getElementById('navMenu');
+            if (navToggle && navMenu) {
+                navToggle.addEventListener('click', function() {
+                    var open = navMenu.classList.toggle('open');
+                    navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                });
+                navMenu.addEventListener('click', function(e) {
+                    if (e.target.tagName === 'A') {
+                        navMenu.classList.remove('open');
+                        navToggle.setAttribute('aria-expanded', 'false');
+                    }
+                });
+            }
+
+            // ===== 联系我们表单（优先 POST 到 contact.php 保存到 contacts.json，无 PHP 环境时 mailto 兜底） =====
+            var contactForm = document.getElementById('contactForm');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var name = document.getElementById('cf-name').value.trim();
+                    var contact = document.getElementById('cf-contact').value.trim();
+                    var topic = document.getElementById('cf-topic').value;
+                    var message = document.getElementById('cf-message').value.trim();
+                    var tip = document.getElementById('formSuccess');
+
+                    fetch('contact.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: name, contact: contact, topic: topic, message: message })
+                    }).then(function(res) {
+                        return res.json().catch(function() { throw new Error('bad response'); });
+                    }).then(function(data) {
+                        if (!data || !data.success) {
+                            throw new Error((data && data.error) || '保存失败');
+                        }
+                        if (tip) {
+                            tip.textContent = '✓ 提交成功！我们会在 1 个工作日内通过您留下的联系方式回复';
+                            tip.classList.add('show');
+                        }
+                        contactForm.reset();
+                    }).catch(function() {
+                        // 服务器不可用（如本地直接打开页面），回退 mailto
+                        var subject = encodeURIComponent('【官网咨询】' + topic + ' - ' + name);
+                        var body = encodeURIComponent('姓名：' + name + '\n联系方式：' + contact + '\n感兴趣的内容：' + topic + '\n留言内容：' + (message || '（无）'));
+                        if (tip) {
+                            tip.textContent = '✓ 已唤起邮件客户端，点击发送即可完成提交；若未唤起，请直接发送邮件至 871722910@qq.com';
+                            tip.classList.add('show');
+                        }
+                        window.location.href = 'mailto:871722910@qq.com?subject=' + subject + '&body=' + body;
+                    });
+                });
+            }
+
+            // ===== 回到顶部 =====
+            var backToTop = document.getElementById('backToTop');
+            if (backToTop) {
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 600) {
+                        backToTop.classList.add('show');
+                    } else {
+                        backToTop.classList.remove('show');
+                    }
+                }, { passive: true });
+                backToTop.addEventListener('click', function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
+
+            // ===== FAQ 折叠 =====
+            document.querySelectorAll('.faq-item .faq-q').forEach(function(q) {
+                q.addEventListener('click', function() {
+                    var item = q.parentElement;
+                    var wasOpen = item.classList.contains('open');
+                    // 关闭其它项
+                    document.querySelectorAll('.faq-item.open').forEach(function(o) {
+                        o.classList.remove('open');
+                    });
+                    if (!wasOpen) item.classList.add('open');
+                });
+            });
+
+            // ===== 滚动淡入动画 =====
+            var revealEls = document.querySelectorAll('.section-title, .section-subtitle, .hero .badge, .hero h1, .hero p, .hero-stats, .why-card, .step-card, .scene-card, .audience-card, .feature-card, .latest-card, .faq-item, .download-option, .contact-info-card, .contact-form-card');
+            if ('IntersectionObserver' in window) {
+                revealEls.forEach(function(el) { el.classList.add('reveal'); });
+                var observer = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(entry) {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add('visible');
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+                revealEls.forEach(function(el) { observer.observe(el); });
+            }
+        })();
+    </script>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ===== 配置 =====
+            var DOWNLOADS_DIR = 'downloads/';
+            var VERSION_JSON = 'version.json';
+            var EXE_REGEX = /Lijiancheng_(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?_x64-setup\.exe/i;
+            var DEFAULT_VERSION = {
+                displayVersion: '0.3.1.57',
+                filename: 'Lijiancheng_0.3.1.57_x64-setup.exe'
+            };
+
+            var latestExe = null;
+            var currentDownloads = 0;
+            var currentFileSize = '';
+
+            function parseVersion(filename) {
+                var m = filename.match(EXE_REGEX);
+                if (!m) return null;
+                var major = parseInt(m[1], 10);
+                var minor = parseInt(m[2], 10);
+                var patch = parseInt(m[3], 10);
+                var build = m[4] ? parseInt(m[4], 10) : 0;
+                return {
+                    full: major + '.' + minor + '.' + patch + (m[4] ? '.' + m[4] : ''),
+                    display: major + '.' + minor + '.' + patch,
+                    compare: major * 1000000 + minor * 10000 + patch * 100 + build
+                };
+            }
+
+            function parseExeFromHtml(htmlText) {
+                var exeFiles = [];
+                // 1) 先抓 href 中的 exe 文件名
+                var linkRegex = /href="([^"]+\.exe)"/gi;
+                var match;
+                while ((match = linkRegex.exec(htmlText)) !== null) {
+                    var name = decodeURIComponent(match[1].split('/').pop());
+                    if (EXE_REGEX.test(name)) {
+                        exeFiles.push({ name: name, downloads: 0, size: '', time: '' });
+                    }
+                }
+                // 2) 尝试从 Apache autoindex 表格中匹配时间戳（格式：YYYY-MM-DD HH:MM）
+                var timeRegex = /(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})/g;
+                var timeMatches = htmlText.match(timeRegex);
+                if (timeMatches && exeFiles.length > 0) {
+                    // 通常 autoindex 表格里 exe 行附近会出现时间
+                    // 取最晚的一个时间作为最新版本时间
+                    var latestTime = timeMatches[timeMatches.length - 1];
+                    // 尝试给每个 exe 行匹配最近的时间（粗略：按出现顺序一一对应）
+                    var lines = htmlText.split('\n');
+                    var fileTimeMap = {};
+                    var lastTime = '';
+                    for (var i = 0; i < lines.length; i++) {
+                        var line = lines[i];
+                        var tMatch = line.match(/(\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})/);
+                        if (tMatch) {
+                            lastTime = tMatch[1];
+                        }
+                        var fMatch = line.match(/Lijiancheng_\d+\.\d+\.\d+(?:\.\d+)?_x64-setup\.exe/i);
+                        if (fMatch && lastTime) {
+                            fileTimeMap[fMatch[0]] = lastTime;
+                        }
+                    }
+                    for (var j = 0; j < exeFiles.length; j++) {
+                        if (fileTimeMap[exeFiles[j].name]) {
+                            exeFiles[j].time = fileTimeMap[exeFiles[j].name];
+                        } else if (latestTime) {
+                            exeFiles[j].time = latestTime;
+                        }
+                    }
+                }
+                return exeFiles;
+            }
+
+            function parseExeFromJsonData(items) {
+                var exeFiles = [];
+                for (var i = 0; i < items.length; i++) {
+                    var item = items[i];
+                    var name = item.name || item;
+                    if (typeof name === 'string' && EXE_REGEX.test(name)) {
+                        exeFiles.push({
+                            name: name,
+                            downloads: item.downloads || 0,
+                            size: item.size || '',
+                            time: item.time || ''
+                        });
+                    }
+                }
+                return exeFiles;
+            }
+
+            function parseExeFromJsonString(jsonText) {
+                try {
+                    return parseExeFromJsonData(JSON.parse(jsonText));
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function findLatest(exeFiles) {
+                if (!exeFiles || exeFiles.length === 0) return null;
+                var parsed = exeFiles.map(function(f) {
+                    return { 
+                        filename: f.name, 
+                        version: parseVersion(f.name),
+                        downloads: f.downloads || 0,
+                        size: f.size || '',
+                        time: f.time || ''
+                    };
+                }).filter(function(p) { return p.version !== null; });
+                if (parsed.length === 0) return null;
+                parsed.sort(function(a, b) { return b.version.compare - a.version.compare; });
+                return parsed[0];
+            }
+
+            // ===== 五种数据源 =====
+
+            // 1. PHP 脚本扫描（宝塔最稳）
+            function fetchPhpList() {
+                return fetch(DOWNLOADS_DIR + 'list.php', { cache: 'no-store' })
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        // 新格式: {files: [...], totalDownloads: N}
+                        // 兼容旧格式: [...]
+                        var list = data.files || data;
+                        if (!Array.isArray(list)) throw new Error('返回不是数组');
+                        return {
+                            files: parseExeFromJsonData(list),
+                            totalDownloads: data.totalDownloads || 0
+                        };
+                    });
+            }
+
+            // 2. filelist.json（cron 定时生成）
+            function fetchFilelistJson() {
+                return fetch(DOWNLOADS_DIR + 'filelist.json', { cache: 'no-store' })
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        var list = data.files || data;
+                        if (!Array.isArray(list)) throw new Error('格式错误');
+                        return parseExeFromJsonData(list);
+                    });
+            }
+
+            // 3. downloads/ 目录浏览（Apache autoindex）
+            function fetchDirectoryListing() {
+                return fetch(DOWNLOADS_DIR, { cache: 'no-store' })
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        var ct = (res.headers.get('content-type') || '').toLowerCase();
+                        return res.text().then(function(text) {
+                            if (ct.indexOf('json') !== -1) return parseExeFromJsonString(text);
+                            return parseExeFromHtml(text);
+                        });
+                    });
+            }
+
+            // 4. version.json（手动配置兜底）
+            function fetchVersionJson() {
+                return fetch(VERSION_JSON, { cache: 'no-store' })
+                    .then(function(res) {
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        return res.json();
+                    })
+                    .then(function(data) {
+                        return {
+                            displayVersion: data.displayVersion || data.version || '',
+                            filename: data.filename || data.url || '',
+                            url: data.url || data.filename || '',
+                            size: data.size || '',
+                            updatedAt: data.updatedAt || data.updateTime || ''
+                        };
+                    });
+            }
+
+            function updateUI(info) {
+                if (!info) return;
+                var el = document.getElementById('versionDisplay');
+                if (el && info.displayVersion) {
+                    el.textContent = '版本 v' + info.displayVersion;
+                }
+                // 显示下载次数
+                var countEl = document.getElementById('downloadCount');
+                if (countEl && typeof info.downloads === 'number') {
+                    currentDownloads = info.downloads;
+                    countEl.textContent = '📥 累计下载 ' + currentDownloads.toLocaleString() + ' 次';
+                }
+                // 显示文件大小
+                var sizeEl = document.getElementById('fileSize');
+                if (sizeEl && info.size) {
+                    currentFileSize = info.size;
+                    sizeEl.textContent = '📦 ' + info.size;
+                }
+                // 显示更新时间
+                var timeEl = document.getElementById('updateTime');
+                if (timeEl) {
+                    if (info.updateTime) {
+                        timeEl.textContent = '📅 更新时间：' + info.updateTime;
+                        timeEl.style.display = '';
+                    } else if (info.updateTime === '') {
+                        timeEl.textContent = '📅 更新时间：暂无数据';
+                        timeEl.style.display = '';
+                    } else {
+                        timeEl.textContent = '';
+                        timeEl.style.display = 'none';
+                    }
+                }
+            }
+
+            function triggerDownload(filename, url) {
+                var href = url || (DOWNLOADS_DIR + filename);
+                // 先增加下载计数
+                incrementCount(filename);
+                var a = document.createElement('a');
+                a.href = href;
+                a.download = filename || href;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            // 调用后端 API 增加下载计数
+            function incrementCount(filename) {
+                fetch(DOWNLOADS_DIR + 'count.php?action=increment&file=' + encodeURIComponent(filename), {
+                    cache: 'no-store'
+                }).then(function(res) { return res.json(); })
+                .then(function(data) {
+                    if (data && data.count !== undefined) {
+                        currentDownloads = data.count;
+                        var countEl = document.getElementById('downloadCount');
+                        if (countEl) {
+                            countEl.textContent = '📥 累计下载 ' + currentDownloads.toLocaleString() + ' 次';
+                        }
+                    }
+                }).catch(function() {});
+            }
+
+            // 从 exe 列表中找最新版本并设置
+            function useLatestFromList(exeFiles, sourceName, totalDownloads) {
+                var latest = findLatest(exeFiles);
+                if (!latest) throw new Error('无匹配 exe');
+                latestExe = {
+                    filename: latest.filename,
+                    url: DOWNLOADS_DIR + latest.filename
+                };
+                // 优先使用累计下载数（跨版本），否则使用文件自带的 downloads
+                var downloads = (typeof totalDownloads === 'number' && totalDownloads > 0) ? totalDownloads : latest.downloads;
+                updateUI({
+                    displayVersion: latest.version.full,
+                    downloads: downloads,
+                    size: latest.size,
+                    updateTime: latest.time
+                });
+                console.log('[锴利超级AI工作台] ' + sourceName + '成功，最新版本:', latest.version.full, '累计下载:', downloads);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                var btn = document.getElementById('downloadBtn');
+
+                function onDownloadClick(e) {
+                    e.preventDefault();
+                    if (latestExe) {
+                        triggerDownload(latestExe.filename, latestExe.url);
+                    } else {
+                        alert('正在获取版本信息，请稍后再试...');
+                    }
+                }
+                if (btn) btn.addEventListener('click', onDownloadClick);
+
+                // ===== 五级兜底链 =====
+                fetchPhpList()
+                    .then(function(result) { 
+                        // 新格式: {files: [...], totalDownloads: N}
+                        return useLatestFromList(result.files, 'PHP 扫描', result.totalDownloads); 
+                    })
+                    .catch(function() {
+                        console.log('[锴利超级AI工作台] PHP 脚本不可用，尝试 filelist.json...');
+                        return fetchFilelistJson()
+                            .then(function(files) { return useLatestFromList(files, 'filelist.json'); });
+                    })
+                    .catch(function() {
+                        console.log('[锴利超级AI工作台] filelist.json 不可用，尝试目录浏览...');
+                        return fetchDirectoryListing()
+                            .then(function(files) { return useLatestFromList(files, '目录浏览'); });
+                    })
+                    .catch(function() {
+                        console.log('[锴利超级AI工作台] 目录浏览失败，尝试 version.json...');
+                        return fetchVersionJson().then(function(info) {
+                            if (info && info.filename) {
+                                latestExe = {
+                                    filename: info.filename,
+                                    url: info.url || (DOWNLOADS_DIR + info.filename)
+                                };
+                                // 从 version.json 获取基础信息
+                                updateUI({
+                                    displayVersion: info.displayVersion,
+                                    size: info.size || '',
+                                    updateTime: info.updatedAt || info.updateTime || ''
+                                });
+                                // 获取累计下载次数
+                                fetch(DOWNLOADS_DIR + 'count.php?action=get_count', { cache: 'no-store' })
+                                    .then(function(r) { return r.json(); })
+                                    .then(function(d) {
+                                        if (d && typeof d.count === 'number') {
+                                            updateUI({ downloads: d.count });
+                                        }
+                                    }).catch(function() {});
+                                console.log('[锴利超级AI工作台] version.json 版本:', info.displayVersion);
+                            } else {
+                                throw new Error('version.json 无效');
+                            }
+                        });
+                    })
+                    .catch(function() {
+                        console.log('[锴利超级AI工作台] 使用默认版本');
+                        latestExe = {
+                            filename: DEFAULT_VERSION.filename,
+                            url: DOWNLOADS_DIR + DEFAULT_VERSION.filename
+                        };
+                        updateUI({ displayVersion: DEFAULT_VERSION.displayVersion });
+                    });
+            });
+        })();
+    </script>
+</body>
+</html>

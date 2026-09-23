@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>入门教程 · 锴利超级AI工作台</title>
+<meta name="description" content="锴利超级AI工作台 新手入门教程：从下载配置到第一条工作流，68 个节点全景清单、20 类预设工作流速查、小白常见工作流派方与报错自查手册。">
+<meta name="theme-color" content="#0f0f23">
+<link rel="icon" href="../assets/img/logo.png">
+<link rel="apple-touch-icon" href="../assets/img/logo.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#6366f1;--primary-dark:#4f46e5;--secondary:#8b5cf6;--accent:#ec4899;
+  --bg1:#0f0f23;--bg2:#1a1a2e;--card:rgba(30,30,50,.8);
+  --text:#ffffff;--text2:#a0a0b0;--border:rgba(255,255,255,.1);
+  --success:#22c55e;--cyan:#06b6d4;--orange:#f97316;--warn:#fbbf24;
+}
+html{scroll-behavior:smooth;scroll-padding-top:96px}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'PingFang SC','Microsoft YaHei',sans-serif;
+  background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);
+  color:var(--text);line-height:1.7;min-height:100vh;overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+:focus-visible{outline:2px solid var(--primary);outline-offset:2px;border-radius:6px}
+/* 内联代码：全局兜底，.md / .faq 内的同名规则优先级更高会覆盖 */
+code{background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px;font-family:Consolas,Monaco,monospace;font-size:.92em;color:#a5f3fc}
+/* pre 内部的 code 必须还原成纯代码块样式。
+   ⚠️ 只写「pre code」压不住「.md code」（0,1,1 > 0,0,2）—— 而本项目里 .md 就挂在 pre 元素自己身上，
+   所以必须显式补「pre.md code」，否则代码块会被渲染成「带底色的行内代码」。
+   注：本注释刻意不写尖括号标签，避免静态检查器把注释里的标签当成真标签。 */
+pre code,pre.md code{background:none;padding:0;border-radius:0;color:#e2e8f0}
+
+/* ---------- 顶栏 ---------- */
+nav.topbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(15,15,35,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+nav.topbar .container{display:flex;justify-content:space-between;align-items:center;padding:13px 20px;gap:16px}
+nav.topbar .logo{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;white-space:nowrap}
+nav.topbar .logo .badge-t{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;background:rgba(99,102,241,.18);color:#a5b4fc;border:1px solid rgba(99,102,241,.4)}
+nav.topbar .brand-name{background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+nav.topbar .links{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+nav.topbar .links a{font-size:13.5px;color:var(--text2);padding:7px 12px;border-radius:8px;transition:.25s;white-space:nowrap}
+nav.topbar .links a:hover{color:#fff;background:rgba(255,255,255,.06)}
+nav.topbar .links a.cta{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#fff;font-weight:600;box-shadow:0 4px 14px rgba(99,102,241,.35)}
+nav.topbar .links a.admin{border:1px solid rgba(6,182,212,.45);background:rgba(6,182,212,.1);color:#67e8f9;font-weight:600}
+
+/* ---------- Hero ---------- */
+header.hero{padding:140px 0 60px;text-align:center;position:relative;overflow:hidden}
+header.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(99,102,241,.16) 0%,transparent 45%),radial-gradient(circle,rgba(139,92,246,.1) 0%,transparent 55%);animation:hp 12s ease-in-out infinite}
+@keyframes hp{0%,100%{transform:scale(1);opacity:.55}50%{transform:scale(1.08);opacity:.85}}
+header.hero .inner{position:relative;z-index:1}
+header.hero h1{font-size:44px;font-weight:800;line-height:1.28;margin-bottom:18px}
+header.hero h1 .grad{background:linear-gradient(135deg,var(--primary),var(--secondary) 55%,var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header.hero p{font-size:17px;color:var(--text2);max-width:820px;margin:0 auto 26px}
+.hero-chips{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.hero-chips span{font-size:13px;padding:6px 14px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text2)}
+
+/* ---------- 布局 ---------- */
+.layout{display:flex;gap:34px;align-items:flex-start;padding-bottom:80px}
+aside.toc{position:sticky;top:88px;width:224px;flex-shrink:0;max-height:calc(100vh - 110px);overflow-y:auto;padding-right:6px}
+aside.toc::-webkit-scrollbar{width:6px}
+aside.toc::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:3px}
+aside.toc .toc-title{font-size:12px;letter-spacing:.12em;color:var(--text2);font-weight:700;padding:0 12px 10px}
+aside.toc a{display:block;font-size:13.5px;color:var(--text2);padding:7px 12px;border-radius:8px;border-left:2px solid transparent;transition:.2s}
+aside.toc a:hover{color:#fff;background:rgba(255,255,255,.05)}
+aside.toc a.active{color:#c7d2fe;background:rgba(99,102,241,.14);border-left-color:var(--primary);font-weight:600}
+main{flex:1;min-width:0}
+section.blk{margin-bottom:64px;scroll-margin-top:92px}
+.sec-head{position:relative;padding-bottom:18px;margin-bottom:26px;border-bottom:1px solid var(--border)}
+.sec-head::after{content:'';position:absolute;left:0;bottom:-1px;width:88px;height:2px;border-radius:2px;background:linear-gradient(90deg,var(--primary),var(--secondary),var(--accent))}
+.sec-head .kicker{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;color:#a5b4fc;background:rgba(99,102,241,.14);border:1px solid rgba(99,102,241,.32);padding:3px 11px;border-radius:999px;margin-bottom:12px}
+.sec-head h2{font-size:28px;font-weight:700;margin-bottom:9px;letter-spacing:-.2px;color:#fff}
+.sec-head p{color:var(--text2);font-size:14.5px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;transition:.3s}
+.card:hover{border-color:rgba(99,102,241,.5)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+
+/* ---------- 四步上手 ----------
+   两列而非四列：四列时每张卡内宽不足 170px，中文句会被切碎。
+   每步一个 --sa/--sb 主色对（靛 -> 紫 -> 品红 -> 青绿），形成「在推进」的观感。
+   ⚠️ li 不可用 display:flex —— 行内的加粗标签会变成独立 flex 子项，被 gap 撑出缝隙。
+   注：本注释刻意不写尖括号标签，避免静态检查器把注释里的标签当成真标签。 */
+.steps{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.step{--sa:#6366f1;--sb:#8b5cf6;--sg:rgba(99,102,241,.2);
+  position:relative;background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:24px 26px 26px;overflow:hidden;
+  transition:transform .3s,border-color .3s,box-shadow .3s}
+.step.s1{--sa:#6366f1;--sb:#8b5cf6;--sg:rgba(99,102,241,.22)}
+.step.s2{--sa:#8b5cf6;--sb:#ec4899;--sg:rgba(139,92,246,.22)}
+.step.s3{--sa:#ec4899;--sb:#06b6d4;--sg:rgba(236,72,153,.22)}
+.step.s4{--sa:#06b6d4;--sb:#22c55e;--sg:rgba(6,182,212,.22)}
+.step::before{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:linear-gradient(90deg,var(--sa),var(--sb))}
+.step::after{content:'';position:absolute;right:-56px;top:-56px;width:168px;height:168px;border-radius:50%;
+  background:radial-gradient(circle,var(--sg) 0%,transparent 70%);opacity:.55;pointer-events:none}
+.step:hover{transform:translateY(-4px);border-color:var(--sa);box-shadow:0 14px 36px var(--sg)}
+.step .sh{display:flex;align-items:center;gap:12px;margin-bottom:11px;position:relative;z-index:1}
+.step .n{flex-shrink:0;width:38px;height:38px;border-radius:12px;
+  background:linear-gradient(135deg,var(--sa),var(--sb));color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:800;font-size:16px;
+  box-shadow:0 6px 16px var(--sg)}
+.step h3{flex:1;min-width:0;font-size:17.5px;font-weight:700;line-height:1.4}
+.step .tag{flex-shrink:0;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;border:1px solid;white-space:nowrap}
+.step .tag.must{color:#fcd34d;background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.32)}
+.step .tag.quick{color:#86efac;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.32)}
+.step>p{font-size:14px;color:var(--text2);position:relative;z-index:1}
+.step ul{list-style:none;margin-top:14px;display:flex;flex-direction:column;gap:9px;position:relative;z-index:1}
+.step ul li{font-size:13.5px;color:var(--text2);position:relative;padding-left:17px;line-height:1.7}
+.step ul li::before{content:'';position:absolute;left:0;top:8px;width:6px;height:6px;border-radius:50%;background:var(--sa);box-shadow:0 0 0 3px var(--sg)}
+.step ul li b{color:#fff;font-weight:600}
+
+/* ---------- 界面导览 ---------- */
+.ui-map{display:grid;grid-template-columns:1fr;gap:14px}
+.ui-row{display:flex;gap:14px;align-items:flex-start;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:12px;padding:16px 18px}
+.ui-row .tag{flex-shrink:0;font-size:12px;font-weight:700;padding:3px 10px;border-radius:6px;background:rgba(99,102,241,.16);color:#a5b4fc;white-space:nowrap}
+.ui-row .txt{font-size:13.5px;color:var(--text2)}
+.ui-row .txt b{color:#fff;font-weight:600}
+
+/* ---------- 工作流配方 ---------- */
+.recipe{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:.3s}
+.recipe:hover{border-color:rgba(236,72,153,.45);box-shadow:0 10px 32px rgba(236,72,153,.1)}
+.recipe .rh{display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+.recipe .rh .idx{width:34px;height:34px;border-radius:10px;background:rgba(236,72,153,.16);color:#f9a8d4;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.recipe .rh h3{font-size:17.5px}
+.recipe .rh .lv{font-size:11.5px;padding:2px 9px;border-radius:999px;border:1px solid var(--border);color:var(--text2)}
+.recipe .rh .lv.easy{color:#86efac;border-color:rgba(34,197,94,.4);background:rgba(34,197,94,.1)}
+.recipe .rh .lv.mid{color:#fcd34d;border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.1)}
+.recipe .line{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-bottom:14px;font-size:13.5px}
+.recipe .line .node{background:rgba(99,102,241,.14);border:1px solid rgba(99,102,241,.34);color:#c7d2fe;padding:4px 11px;border-radius:8px;font-weight:600}
+.recipe .line .arrow{color:rgba(255,255,255,.3)}
+.recipe dl{display:flex;flex-direction:column;gap:9px}
+.recipe dl .r{display:flex;gap:10px;font-size:13.5px}
+.recipe dl .r dt{flex-shrink:0;width:62px;font-weight:700;font-size:12.5px;padding-top:2px}
+.recipe dl .r dd{color:var(--text2);flex:1;min-width:0}
+.recipe dl .r dd b{color:#fff;font-weight:600}
+.recipe .r.how dt{color:var(--cyan)}
+.recipe .r.key dt{color:var(--success)}
+.recipe .r.trap dt{color:var(--orange)}
+
+/* ---------- 节点表 ---------- */
+.node-tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+.node-tools input,.node-tools select{background:rgba(15,15,35,.7);border:1px solid var(--border);color:#fff;border-radius:10px;padding:10px 14px;font-size:13.5px;font-family:inherit;outline:none;transition:.25s}
+.node-tools input{flex:1;min-width:200px}
+.node-tools input:focus,.node-tools select:focus{border-color:var(--primary)}
+.node-tools select option{background:var(--bg2);color:#fff}
+.cat{margin-bottom:18px;border:1px solid var(--border);border-radius:14px;overflow:hidden;background:rgba(255,255,255,.02)}
+.cat .cath{display:flex;align-items:center;gap:10px;padding:13px 18px;background:rgba(99,102,241,.08);border-bottom:1px solid var(--border);cursor:pointer;user-select:none}
+.cat .cath .cn{font-size:15px;font-weight:700}
+.cat .cath .cc{font-size:12px;color:var(--text2)}
+.cat .cath .caret{margin-left:auto;color:var(--primary);transition:transform .25s;font-size:14px}
+.cat.open .cath .caret{transform:rotate(90deg)}
+.cat .catb{display:none;padding:14px 18px 18px}
+.cat.open .catb{display:block}
+.nrow{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1px dashed rgba(255,255,255,.07);font-size:13.5px}
+.nrow:last-child{border-bottom:none}
+.nrow .nn{flex-shrink:0;width:150px;font-weight:600;color:#fff}
+.nrow .nt{flex-shrink:0;font-size:11.5px;color:var(--text2);font-family:Consolas,Monaco,monospace;background:rgba(255,255,255,.05);padding:2px 7px;border-radius:5px;margin-top:3px}
+.nrow .nd{flex:1;min-width:0;color:var(--text2)}
+.pill{display:inline-block;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:999px;margin-left:6px;vertical-align:1px}
+.pill.on{background:rgba(34,197,94,.16);color:#86efac;border:1px solid rgba(34,197,94,.35)}
+.pill.off{background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border)}
+.empty{color:var(--text2);font-size:13.5px;padding:16px;text-align:center}
+
+/* ---------- FAQ ---------- */
+.faq-list{display:flex;flex-direction:column;gap:12px}
+.faq{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color .3s}
+.faq:hover{border-color:rgba(99,102,241,.55)}
+.faq .q{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 20px;cursor:pointer;font-size:15px;font-weight:600;user-select:none}
+.faq .q .t{color:var(--primary);font-size:18px;transition:transform .3s;flex-shrink:0}
+.faq.open .q .t{transform:rotate(45deg)}
+.faq .a{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.faq.open .a{max-height:700px}
+.faq .a .inner{padding:0 20px 18px;font-size:14px;color:var(--text2)}
+.faq .a .inner b{color:#fff;font-weight:600}
+.faq .a .inner code{background:rgba(255,255,255,.07);padding:1px 6px;border-radius:4px;font-size:13px;font-family:Consolas,Monaco,monospace;color:#c7d2fe}
+.faq .a .inner ul{margin:8px 0 0 18px;display:flex;flex-direction:column;gap:6px}
+
+/* ---------- 官方教程（SQLite 驱动） ---------- */
+.tut-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.tut-status{font-size:12.5px;color:var(--text2);display:inline-flex;align-items:center;gap:7px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--warn);display:inline-block}
+.dot.ok{background:var(--success);box-shadow:0 0 8px rgba(34,197,94,.7)}
+.tut-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.tut{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:.3s;display:flex;flex-direction:column;gap:9px}
+.tut:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 10px 30px rgba(236,72,153,.14)}
+.tut .tt{font-size:16px;font-weight:700}
+.tut .ts{font-size:13px;color:var(--text2);flex:1}
+.tut .tm{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--text2)}
+.tut .tm .c{background:rgba(99,102,241,.16);color:#a5b4fc;padding:2px 9px;border-radius:999px;font-weight:600}
+.tut .tm .v{opacity:.8}
+.notice{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.3);border-radius:12px;padding:14px 18px;font-size:13.5px;color:#fde68a;margin-bottom:16px}
+
+/* ---------- 弹层 ---------- */
+.modal{position:fixed;inset:0;z-index:2000;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:60px 16px;overflow-y:auto}
+.modal.show{display:flex}
+.modal .box{background:#16162b;border:1px solid var(--border);border-radius:18px;width:100%;max-width:840px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.modal .box .mh{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:22px 26px;border-bottom:1px solid var(--border);background:rgba(99,102,241,.07)}
+.modal .box .mh h3{font-size:20px;margin-bottom:6px}
+.modal .box .mh .meta{font-size:12.5px;color:var(--text2)}
+.modal .box .mh button{background:none;border:none;color:var(--text2);font-size:26px;line-height:1;cursor:pointer;padding:0 4px}
+.modal .box .mh button:hover{color:#fff}
+.modal .box .mb{padding:26px;max-height:calc(100vh - 250px);overflow-y:auto}
+.md h3{font-size:19px;margin:22px 0 10px;padding-left:11px;border-left:3px solid var(--primary)}
+.md h3:first-child{margin-top:0}
+.md h4{font-size:16px;margin:18px 0 8px;color:#c7d2fe}
+.md p{font-size:14.5px;color:var(--text2);margin-bottom:12px}
+.md ul,.md ol{margin:0 0 14px 22px;display:flex;flex-direction:column;gap:7px}
+.md li{font-size:14.5px;color:var(--text2)}
+.md b{color:#fff;font-weight:600}
+.md code{background:rgba(255,255,255,.08);padding:1px 6px;border-radius:4px;font-family:Consolas,Monaco,monospace;font-size:13px;color:#a5f3fc}
+.md pre{background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;margin-bottom:14px}
+.md pre code{background:none;padding:0;color:#e2e8f0}
+.md blockquote{border-left:3px solid var(--warn);background:rgba(251,191,36,.07);padding:12px 16px;border-radius:0 10px 10px 0;margin-bottom:14px}
+.md blockquote p{margin-bottom:0;color:#fde68a}
+.md table{width:100%;border-collapse:collapse;margin-bottom:16px;font-size:13.5px}
+.md th,.md td{border:1px solid var(--border);padding:9px 12px;text-align:left}
+.md th{background:rgba(99,102,241,.12);color:#fff;font-weight:600}
+.md td{color:var(--text2)}
+.md hr{border:none;border-top:1px solid var(--border);margin:20px 0}
+.md a{color:#67e8f9;text-decoration:underline}
+
+/* ---------- 表格 / 快捷键 ---------- */
+table.plain{width:100%;border-collapse:collapse;font-size:13.5px}
+table.plain th,table.plain td{border:1px solid var(--border);padding:10px 13px;text-align:left;vertical-align:top}
+table.plain th{background:rgba(99,102,241,.12);color:#fff;font-weight:600;white-space:nowrap}
+table.plain td{color:var(--text2)}
+table.plain td b{color:#fff}
+kbd{display:inline-block;background:rgba(255,255,255,.08);border:1px solid var(--border);border-bottom-width:2px;border-radius:5px;padding:1px 7px;font-size:12px;font-family:Consolas,Monaco,monospace;color:#e2e8f0}
+
+/* ---------- 页脚 ---------- */
+footer{border-top:1px solid var(--border);padding:40px 0;text-align:center}
+footer p{font-size:13.5px;color:var(--text2)}
+footer .fl{display:flex;gap:16px 26px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+footer .fl a{font-size:13.5px;color:var(--text2)}
+footer .fl a:hover{color:var(--primary)}
+
+.totop{position:fixed;right:22px;bottom:22px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(99,102,241,.4);opacity:0;visibility:hidden;transform:translateY(10px);transition:.3s;z-index:900}
+.totop.show{opacity:1;visibility:visible;transform:translateY(0)}
+.toc-toggle{display:none}
+
+@media (max-width:1000px){
+  aside.toc{display:none}
+  aside.toc.mobile-open{display:block;position:fixed;top:62px;left:0;right:0;bottom:0;width:auto;max-height:none;background:rgba(15,15,35,.98);backdrop-filter:blur(10px);z-index:999;padding:18px;border-top:1px solid var(--border);overflow-y:auto}
+  aside.toc.mobile-open a{padding:11px 12px;font-size:14.5px}
+  .toc-toggle{display:inline-flex;align-items:center;gap:6px;background:rgba(99,102,241,.16);border:1px solid rgba(99,102,241,.4);color:#a5b4fc;border-radius:8px;padding:7px 12px;font-size:13px;cursor:pointer;font-family:inherit}
+  nav.topbar .links a:not(.admin){display:none}
+}
+@media (max-width:700px){
+  header.hero{padding:110px 0 40px}
+  header.hero h1{font-size:30px}
+  header.hero p{font-size:15px}
+  .sec-head h2{font-size:22px}
+  .steps{grid-template-columns:1fr}
+  .step{padding:20px 20px 22px}
+  .step .sh{flex-wrap:wrap}
+  .nrow{flex-direction:column;gap:5px}
+  .nrow .nn{width:auto}
+  .recipe dl .r{flex-direction:column;gap:3px}
+  .recipe dl .r dt{width:auto}
+  .modal{padding:20px 10px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav class="topbar">
+  <div class="container">
+    <a href="#top" class="logo">
+      <span class="brand-name">锴利超级AI工作台</span>
+      <span class="badge-t">入门教程</span>
+    </a>
+    <div class="links">
+      <button class="toc-toggle" id="tocToggle" type="button">目录</button>
+      <a href="#quickstart">快速开始</a>
+      <a href="#recipes">常见工作流</a>
+      <a href="#nodes">节点全景</a>
+      <a href="#faq">常见问题</a>
+      <a href="#official">技巧分享</a>
+      <a href="product.html">产品介绍</a>
+      <a href="../index.html">返回工作台</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="container inner">
+    <h1>从装好锴利超级AI工作台，到<span class="grad">跑出第一条能用的工作流</span></h1>
+    <p>这份教程按「先跑通、再理解、最后调优」的顺序写。不用先学概念，跟着四步走就能出第一张图；遇到问题直接翻「报错自查手册」。</p>
+    <div class="hero-chips">
+      <span>68 个节点 · 17 个分类</span>
+      <span>出厂可见 30 个节点</span>
+      <span>20 类预设工作流</span>
+      <span>10 组小白工作流派方</span>
+      <span>数据全部存本地</span>
+    </div>
+  </div>
+</header>
+
+<div class="container layout">
+  <aside class="toc" id="toc">
+    <div class="toc-title">教程目录</div>
+    <a href="#quickstart">① 四步上手</a>
+    <a href="#ui">② 界面导览</a>
+    <a href="#recipes">③ 小白常见工作流</a>
+    <a href="#nodes">④ 节点库全景</a>
+    <a href="#wf-lib">⑤ 工作流库速查</a>
+    <a href="#libraries">⑥ 资源库与素材</a>
+    <a href="#faq">⑦ 报错自查 / 常见问题</a>
+    <a href="#shortcuts">⑧ 快捷键</a>
+    <a href="#official">⑨ 技巧分享</a>
+    <a href="#help">⑩ 还是搞不定</a>
+  </aside>
+
+  <main>
+
+    <!-- ================= ① 四步上手 ================= -->
+    <section class="blk" id="quickstart">
+      <div class="sec-head">
+        <span class="kicker">STEP BY STEP</span>
+        <h2>① 四步上手，先出一张图</h2>
+        <p>前两步是「必须做」，不做后面一定失败；第三、四步是「跑一次就会」。全程不用写代码。</p>
+      </div>
+      <div class="steps">
+        <div class="step s1">
+          <div class="sh">
+            <span class="n">1</span>
+            <h3>下载安装</h3>
+            <span class="tag must">必做</span>
+          </div>
+          <p>Windows 10 及以上，安装包 10MB 级，本地原生运行，不需要浏览器。</p>
+          <ul>
+            <li>安装完双击桌面图标即可</li>
+            <li>首次启动停在「工作台首页」</li>
+            <li>想自己搭流程则切到「经典画布」</li>
+          </ul>
+        </div>
+        <div class="step s2">
+          <div class="sh">
+            <span class="n">2</span>
+            <h3>配置供应商</h3>
+            <span class="tag must">必做</span>
+          </div>
+          <p>没有算力等于没有电。这是新手失败率最高的一步。</p>
+          <ul>
+            <li>右上角菜单栏→ 供应商管理</li>
+            <li>导入开发者的config配置文件，输入加密密码，即可配置供应商</li>
+            <li>用哪个生成节点，就要配对应的那条线（默认开发者配置好了，直接使用即可）</li>
+          </ul>
+        </div>
+        <div class="step s3">
+          <div class="sh">
+            <span class="n">3</span>
+            <h3>跑出第一张图</h3>
+            <span class="tag quick">跑一次就会</span>
+          </div>
+          <p>只需要两个节点。拖进画布、连上线、点运行。</p>
+          <ul>
+            <li>节点库拖入<b>提示词</b>节点</li>
+            <li>右侧拖入<b>Banana Pro</b>节点</li>
+            <li>把两个节点的小圆点拖在一起完成连线</li>
+            <li>写提示词 → 点节点上的运行</li>
+          </ul>
+        </div>
+        <div class="step s4">
+          <div class="sh">
+            <span class="n">4</span>
+            <h3>把成果留下来</h3>
+            <span class="tag quick">跑一次就会</span>
+          </div>
+          <p>生成完的东西不会自己消失，但要主动归档才好复用。</p>
+          <ul>
+            <li>图片自动进入<b>素材库</b></li>
+            <li>整套流程存进<b>工作流库</b>，下次直接加载</li>
+            <li>重复性任务可转成定时任务</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:22px">
+        <h3 style="font-size:17px;margin-bottom:12px">第一张图的提示词，照抄就能用</h3>
+        <p style="font-size:13.5px;color:var(--text2);margin-bottom:10px">好提示词 = 主体 + 场景 + 光线 + 风格 + 画质。缺哪补哪，别只写一个词。</p>
+        <pre class="md" style="background:rgba(0,0,0,.35);border:1px solid var(--border);border-radius:10px;padding:14px 16px;overflow-x:auto;margin-bottom:0"><code>一只戴圆框眼镜的柴犬，坐在木质书桌前敲笔记本电脑，
+暖色台灯从左前方打光，背景是洒满便签的软木板，
+电影级人像摄影风格，浅景深，高清细节</code></pre>
+        <p style="font-size:13px;color:var(--text2);margin-top:12px">对应关系：<b>主体</b>=柴犬 / <b>场景</b>=书桌+软木板 / <b>光线</b>=暖色台灯左前 / <b>风格</b>=电影级人像 / <b>画质</b>=高清细节。这个五段结构适用于一切出图场景。</p>
+      </div>
+    </section>
+
+    <!-- ================= ② 界面导览 ================= -->
+    <section class="blk" id="ui">
+      <div class="sec-head">
+        <span class="kicker">UI TOUR</span>
+        <h2>② 界面六个区域，各管一件事</h2>
+        <p>第一次打开会被满屏按钮吓到。其实只有六块区域，认全了就不会迷路。</p>
+      </div>
+      <div class="ui-map">
+        <div class="ui-row"><div class="tag">主视图切换</div><div class="txt"><b>工作台首页 / 经典画布</b>。工作台是「说一句话自动干活」，经典画布是「自己拖节点」。两者可随时切换，画布始终挂载不会丢数据。</div></div>
+        <div class="ui-row"><div class="tag">左侧菜单</div><div class="txt">资源库入口：<b>画布、节点库、工作流、素材、技能、知识库、提示词</b> 默认显示；<b>专家、数字人、选题、风格、角色、场景、品牌、商品</b> 出厂默认隐藏，可在菜单的「管理」里开自定义模式勾上。</div></div>
+        <div class="ui-row"><div class="tag">节点库</div><div class="txt">所有可拖拽的 AI 能力。<b>出厂只显示 30 个</b>，点顶部的「管理」打开自定义模式可放出剩余节点。按分类折叠，支持搜索。</div></div>
+        <div class="ui-row"><div class="tag">中间画布</div><div class="txt">搭流程的地方。滚轮缩放、中键或右键拖拽平移。支持撤销重做、复制粘贴、框选多选、一键自动布局。</div></div>
+        <div class="ui-row"><div class="tag">右侧参数面板</div><div class="txt">选中节点后在这里改参数。所有参数改动都是即时的，改完直接点运行，不需要保存。</div></div>
+        <div class="ui-row"><div class="tag">右下 AI 助手</div><div class="txt"><b>小锴助手</b>。可以问「怎么配供应商」「帮我生成一条详情页工作流」，也能让它调用技能、搜索资源库、拆解并执行任务。它默认知道当前画布状态，不用手动粘贴上下文。</div></div>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3 style="font-size:17px;margin-bottom:12px">智能工作台的三块东西</h3>
+        <div class="ui-map">
+          <div class="ui-row"><div class="tag">顶部胶囊</div><div class="txt">决定下方「能力标签」显示范围。<b>不选胶囊</b>就显示全部能力标签。</div></div>
+          <div class="ui-row"><div class="tag">能力标签</div><div class="txt">点一下会把「分类名：描述」直接写进输入框，当作自然语言的起点。新手最快的用法是：点标签 → 改掉里面的具体内容 → 回车。</div></div>
+          <div class="ui-row"><div class="tag">输入框</div><div class="txt"><kbd>Enter</kbd> 立即运行；<kbd>Shift</kbd>+<kbd>Enter</kbd> 换行；<code>@文件名</code> 引用已上传文件；<code>/技能名</code> 调用内置技能。</div></div>
+          <div class="ui-row"><div class="tag">历史面板</div><div class="txt">页面下方保留最近运行记录，点一下能回到当时的画布。执行完还能一键把当前工作流<b>转成定时任务</b>。</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ③ 小白常见工作流 ================= -->
+    <section class="blk" id="recipes">
+      <div class="sec-head">
+        <span class="kicker">RECIPES</span>
+        <h2>③ 小白常见工作流：照着搭就行</h2>
+        <p>以下 10 组是新手最常用、最容易跑通的链路。每组都写了「链路 / 参数要点 / 常见坑」，按顺序从第 1 组往后做。</p>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">1</div><h3>出一张图（最好上手的起点）</h3><span class="lv easy">★ 最容易</span></div>
+        <div class="line"><span class="node">提示词</span><span class="arrow">→</span><span class="node">Banana Pro</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>拖两个节点、连一条线、写提示词、点运行。就这么点事。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd><b>画幅比例</b>和<b>分辨率档位</b>必须同属一套协议。Banana 系吃「1K/2K/4K」，GPT Image 系吃「2160x3840」这种像素串 —— 配错会被服务端按协议改回去，你会以为设置不生效。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>① 两个节点之间没连线，提示词传不过去；② 供应商管理里没配图像线路。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">2</div><h3>图生图 / 换风格（手上有张图，想变成别的样子）</h3><span class="lv easy">★ 最容易</span></div>
+        <div class="line"><span class="node">图片</span><span class="arrow">→</span><span class="node">Banana Pro</span><span class="arrow">＋</span><span class="node">提示词</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>图片节点接进生成节点的图像输入口，提示词只写「要变成什么」，不要再去描述原图长什么样。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>写「改成 XX 风格，保持构图不变」比写一长串风格词有效得多。风格越短越准。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>产品图被改形。要在提示词里明确加一句：<b>严格保持产品外形、颜色、logo 不变，只替换背景与光线</b>。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">3</div><h3>电商详情页（跨境 / 国内电商最常用）</h3><span class="lv mid">★★ 中等</span></div>
+        <div class="line"><span class="node">图片（产品图）</span><span class="arrow">→</span><span class="node">详情页生成</span><span class="arrow">→</span><span class="node">素材库</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>上传清晰的产品正面图，接进「详情页生成」。节点会反推品类、材质、人群，按品类套用详情页模块组合（首屏卖点 → 场景 → 细节 → 参数 → 服务承诺），逐屏出图。<b>也可以</b>先用「详情页解析」粘贴商品链接抓数据再喂过去。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>模块组合默认按品类给一套，不需要的模块直接取消勾选，别生成完再删。跨境场景要分别设「提示词语言」和「画面语言」，别把中文大字铺到英文站点。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>① 图里中文字不一定写准，上架前必须人工复核；② 多 SKU 批量前先跑 1 个验证画幅，验证完再放大，否则整批白烧钱。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">4</div><h3>图文笔记（小红书 / 朋友圈九宫格）</h3><span class="lv easy">★ 最容易</span></div>
+        <div class="line"><span class="node">图文生成（一个主题）</span><span class="arrow">→</span><span class="node">文案 + N 屏配图</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>一个节点搞定文案和配图。内置五套平台预设：小红书图文 / 电商种草 / 朋友圈九宫格 / 公众号图文 / 抖音图文，选中后自动匹配画幅、屏数与平台写法约束。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>结构是「第 k 段正文天然对应第 k 张图」，所以<b>屏数改了要重跑配图</b>，否则图文对不上。单屏可以全屏编辑，改完实时写回。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>文案改了但配图没重跑 —— 这是最常见的不一致来源。改文案后统一重新生成。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">5</div><h3>短视频 / 漫剧（从一句灵感到成片）</h3><span class="lv mid">★★ 中等</span></div>
+        <div class="line"><span class="node">提示词</span><span class="arrow">→</span><span class="node">视频大纲</span><span class="arrow">→</span><span class="node">视频分镜</span><span class="arrow">→</span><span class="node">Seedance</span><span class="arrow">→</span><span class="node">视频组装</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>先出大纲定结构，再用「视频分镜」把每个镜头拆成脚本 + 画面提示词，然后逐个镜头交给 Seedance 出片段，最后「视频组装」预览并导出。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>控制总时长：<b>单镜头时长 × 镜头数 = 总时长</b>。先跑通 1 个镜头确认风格，再整批跑。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>① 视频线路没配就点运行；② 单镜头时长超过该模型上限（多数是 5s / 10s）；③ 一次性全跑导致中途想改风格，前面的钱白花。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">6</div><h3>带货脚本（把一件商品编译成脚本矩阵）</h3><span class="lv mid">★★ 中等</span></div>
+        <div class="line"><span class="node">图片（商品图）</span><span class="arrow">→</span><span class="node">带货脚本</span><span class="arrow">→</span><span class="node">分镜提示词</span><span class="arrow">→</span><span class="node">Seedance</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>只连一张商品图，节点会自动反推名称、描述、卖点、人群、场景；再按功能 / 效果 / 情绪 / 信任 / 差异化 / 转化六维拆解卖点并绑定证据，最后用「视频模板 × 前三秒钩子」正交枚举出多个变体。每个变体自带完整分镜：时长、景别、运镜、口播、字幕。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>变体数量先设小（比如 2~3 个），文字部分筛出满意的大纲，再拿它的提示词去出视频。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>变体开太多，逐个生成视频成本失控。策略是「先穷尽脚本，再精选生成」。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">7</div><h3>办公四件套（Word / Excel / PPT / HTML）</h3><span class="lv easy">★ 最容易</span></div>
+        <div class="line"><span class="node">提示词</span><span class="arrow">→</span><span class="node">Word / Excel / PPT / HTML</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>四个独立节点，各自负责生成对应格式的文件。做完可以在工作区预览，也能直接下载。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>一定要说清<b>结构</b>和<b>规模</b>：「8 页 PPT，每页 3 个要点」比「做个 PPT」结果好十倍。要可编辑的 PPT 走「PPT内容 → PPT组装」这条线，能导出 PPTX 和讲稿。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>格式不对或打不开时，用<b>文档转换</b>节点做兼容转换（支持 DOCX / PDF / HTML / RTF / CSV / JSON / XML / TXT / MD / PPTX / XLSX / EPUB 十二种格式双向转换）。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">8</div><h3>一句话让 AI 干活（不想学节点就用这个）</h3><span class="lv easy">★ 最容易</span></div>
+        <div class="line"><span class="node">工作台输入一句话</span><span class="arrow">→</span><span class="node">自动建画布</span><span class="arrow">→</span><span class="node">自动执行</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>在工作台首页输入自然语言需求，比如「生成 3 张小红书风格的九宫格图文，主题是新中式茶具」。系统会解析意图、自动搭好工作流并执行，执行完可以跳到画布看它到底搭了什么。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>需求里带上<b>产出物 + 数量 + 风格</b>三要素。信息不够时它会主动反问澄清（比如「要横屏还是竖屏」），这时认真回答，比它猜错重跑便宜得多。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>描述太含糊（「做几张图」），产出完全不可控。宁可多写十个字。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">9</div><h3>多角色出方案（需要专业视角时）</h3><span class="lv mid">★★ 中等</span></div>
+        <div class="line"><span class="node">提示词（主题）</span><span class="arrow">→</span><span class="node">专家讨论 / 专家协作</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>「专家讨论」是让多位专家围绕同一主题各说各话、互相碰撞；「专家协作」是按阶段分工，各产出自己那一段。还有「数字人协作」走顺序 / 并行 / 讨论 / 混合四种模式。</dd></div>
+          <div class="r key"><dt>参数要点</dt><dd>把<b>主题</b>和<b>最终产出物</b>都写清楚。只说「帮我做营销方案」，出来的一定是泛泛而谈。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>参与了太多专家导致内容冗长重复。先选 2~3 位最相关的。</dd></div>
+        </dl>
+      </div>
+
+      <div class="recipe">
+        <div class="rh"><div class="idx">10</div><h3>跨境选品到上架（涉及真实外呼，务必先读）</h3><span class="lv mid">★★★ 需前置条件</span></div>
+        <div class="line"><span class="node">云牛顿·找品</span><span class="arrow">→</span><span class="node">云牛顿·批量询盘</span><span class="arrow">→</span><span class="node">妙手·货源采集</span><span class="arrow">→</span><span class="node">妙手·编辑详情</span><span class="arrow">→</span><span class="node">妙手·多平台发布</span></div>
+        <dl>
+          <div class="r how"><dt>怎么做</dt><dd>这条链路在节点库里<b>默认隐藏</b>，需要先在节点库「管理」里打开展示。用 1688 云牛顿按文字或链接找品，拿到候选商品后批量发起询价/议价/交期询盘，再用妙手 ERP 把货源采集到公共采集箱，AI 生成标题描述图片后回写，最后一个节点发布到 TikTok / Shopee / TEMU / OZON / 美客多。</dd></div>
+          <div class="r key"><dt>前置条件</dt><dd>妙手功能需要你自己的妙手开放平台 <b>AppKey / AppSecret</b> 并配置 <b>IP 白名单</b>；云牛顿需要你的 1688 采购账号完成授权。</dd></div>
+          <div class="r trap"><dt>常见坑</dt><dd>① 询盘是<b>真实外呼</b>，默认带人工确认闸门，需要你点确认才会发出去；② 按次扣点的服务（如店雷达选品榜）<b>失败也不退点数</b>，且系统不会自动重试，别反复点；③ 采集类操作不要把在途的真实外呼强行掐断，否则会留下孤儿任务。</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- ================= ④ 节点库全景 ================= -->
+    <section class="blk" id="nodes">
+      <div class="sec-head">
+        <span class="kicker">NODE CATALOG</span>
+        <h2>④ 节点库全景：68 个节点，出厂只显示 30 个</h2>
+        <p>下面的清单与软件内节点库一一对应。带<span class="pill on">可见</span>的是开箱就显示的；带<span class="pill off">需开启</span>的要去节点库「管理」→ 自定义模式里勾出来。支持搜索与分类筛选。</p>
+      </div>
+      <div class="node-tools">
+        <input type="search" id="nodeSearch" placeholder="搜索节点名 / 用途，例如：详情页、视频、转换…" autocomplete="off">
+        <select id="nodeFilter">
+          <option value="all">全部分类</option>
+          <option value="visible">只看出厂可见</option>
+          <option value="hidden">只看需手动开启</option>
+        </select>
+      </div>
+      <div id="nodeCats"></div>
+      <div class="card" style="margin-top:6px">
+        <h3 style="font-size:16px;margin-bottom:10px">两个关于「找不到节点」的事实</h3>
+        <p style="font-size:13.5px;color:var(--text2);margin-bottom:8px"><b style="color:#fff">1）属于权限禁用的节点，可见性设为显示也不会出现。</b>权限禁用优先级高于可见性设置，所以如果你在自定义模式下勾了却依然看不到，多半是这条被禁用了。</p>
+        <p style="font-size:13.5px;color:var(--text2);margin-bottom:0"><b style="color:#fff">2）节点库分组里还有「分析阶段 / 策划阶段 / 执行阶段 / 优化阶段」四个分组</b>，是给分阶段协作预留的，目前只有「优化阶段」下有<b>数字人协作</b>与<b>创意灵感</b>两个节点。上面清单把这两个归入了「协同与优化」分类，方便阅读。</p>
+      </div>
+    </section>
+
+    <!-- ================= ⑤ 工作流库 ================= -->
+    <section class="blk" id="wf-lib">
+      <div class="sec-head">
+        <span class="kicker">WORKFLOW LIBRARY</span>
+        <h2>⑤ 工作流库速查：20 个分类该挑哪个</h2>
+        <p>软件自带一整套预设工作流，不需要从零搭。左侧菜单 → 工作流库 → 选中 → 加载到画布。新手建议先跑「快速入门」那一区。</p>
+      </div>
+      <div class="card" style="margin-bottom:18px">
+        <h3 style="font-size:17px;margin-bottom:12px">先跑这 8 条（快速入门区）</h3>
+        <div class="grid3">
+          <div class="ui-row"><div class="tag">图片</div><div class="txt">最简单图片生成 / 最简单图生图 / 最简单头像生成</div></div>
+          <div class="ui-row"><div class="tag">视频</div><div class="txt">最简单视频生成</div></div>
+          <div class="ui-row"><div class="tag">文本</div><div class="txt">一句话文案 / 最简单文章写作 / 最简单翻译</div></div>
+          <div class="ui-row"><div class="tag">结构</div><div class="txt">最简单大纲生成</div></div>
+        </div>
+        <p style="font-size:13px;color:var(--text2);margin-top:12px">建议顺序：图片生成 → 图生图 → 一句话文案 → 视频生成。前三条各花 3 分钟，第四条开始真正理解「异步任务」是什么感觉。</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:17px;margin-bottom:14px">其余 19 个分类速查</h3>
+        <table class="plain">
+          <thead><tr><th>分类</th><th>什么时候用它</th></tr></thead>
+          <tbody id="wfTable"></tbody>
+        </table>
+      </div>
+      <div class="card" style="margin-top:18px">
+        <h3 style="font-size:16px;margin-bottom:10px">加载模板后必做三件事</h3>
+        <p style="font-size:13.5px;color:var(--text2);margin-bottom:6px"><b style="color:#fff">① 换成自己的素材。</b>模板里的示例提示词、示例图全部替换掉，别直接跑。</p>
+        <p style="font-size:13.5px;color:var(--text2);margin-bottom:6px"><b style="color:#fff">② 确认模型。</b>点开生成节点的模型下拉，确认指向你已经配好的那一档。</p>
+        <p style="font-size:13.5px;color:var(--text2);margin-bottom:0"><b style="color:#fff">③ 先小规模试跑。</b>把数量类参数改成 1，跑通了再放大。</p>
+      </div>
+    </section>
+
+    <!-- ================= ⑥ 资源库 ================= -->
+    <section class="blk" id="libraries">
+      <div class="sec-head">
+        <span class="kicker">LIBRARIES</span>
+        <h2>⑥ 资源库与素材：东西存在哪，去哪找</h2>
+        <p>所有创作资产都留在本机，不上传服务器，断网也能打开软件。只有你主动调用 AI 接口时才联网。</p>
+      </div>
+      <div class="grid3">
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">出厂显示的库</h3><p style="font-size:13.5px;color:var(--text2)">画布、节点库、工作流、素材、技能、知识库、提示词。这七个开箱就在左侧菜单里。</p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">默认隐藏的库</h3><p style="font-size:13.5px;color:var(--text2)">专家、数字人、选题、风格、角色、场景、品牌、商品。在菜单「管理」里打开自定义模式即可显示。</p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">自动沉淀</h3><p style="font-size:13.5px;color:var(--text2)">生成的图片会自动存入素材库；创意灵感节点里的结果图可以一键收藏进素材库，而且会连着「实际发送的那条提示词」一起带走。</p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">备份与迁移</h3><p style="font-size:13.5px;color:var(--text2)">设置 → 数据备份，可导出/导入资源库与画布数据，换电脑时用它搬家。</p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">长文本怎么填</h3><p style="font-size:13.5px;color:var(--text2)">节点里只放一个点击式预览卡，点开是独立编辑器（带提示词库、语义库、模型切换、AI 优化）。这是刻意设计 —— 节点内滚动会跟画布缩放打架。</p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">滚动不跟手？</h3><p style="font-size:13.5px;color:var(--text2)">画布的滚轮缩放优先级最高。把鼠标移到内容区内部再滚；最稳的方式是直接拖滚动条。</p></div>
+      </div>
+    </section>
+
+    <!-- ================= ⑧ FAQ ================= -->
+    <section class="blk" id="faq">
+      <div class="sec-head">
+        <span class="kicker">TROUBLESHOOTING</span>
+        <h2>⑦ 报错自查 / 常见问题</h2>
+        <p>90% 的「生成失败」都不是软件坏了。按下面的顺序逐条排查，绝大多数问题能自己解决。</p>
+      </div>
+      <div class="faq-list" id="faqList"></div>
+    </section>
+
+    <!-- ================= ⑨ 快捷键 ================= -->
+    <section class="blk" id="shortcuts">
+      <div class="sec-head">
+        <span class="kicker">SHORTCUTS</span>
+        <h2>⑧ 快捷键（Windows 上 Ctrl，macOS 上 Cmd）</h2>
+        <p>记住撤销、复制、自动布局这三个就够日常用了。</p>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3 style="font-size:15px;margin-bottom:12px">编辑</h3>
+          <table class="plain">
+            <tbody>
+              <tr><td><kbd>Delete</kbd> / <kbd>Backspace</kbd></td><td>删除选中的节点或连线</td></tr>
+              <tr><td><kbd>Ctrl</kbd>+<kbd>C</kbd> / <kbd>Ctrl</kbd>+<kbd>V</kbd></td><td>复制 / 粘贴节点</td></tr>
+              <tr><td><kbd>Ctrl</kbd>+<kbd>D</kbd></td><td>创建选中节点的副本</td></tr>
+              <tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td><td>全选所有节点</td></tr>
+              <tr><td><kbd>Esc</kbd></td><td>取消选择</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px;margin-bottom:12px">撤销与布局</h3>
+          <table class="plain">
+            <tbody>
+              <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>撤销上一步操作</td></tr>
+              <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd></td><td>重做</td></tr>
+              <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td>自动整理节点布局</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px;margin-bottom:12px">多选</h3>
+          <table class="plain">
+            <tbody>
+              <tr><td><kbd>Ctrl</kbd>+ 单击 / <kbd>Shift</kbd>+ 单击</td><td>添加或移除节点到选区</td></tr>
+              <tr><td>拖拽框选</td><td>框选多个节点</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card">
+          <h3 style="font-size:15px;margin-bottom:12px">画布导航</h3>
+          <table class="plain">
+            <tbody>
+              <tr><td>鼠标滚轮</td><td>缩放画布</td></tr>
+              <tr><td>鼠标中键拖拽 / 右键拖拽</td><td>平移画布</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= ⑩ 官方教程 ================= -->
+    <section class="blk" id="official">
+      <div class="sec-head">
+        <span class="kicker">FROM ADMIN</span>
+        <h2>⑨ 技巧分享</h2>
+      </div>
+      <div class="tut-bar">
+        <span class="tut-status" id="tutStatus"><span class="dot" id="tutDot"></span><span id="tutStatusText">正在读取教程数据…</span></span>
+        <select id="tutFilter" style="background:rgba(15,15,35,.7);border:1px solid var(--border);color:#fff;border-radius:10px;padding:8px 12px;font-size:13.5px;font-family:inherit;outline:none"><option value="">全部分类</option></select>
+        <button id="tutReload" type="button" style="background:rgba(255,255,255,.05);border:1px solid var(--border);color:var(--text2);border-radius:10px;padding:8px 14px;font-size:13.5px;cursor:pointer;font-family:inherit">刷新</button>
+      </div>
+      <div id="tutNotice"></div>
+      <div class="tut-grid" id="tutGrid"></div>
+    </section>
+
+    <!-- ================= ⑪ 求助 ================= -->
+    <section class="blk" id="help">
+      <div class="sec-head">
+        <span class="kicker">NEED HELP</span>
+        <h2>⑩ 还是搞不定，这样来找我们</h2>
+        <p>带着有效信息问，解决问题会快很多。</p>
+      </div>
+      <div class="grid3">
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">要带上什么信息</h3><p style="font-size:13.5px;color:var(--text2)">① 你跑的节点名；② 报错弹窗里的<b style="color:#fff">完整错误详情</b>（不是截图里的半句话）；③ 你期望的结果和实际得到的结果。只说「生成失败」很难定位。</p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">咨询热线</h3><p style="font-size:13.5px;color:var(--text2)"><a href="tel:18589224864" style="color:#67e8f9">18589224864</a></p></div>
+        <div class="card"><h3 style="font-size:15px;margin-bottom:8px">商务邮箱</h3><p style="font-size:13.5px;color:var(--text2)"><a href="mailto:871722910@qq.com" style="color:#67e8f9">871722910@qq.com</a></p></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="fl">
+      <a href="#quickstart">四步上手</a>
+      <a href="#recipes">常见工作流</a>
+      <a href="#nodes">节点全景</a>
+      <a href="#faq">报错自查</a>
+      <a href="#official">技巧分享</a>
+      <a href="product.html">产品介绍</a>
+      <a href="../index.html">返回工作台</a>
+    </div>
+    <p>锴利超级AI工作台 入门教程</p>
+    <p style="margin-top:10px;font-size:13px;color:var(--text2);opacity:.7;">© 2026 阳江市锴利国际贸易有限公司</p>
+  </div>
+</footer>
+
+<button class="totop" id="toTop" type="button" aria-label="回到顶部">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg>
+</button>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <div class="mh">
+      <div>
+        <h3 id="mTitle">教程</h3>
+        <div class="meta" id="mMeta"></div>
+      </div>
+      <button type="button" id="mClose" aria-label="关闭">×</button>
+    </div>
+    <div class="mb"><div class="md" id="mBody"></div></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ============================================================
+     数据区（与软件内 nodeConfig / uiVisibilityPresets 对齐）
+     ============================================================ */
+
+  // 工作流库 20 个分类速查
+  var WF_CATS = [
+    ['图像创作','单图 / 图生图 / 多模型对比 / 批量风格'],
+    ['视频创作','文生视频、图生视频、多模型视频对比'],
+    ['故事漫剧','大纲 → 单镜头 → 完整分镜 → 漫剧全流程'],
+    ['内容创作','AI 写作、文案优化、多轮对话、文档解析与总结'],
+    ['PPT 制作','单页 / 图文 / 多页完整生成'],
+    ['图像处理','风格转换、图片扩图、人像美化、线稿上色'],
+    ['多模态混合','图文联动、文本到视频全流程、视频脚本、AI 配图文案'],
+    ['电商详情页','一键生成、产品图转详情页、主图批量、各行业详情页'],
+    ['工业设计','草图渲染、造型融合、风格迁移、CMF 发散、多视角'],
+    ['专家协作','多专家按阶段分工完成同一个任务'],
+    ['专家讨论','多专家围绕同一主题各自出方案、互相碰撞'],
+    ['品牌运营','品牌相关的内容与视觉批量产出'],
+    ['商业方案','商品短视频工厂、数字人直播脚本包、AI 广告创意工厂'],
+    ['文旅','景区宣传片、城市文旅 IP、旅游线路详情页、多语言导游词'],
+    ['社媒运营','小红书种草笔记、多平台一键改写'],
+    ['翻译本地化','中英本地化翻译'],
+    ['代码开发','函数代码生成'],
+    ['数据分析','销售数据洞察报告'],
+    ['音频播客','播客单集脚本']
+  ];
+
+  // 节点清单：cat 分类 / nodes[名称, type, 描述, 是否出厂可见]
+  var NODES = [
+    {cat:'输入', nodes:[
+      ['提示词','promptNode','基础文本输入，把提示词传给下游图片/视频节点，是一切创作的起点',1],
+      ['图片','imageInputNode','上传本地图片作为参考或编辑素材，用于图生图、图像编辑、风格迁移',1],
+      ['视频','videoInputNode','上传本地视频，用于视频编辑、风格转换、视频内容理解',1],
+      ['文件','fileUploadNode','上传文件供 LLM 解析，支持图片 / PDF / Markdown / 音频 / 视频',1]
+    ]},
+    {cat:'图片生成', nodes:[
+      ['Banana Pro','imageGeneratorProNode','高画质出图，适合产品效果图、商业摄影风格、高质量插画',1],
+      ['GPT Image','gptImageGeneratorNode','多模态出图，支持图文结合创作与图像编辑、风格转换',1],
+      ['创意灵感','creativeInspirationNode','一句话快速生成多张灵感图，结果可放大、下载、一键收藏进素材库',1],
+      ['Banana（快速版）','imageGeneratorFastNode','响应更快，适合快速原型图与批量素材生成',0],
+      ['SeeDream','doubaoGeneratorNode','SeeDream 图像生成线路',0],
+      ['DALL-E','dalleGeneratorNode','OpenAI DALL-E 图像生成线路',0],
+      ['Flux','fluxGeneratorNode','Flux 图像生成线路',0],
+      ['Z-Image','zImageGeneratorNode','Gitee AI Z-Image 图像生成线路',0],
+      ['Agnes Image','agnesImageGeneratorNode','Agnes Image 图像生成线路',0]
+    ]},
+    {cat:'视频生成', nodes:[
+      ['Seedance','seedanceGeneratorNode','Seedance 视频生成线路',1],
+      ['Omni','omniGeneratorNode','Google Omni 视频生成线路',1],
+      ['MiniMax','minimaxGeneratorNode','MiniMax 视频生成线路',0],
+      ['Grok Video','grokGeneratorNode','xAI Grok 视频生成线路',0],
+      ['Sora','videoGeneratorNode','OpenAI Sora 视频生成线路',0],
+      ['Veo','veoGeneratorNode','Gemini Veo 视频生成线路',0],
+      ['Kling','klingGeneratorNode','快手可灵视频生成线路',0],
+      ['Agnes Video','agnesVideoGeneratorNode','Agnes Video 视频生成线路',0]
+    ]},
+    {cat:'3D 生成', nodes:[
+      ['Lux3D','lux3DGeneratorNode','3D 网格资产生成：图生3D / 文生3D / 四视图 / 材质重绘，可导出 GLB、PLY、USDZ、OBJ、FBX',0],
+      ['AHOLO World','ahWorldGeneratorNode','3DGS 高斯溅射空间：世界重建（图/视频/insv）与世界生成（文+图）',0],
+      ['3D模型','model3DGeneratorNode','上传图片，AI 分析结构生成可交互的 Three.js 3D 模型代码，支持旋转、拆解、换色',0]
+    ]},
+    {cat:'连接器', nodes:[
+      ['LLM','llmContentNode','通用大语言模型内容生成，支持深度思考与多轮对话',1],
+      ['内容审查','contentReviewNode','多模态内容合规审查与风险评估，发布前的前置拦截',1],
+      ['MCP','mcpNode','调用 MCP 服务器的外部工具，把外部能力接进工作流',0],
+      ['CLI','cliNode','调用本地命令行工具的子命令',0],
+      ['GEO','geoOptimizerNode','生成式引擎优化：让内容更容易被 ChatGPT / Perplexity / Gemini 检索与引用',0],
+      ['信息检索','infoRetrievalNode','多源信息检索 + LLM 智能处理',0]
+    ]},
+    {cat:'文件处理', nodes:[
+      ['文档转换','documentConverterNode','12 种格式双向转换：DOCX / PDF / HTML / RTF / CSV / JSON / XML / TXT / MD / PPTX / XLSX / EPUB',1],
+      ['图像转换','imageConverterNode','PNG / JPG / WEBP / GIF / BMP / TIFF / ICO / SVG 互转，以及多图合并 PDF',1],
+      ['模型转换','modelConverterNode','GLB / OBJ / STL / PLY ↔ 3MF 等互转，支持远程直链转 3MF 打印文件',1],
+      ['宫格分割','imageGridSplitNode','把一张图按行列分割成多张图',1]
+    ]},
+    {cat:'协同与优化', nodes:[
+      ['专家讨论','expertDiscussionNode','多位专家围绕同一主题各自出方案并互相讨论',1],
+      ['专家协作','expertCollaborationNode','多专家按阶段分工协作完成同一任务',1],
+      ['数字人协作','digitalHumanCollaborationNode','碳硅共生数字人多 Agent 协作，支持顺序 / 并行 / 讨论 / 混合四种模式',1]
+    ]},
+    {cat:'电商工作流', nodes:[
+      ['详情页生成','detailPageGeneratorNode','电商详情页大纲与配图生成，是详情页链路的主力节点',1],
+      ['详情页复刻','detailPageReplicaNode','给参考图一键复刻出同款版式的详情页',1],
+      ['带货脚本','salesScriptNode','商品 → 卖点矩阵 → 爆款短视频脚本，自带完整分镜',1],
+      ['图文生成','imageTextNode','主题 → 图文一体：文案 + N 屏配图，第 k 段对应第 k 张图',1],
+      ['详情页解析','productParserNode','粘贴链接智能解析电商详情页数据（标题、卖点、参数、主图）',0],
+      ['印刷定制','productCustomizerNode','印刷定制效果图生成',0],
+      ['批量生成','batchGeneratorNode','数据源驱动的批量图片生成',0]
+    ]},
+    {cat:'IP 工作流', nodes:[
+      ['选题挖掘','topicDiscoveryNode','跨平台热点搜索与 AI 选题推荐',0],
+      ['品牌IP','brandIPGeneratorNode','品牌 IP 全案设定与视觉生成：核心定位、CI VI、多视角形象、表情包、运营规划',0],
+      ['个人IP','aipSuperIndividualNode','AIP 个人 IP 全案：定位 → 价值交集 → 受众画像 → 内容矩阵 → 能力飞轮 → 增长闭环',0]
+    ]},
+    {cat:'视频工作流', nodes:[
+      ['视频大纲','storyOutlineNode','视频 / 漫剧故事大纲生成，先把结构定下来',1],
+      ['视频复刻','videoReplicaNode','上传视频或粘贴链接，AI 解析分镜结构并生成复刻提示词',1],
+      ['视频替换','videoReplaceNode','原视频局部替换：商品 / 背景 / 服装 / 模特',1],
+      ['视频分镜','shotGeneratorNode','视频分镜脚本与画面生成，把每个镜头拆到可执行',1],
+      ['导演台','directorConsoleNode','一站式脚本解析与分镜规划',0],
+      ['视频组装','storyAssemblerNode','预览并导出视频 / 图片序列成片',0]
+    ]},
+    {cat:'供应链工作流', nodes:[
+      ['云牛顿·找品','newtonImageSearchNode','1688 云牛顿采购 Agent：文字/链接找品，返回候选商品表格与采购建议',0],
+      ['云牛顿·批量询盘','newtonInquiryNode','对找品结果批量发起询价 / 议价 / 交期询盘（真实外呼，带人工闸门）',0],
+      ['云牛顿·询盘结果','newtonInquiryResultNode','查询商家回复并生成供应商比价数据，支持自动轮询与终止',0],
+      ['妙手·货源采集','miaoshouCollectSubmitNode','粘贴或从上游一键导入货源链接，批量采集到妙手公共采集箱',0],
+      ['妙手·采集详情','miaoshouCollectDetailNode','拉取采集箱商品的完整数据与主图',0],
+      ['妙手·编辑详情','miaoshouWritebackNode','把 AI 生成的标题 / 描述 / 图片回写进妙手采集箱草稿，AI 内容进发布管道的必经通道',0],
+      ['妙手·多平台发布','miaoshouPublishNode','一个节点发布到 TikTok / Shopee / TEMU / OZON / 美客多 多平台店铺',0],
+      ['店雷达·选品榜','dianLeiDaBillboardNode','1688 商品日 / 周 / 月热销榜，按真实销量与销售额排序的选品验证层',0]
+    ]},
+    {cat:'办公工作流', nodes:[
+      ['HTML','htmlGeneratorNode','输入网址或文本，多维参数配置后生成可运行的 HTML 文件',1],
+      ['Word','wordGeneratorNode','多维参数配置，生成专业 Word 文档',1],
+      ['Excel','excelGeneratorNode','多维参数配置，生成专业 Excel 电子表格',1],
+      ['PPT','pptGeneratorNode','多维参数配置，生成专业 PPT 演示文稿',1],
+      ['PPT内容','pptContentNode','PPT 大纲与逐页内容生成',0],
+      ['PPT组装','pptAssemblerNode','预览并导出 PPTX 与讲稿',0]
+    ]},
+    {cat:'生活工具', nodes:[
+      ['命理玄学','fortuneMasterNode','融合十大命理体系的拟人化命理师节点',0]
+    ]}
+  ];
+
+  // FAQ（含官网 FAQ + 实际踩坑）
+  var FAQS = [
+    ['点运行完全没反应，怎么办？',
+     '先查<b>连线</b>。节点之间没连线，上游的提示词根本传不到下游，点了也等于空跑。第二步再查提示词节点里是不是空的。这两条覆盖了九成「没反应」。'],
+    ['提示「未配置供应商」或找不到模型',
+     '去 <code>设置 → 供应商管理</code>，确认这条线是否存在、是否填了 Key。另外记住一条铁律：<b>生图节点必须手动选模型</b>，生成前一定要在节点里明确选好，否则会直接抛错。'],
+    ['提示鉴权失败 / 401 / 403',
+     '按这个顺序查：① API Key 有没有复制全（前后空格是最常见的原因）；② Key 是否过期；③ 账号是否有余额；④ 这个 Key 有没有开通你要用的那个模型的权限。'],
+    ['提示参数不支持',
+     '大概率是<b>画幅和尺寸不属于同一套协议</b>。Banana 系认 1K/2K/4K 档位；GPT Image 系认 2160x3840 这种像素串。视频则多半是时长超过该模型上限（常见 5s / 10s）。'],
+    ['一直转圈不出结果，是不是卡死了？',
+     '图像和视频是<b>异步任务</b>，服务端出图需要排队。看节点上的进度或任务状态就好。<b>千万不要连点运行</b> —— 连点会真的扣多次费用。'],
+    ['想中断生成，点停就行吗？',
+     '只读 / 查询类任务可以随时掐断。但<b>已经发出去的真实外呼任务不会撤回</b>，按次扣点的服务（比如店雷达选品榜）也不会退费，界面会提示你「点数已消耗不退回」。'],
+    ['明明有 68 个节点，为什么我只看到 30 个？',
+     '出厂只显示 30 个，剩下 38 个默认隐藏。打开节点库顶部的「管理」弹窗 → 开启<b>自定义模式</b> → 勾选你要的节点，本机永久生效，升级不会回退。侧边栏的资源库同理（专家、数字人、选题、风格、角色、场景、品牌、商品出厂默认隐藏）。'],
+    ['在自定义模式下勾了，节点还是不出现',
+     '那多半是<b>权限禁用</b>在起作用。权限禁用的优先级高于可见性设置，即使把可见性改成显示也不会出现。'],
+    ['生成好的图片 / 文件去哪了？',
+     '三个地方：① 节点自己的结果预览区；② 左侧「素材库」——生成的图片会自动存进去；③ 选中节点后右侧参数面板里的结果信息。工作区里也能预览和下载生成的文件。'],
+    ['数据存在哪里？会不会上传到你们服务器？',
+     '全部存在<b>你自己电脑本地</b>：工作流、资源库、生成的作品。不上传任何服务器，断网也能打开软件。只有你主动调用 AI 接口时才联网。设置里的「数据备份」可以整体导出，换电脑时用它搬家。'],
+    ['需要注册账号或付费订阅吗？',
+     '桌面客户端免费下载，不需要注册。使用 AI 生成功能时，只要在供应商管理里配置你自己的 API Key，按你的用量计费，没有任何平台抽成。'],
+    ['不会写代码、不会搭流程，能用吗？',
+     '完全可以。两个不用学节点的入口：① 工作台首页直接说需求，AI 会自动解析意图、搭建工作流并执行；② 工作流库里有现成模板，加载后改改参数就能跑。建议先跑「快速入门」区的最简单图片生成。'],
+    ['妙手 ERP / 1688 云牛顿功能用不了',
+     '这两个都需要前置条件：<b>妙手</b>要你自己的妙手开放平台 AppKey / AppSecret，并在妙手后台配置 IP 白名单；<b>云牛顿</b>要你的 1688 采购账号完成授权。另外这两条供应链节点默认隐藏，要在节点库「管理」里打开展示。'],
+    ['询盘会不会自动发出去？会不会乱花钱？',
+     '询盘这类敏感操作为了安全，默认带<b>人工确认闸门</b> —— 需要你点确认才会真正外呼，AI 不会未经你确认擅自操作。按次扣点的服务不会自动重试，避免重复扣费。'],
+    ['滚动页面时画布反而缩放，很别扭',
+     '这是设计的取舍：画布的滚轮缩放优先级最高。把鼠标移到有独立滚动条的<b>内容区内部</b>再滚；最稳的方式是直接拖滚动条。'],
+    ['长提示词在节点里不好编辑',
+     '节点里刻意只放一个点击式预览卡。点它打开独立编辑器，里面带提示词库、语义库、模型切换和 AI 优化。这样做是因为在节点内直接滚动编辑会和画布缩放打架。'],
+    ['能否接入我自己的外部系统或自动化流程？',
+     '可以。内置 HTTP API 服务器可供外部程序调用；通过 MCP 协议能连接任意外部工具；也支持飞书机器人在群聊里直接下达创作需求。想要定时自动跑，可以把工作流一键转成定时任务。'],
+    ['生成出来的图片里文字是错的',
+     '画面里的文字目前不能保证百分百准确，这是图像生成的共性限制。涉及价格、规格、法规类文字，务必人工复核后再发布。重要文案建议用「图文生成」节点做，正文是文本产出，可校可改。'],
+    ['工作流乱了想重来',
+     '选中节点按 <code>Delete</code> 删除，或直接新建画布。想保留的先存进工作流库。误删了不要慌，<code>Ctrl+Z</code> 可以撤销。'],
+    ['怎么把重复的活变成每天自动跑？',
+     '在工作台执行完一次之后，可以一键把当前工作流<b>转成定时任务</b>，到点自动重跑。批量场景则用批量并行执行。']
+  ];
+
+  /* ============================================================
+     渲染：节点库
+     ============================================================ */
+  var nodeCats = document.getElementById('nodeCats');
+  var nodeSearch = document.getElementById('nodeSearch');
+  var nodeFilter = document.getElementById('nodeFilter');
+
+  function renderNodes(){
+    var q = (nodeSearch.value || '').trim().toLowerCase();
+    var f = nodeFilter.value;
+    var html = '';
+    var totalShown = 0;
+
+    NODES.forEach(function(group){
+      var rows = group.nodes.filter(function(n){
+        if (f === 'visible' && n[3] !== 1) return false;
+        if (f === 'hidden' && n[3] !== 0) return false;
+        if (q) {
+          var hay = (n[0] + ' ' + n[1] + ' ' + n[2] + ' ' + group.cat).toLowerCase();
+          if (hay.indexOf(q) === -1) return false;
+        }
+        return true;
+      });
+      if (!rows.length) return;
+      totalShown += rows.length;
+      var visCount = group.nodes.filter(function(n){return n[3] === 1;}).length;
+      html += '<div class="cat' + (q ? ' open' : '') + '">' +
+        '<div class="cath"><span class="cn">' + group.cat + '</span>' +
+        '<span class="cc">共 ' + group.nodes.length + ' 个 · 出厂可见 ' + visCount + ' 个</span>' +
+        '<span class="caret">›</span></div><div class="catb">';
+      rows.forEach(function(n){
+        html += '<div class="nrow"><div class="nn">' + n[0] +
+          (n[3] === 1 ? '<span class="pill on">可见</span>' : '<span class="pill off">需开启</span>') +
+          '</div><div class="nt">' + n[1] + '</div><div class="nd">' + n[2] + '</div></div>';
+      });
+      html += '</div></div>';
+    });
+
+    if (!totalShown) {
+      html = '<div class="empty">没有匹配的节点，换个关键词试试</div>';
+    }
+    nodeCats.innerHTML = html;
+
+    Array.prototype.forEach.call(nodeCats.querySelectorAll('.cath'), function(h){
+      h.addEventListener('click', function(){ h.parentElement.classList.toggle('open'); });
+    });
+  }
+
+  nodeSearch.addEventListener('input', renderNodes);
+  nodeFilter.addEventListener('change', renderNodes);
+
+  /* ============================================================
+     渲染：工作流库表
+     ============================================================ */
+  var wfTable = document.getElementById('wfTable');
+  wfTable.innerHTML = WF_CATS.map(function(r){
+    return '<tr><td><b>' + r[0] + '</b></td><td>' + r[1] + '</td></tr>';
+  }).join('');
+
+  /* ============================================================
+     渲染：FAQ
+     ============================================================ */
+  var faqList = document.getElementById('faqList');
+  faqList.innerHTML = FAQS.map(function(f){
+    return '<div class="faq"><div class="q">' + f[0] +
+      '<span class="t">+</span></div><div class="a"><div class="inner">' + f[1] + '</div></div></div>';
+  }).join('');
+
+  Array.prototype.forEach.call(faqList.querySelectorAll('.q'), function(q){
+    q.addEventListener('click', function(){
+      var item = q.parentElement;
+      var was = item.classList.contains('open');
+      Array.prototype.forEach.call(faqList.querySelectorAll('.faq.open'), function(o){ o.classList.remove('open'); });
+      if (!was) item.classList.add('open');
+    });
+  });
+
+  /* ============================================================
+     极简 Markdown 渲染（后台教程正文用）
+     ============================================================ */
+  function esc(s){
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+  function inline(s){
+    s = esc(s);
+    s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+    s = s.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+    s = s.replace(/\[([^\]]+)\]\((https?:[^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    return s;
+  }
+  function md(src){
+    var lines = String(src || '').replace(/\r\n/g, '\n').split('\n');
+    var out = [], i = 0;
+    while (i < lines.length) {
+      var L = lines[i];
+      if (!L.trim()) { i++; continue; }
+      // 代码块
+      if (L.indexOf('```') === 0) {
+        i++;
+        var buf = [];
+        while (i < lines.length && lines[i].indexOf('```') !== 0) { buf.push(lines[i]); i++; }
+        i++;
+        out.push('<pre><code>' + esc(buf.join('\n')) + '</code></pre>');
+        continue;
+      }
+      // 表格
+      if (L.indexOf('|') === 0 && i + 1 < lines.length && /^\|[\s:|-]+\|$/.test(lines[i + 1].trim())) {
+        var head = L.split('|').slice(1, -1);
+        i += 2;
+        var rows = [];
+        while (i < lines.length && lines[i].indexOf('|') === 0) {
+          rows.push(lines[i].split('|').slice(1, -1));
+          i++;
+        }
+        var t = '<table><thead><tr>' + head.map(function(h){ return '<th>' + inline(h.trim()) + '</th>'; }).join('') + '</tr></thead><tbody>';
+        rows.forEach(function(r){
+          t += '<tr>' + r.map(function(c){ return '<td>' + inline(c.trim()) + '</td>'; }).join('') + '</tr>';
+        });
+        out.push(t + '</tbody></table>');
+        continue;
+      }
+      if (/^###\s+/.test(L)) { out.push('<h4>' + inline(L.replace(/^###\s+/, '')) + '</h4>'); i++; continue; }
+      if (/^##\s+/.test(L))  { out.push('<h3>' + inline(L.replace(/^##\s+/, '')) + '</h3>'); i++; continue; }
+      if (/^#\s+/.test(L))   { out.push('<h3>' + inline(L.replace(/^#\s+/, '')) + '</h3>'); i++; continue; }
+      if (/^>\s?/.test(L)) {
+        var q2 = [];
+        while (i < lines.length && /^>\s?/.test(lines[i])) { q2.push(lines[i].replace(/^>\s?/, '')); i++; }
+        out.push('<blockquote><p>' + inline(q2.join(' ')) + '</p></blockquote>');
+        continue;
+      }
+      if (/^(-{3,}|\*{3,})$/.test(L.trim())) { out.push('<hr>'); i++; continue; }
+      if (/^[-*]\s+/.test(L)) {
+        var ul = [];
+        while (i < lines.length && /^[-*]\s+/.test(lines[i])) { ul.push(lines[i].replace(/^[-*]\s+/, '')); i++; }
+        out.push('<ul>' + ul.map(function(x){ return '<li>' + inline(x) + '</li>'; }).join('') + '</ul>');
+        continue;
+      }
+      if (/^\d+\.\s+/.test(L)) {
+        var ol = [];
+        while (i < lines.length && /^\d+\.\s+/.test(lines[i])) { ol.push(lines[i].replace(/^\d+\.\s+/, '')); i++; }
+        out.push('<ol>' + ol.map(function(x){ return '<li>' + inline(x) + '</li>'; }).join('') + '</ol>');
+        continue;
+      }
+      // 段落
+      var p = [];
+      while (i < lines.length && lines[i].trim() && !/^(#{1,4}\s|>|[-*]\s|\d+\.\s|\||```)/.test(lines[i]) ) {
+        p.push(lines[i]); i++;
+      }
+      if (p.length) out.push('<p>' + inline(p.join('<br>')) + '</p>'); else i++;
+    }
+    return out.join('');
+  }
+
+  /* ============================================================
+     官方教程区（读 SQLite，通过 tutorial-api.php）
+     ============================================================ */
+  var API = 'tutorial-api.php';
+  var tutGrid = document.getElementById('tutGrid');
+  var tutNotice = document.getElementById('tutNotice');
+  var tutStatusText = document.getElementById('tutStatusText');
+  var tutDot = document.getElementById('tutDot');
+  var tutFilter = document.getElementById('tutFilter');
+  var TUTS = [];
+
+  var LEVEL_TEXT = { beginner:'入门', intermediate:'进阶', advanced:'高阶' };
+
+  function offline(msg){
+    tutDot.className = 'dot';
+    tutStatusText.textContent = '未连接内容服务，本区暂不可用';
+    tutGrid.innerHTML = '';
+    tutNotice.innerHTML = '<div class="notice">' + msg + '</div>';
+  }
+
+  function loadTutorials(){
+    tutDot.className = 'dot';
+    tutStatusText.textContent = '正在读取教程数据…';
+    fetch(API + '?action=list&scope=public&_=' + Date.now(), { cache:'no-store' })
+      .then(function(r){
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function(d){
+        if (!d || !d.ok) throw new Error((d && d.error) || 'bad payload');
+        TUTS = d.items || [];
+        tutNotice.innerHTML = '';
+        tutDot.className = 'dot ok';
+        tutStatusText.textContent = '已连接内容库，共 ' + TUTS.length + ' 篇已发布教程';
+        // 分类下拉
+        var cats = [];
+        TUTS.forEach(function(t){ if (cats.indexOf(t.category) === -1) cats.push(t.category); });
+        tutFilter.innerHTML = '<option value="">全部分类</option>' + cats.map(function(c){
+          return '<option value="' + esc(c) + '">' + esc(c) + '</option>';
+        }).join('');
+        renderTutorials();
+      })
+      .catch(function(){
+        offline('当前页面没有连上内容服务（<code>tutorial-api.php</code>）。如果你是直接双击本地文件打开本页，或站点还没部署 PHP + SQLite，这一区会保持空白 —— 上面的教程内容不受影响，照常可读。<br><br>部署方式：把 <code>tutorial.html</code>、<code>tutorial-admin.html</code>、<code>tutorial-api.php</code> 一起放到站点目录，并确保 PHP 已启用 <code>pdo_sqlite</code> 扩展。首次访问会自动建库并写入示例教程。');
+      });
+  }
+
+  function renderTutorials(){
+    var f = tutFilter.value;
+    var list = f ? TUTS.filter(function(t){ return t.category === f; }) : TUTS;
+    if (!list.length) {
+      tutGrid.innerHTML = '';
+      tutNotice.innerHTML = '<div class="notice">内容库还没有已发布的教程。进 <a href="tutorial-admin.html" style="color:#fde68a;text-decoration:underline">教程后台</a> 发布第一篇。</div>';
+      return;
+    }
+    tutNotice.innerHTML = '';
+    tutGrid.innerHTML = list.map(function(t){
+      return '<div class="tut" data-id="' + t.id + '">' +
+        '<div class="tt">' + esc(t.title) + '</div>' +
+        '<div class="ts">' + esc(t.summary || '（暂无摘要）') + '</div>' +
+        '<div class="tm"><span class="c">' + esc(t.category) + '</span>' +
+        '<span class="v">' + esc(LEVEL_TEXT[t.level] || t.level) + '</span>' +
+        '<span class="v">阅读 ' + (t.views || 0) + '</span>' +
+        '<span class="v">' + esc((t.updated_at || '').slice(0, 10)) + '</span></div>' +
+        (t.tags && t.tags.length ? '<div class="tm">' + t.tags.map(function(x){ return '<span class="v">#' + esc(x) + '</span>'; }).join('') + '</div>' : '') +
+        '</div>';
+    }).join('');
+
+    Array.prototype.forEach.call(tutGrid.querySelectorAll('.tut'), function(el){
+      el.addEventListener('click', function(){ openTutorial(parseInt(el.getAttribute('data-id'), 10)); });
+    });
+  }
+
+  var modal = document.getElementById('modal');
+  var mTitle = document.getElementById('mTitle');
+  var mMeta = document.getElementById('mMeta');
+  var mBody = document.getElementById('mBody');
+
+  function openModal(){
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){
+    modal.classList.remove('show');
+    document.body.style.overflow = '';
+  }
+
+  function openTutorial(id){
+    var local = TUTS.filter(function(t){ return t.id === id; })[0];
+    if (local) {
+      mTitle.textContent = local.title;
+      mMeta.textContent = local.category + ' · ' + (LEVEL_TEXT[local.level] || local.level) + ' · 更新于 ' + (local.updated_at || '').slice(0, 16);
+      mBody.innerHTML = '<p style="color:#a0a0b0">正在载入正文…</p>';
+      openModal();
+    }
+    fetch(API + '?action=get&id=' + id + '&_=' + Date.now(), { cache:'no-store' })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (!d || !d.ok) throw new Error((d && d.error) || 'load failed');
+        var it = d.item;
+        mTitle.textContent = it.title;
+        mMeta.textContent = it.category + ' · ' + (LEVEL_TEXT[it.level] || it.level) +
+          ' · 阅读 ' + it.views + ' · 更新于 ' + (it.updated_at || '').slice(0, 16);
+        mBody.innerHTML = md(it.content) || '<p>（正文为空）</p>';
+        // 计数
+        fetch(API + '?action=view&id=' + id, { cache:'no-store' }).catch(function(){});
+      })
+      .catch(function(){
+        mBody.innerHTML = '<div class="notice">正文载入失败，请稍后重试。</div>';
+      });
+  }
+
+  document.getElementById('mClose').addEventListener('click', closeModal);
+  modal.addEventListener('click', function(e){ if (e.target === modal) closeModal(); });
+  document.addEventListener('keydown', function(e){ if (e.key === 'Escape') closeModal(); });
+
+  document.getElementById('tutReload').addEventListener('click', loadTutorials);
+  tutFilter.addEventListener('change', renderTutorials);
+
+  /* ============================================================
+     目录高亮 / 回到顶部 / 移动端目录
+     ============================================================ */
+  var tocLinks = Array.prototype.slice.call(document.querySelectorAll('#toc a'));
+  var sections = tocLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+
+  function spy(){
+    var y = window.scrollY + 130;
+    var idx = 0;
+    for (var i = 0; i < sections.length; i++) {
+      if (sections[i] && sections[i].offsetTop <= y) idx = i;
+    }
+    tocLinks.forEach(function(a, i){ a.classList.toggle('active', i === idx); });
+  }
+
+  var toTop = document.getElementById('toTop');
+  var tocToggle = document.getElementById('tocToggle');
+  var toc = document.getElementById('toc');
+
+  window.addEventListener('scroll', function(){
+    spy();
+    toTop.classList.toggle('show', window.scrollY > 600);
+  }, { passive:true });
+
+  toTop.addEventListener('click', function(){ window.scrollTo({ top:0, behavior:'smooth' }); });
+
+  if (tocToggle) {
+    tocToggle.addEventListener('click', function(){ toc.classList.toggle('mobile-open'); });
+    toc.addEventListener('click', function(e){
+      if (e.target.tagName === 'A') toc.classList.remove('mobile-open');
+    });
+  }
+
+  /* ============================================================
+     启动
+     ============================================================ */
+  renderNodes();
+  spy();
+  loadTutorials();
+})();
+</script>
+</body>
+</html>
