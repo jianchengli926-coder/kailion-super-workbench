@@ -601,7 +601,12 @@
       if (ids[l.from] && ids[l.to]) Canvas.connect(ids[l.from], ids[l.to]);
     });
     switchView('canvas');
-    document.getElementById('workflow-name').textContent = cat + ' · ' + tx('workflow.templateSuffix', '模板');
+    const wfEl = document.getElementById('workflow-name');
+    if (wfEl) {
+      const wfVal = cat + ' · ' + tx('workflow.templateSuffix', '模板');
+      if (wfEl.tagName === 'INPUT') wfEl.value = wfVal;
+      else wfEl.textContent = wfVal;
+    }
     toast(tx('workflow.loaded', '已加载「' + cat + '」工作流模板', { cat }));
   }
 
@@ -1021,26 +1026,26 @@
         const v = Canvas.addNode('seedanceGeneratorNode', 500, 200);
         Canvas.connect(p.id, v.id);
         switchView('canvas');
-        reply = '✅ 已生成视频工作流：\n· 提示词节点 → Seedance 视频节点\n在右侧面板填写脚本即可出片。';
+        reply = tx('assistant.reply.videoWf', '✅ 已生成视频工作流：\n· 提示词节点 → Seedance 视频节点\n在右侧面板填写脚本即可出片。');
       } else if (t.includes('ppt') && (t.includes('工作流') || t.includes('制作'))) {
         const c = Canvas.addNode('pptContentNode', 150, 200);
         const g = Canvas.addNode('pptGeneratorNode', 500, 200);
         Canvas.connect(c.id, g.id);
         switchView('canvas');
-        reply = '✅ 已生成 PPT 工作流：\n· PPT内容节点 → PPT 生成节点\n先生成大纲逐页内容，再导出 PPTX。';
+        reply = tx('assistant.reply.pptWf', '✅ 已生成 PPT 工作流：\n· PPT内容节点 → PPT 生成节点\n先生成大纲逐页内容，再导出 PPTX。');
       } else if (t.includes('图文工作流') || (t.includes('图文') && t.includes('工作流'))) {
         const p = Canvas.addNode('promptNode', 150, 200);
         const it = Canvas.addNode('imageTextNode', 500, 200);
         Canvas.connect(p.id, it.id);
         switchView('canvas');
-        reply = '✅ 已生成图文工作流：\n· 提示词节点 → 图文生成节点\n主题自动转成「文案 + N 屏配图」。';
+        reply = tx('assistant.reply.imageTextWf', '✅ 已生成图文工作流：\n· 提示词节点 → 图文生成节点\n主题自动转成「文案 + N 屏配图」。');
       } else if (t.includes('详情页')) {
         // 自动在画布生成详情页工作流
         const p = Canvas.addNode('promptNode', 150, 200);
         const d = Canvas.addNode('detailPageGeneratorNode', 500, 200);
         Canvas.connect(p.id, d.id);
         switchView('canvas');
-        reply = '✅ 已为你生成详情页工作流：\n· 提示词节点 → 详情页生成节点\n你可以在右侧面板配置产品名称和行业。';
+        reply = tx('assistant.reply.detailWf', '✅ 已为你生成详情页工作流：\n· 提示词节点 → 详情页生成节点\n你可以在右侧面板配置产品名称和行业。');
       } else if (/(添加|加一个|加个|新建|加一?个?)/.test(t) || t.includes('提示词') || t.includes('prompt')) {
         // 尝试提取节点名进行模糊匹配：去掉动词/量词/"节点"二字后即为候选名
         let kw = null;
@@ -1055,44 +1060,44 @@
         if (found) {
           const node = Canvas.addNode(found.type, 200 + Math.random() * 200, 180 + Math.random() * 120);
           switchView('canvas');
-          reply = `✅ 已添加「${found.name}」节点（${found.cat}）：\n${found.desc}\n节点 id: ${node.id}`;
+          reply = tx('assistant.reply.nodeAdded', `✅ 已添加「${found.name}」节点（${found.cat}）：\n${found.desc}\n节点 id: ${node.id}`, { name: found.name, cat: found.cat, desc: found.desc, id: node.id });
         } else if (t.includes('提示词') || t.includes('prompt')) {
           const p = Canvas.addNode('promptNode', 200, 200);
           switchView('canvas');
-          reply = `✅ 已添加一个提示词节点（id: ${p.id}）。`;
+          reply = tx('assistant.reply.promptAdded', `✅ 已添加一个提示词节点（id: ${p.id}）。`, { id: p.id });
         } else {
-          reply = '我没找到对应的节点。试试说具体名称，例如：\n· 「添加详情页生成节点」\n· 「加一个 LLM」';
+          reply = tx('assistant.reply.nodeNotFound', '我没找到对应的节点。试试说具体名称，例如：\n· 「添加详情页生成节点」\n· 「加一个 LLM」');
         }
       } else if (t.includes('删除选中') || t.includes('删除当前') || t.includes('删掉节点')) {
         const sel = Canvas.getSelected();
         if (sel) {
           Canvas.removeNode(sel.id);
-          reply = `🗑 已删除选中节点「${sel.name}」。`;
+          reply = tx('assistant.reply.nodeDeleted', `🗑 已删除选中节点「${sel.name}」。`, { name: sel.name });
         } else {
-          reply = '当前没有选中任何节点。先点选画布上的节点再让我删除。';
+          reply = tx('assistant.reply.nothingSelected', '当前没有选中任何节点。先点选画布上的节点再让我删除。');
         }
       } else if (t.includes('自动布局')) {
         const state = Canvas.getState();
         if (!Object.keys(state.nodes).length) {
-          reply = '画布为空，先添加一些节点再自动布局吧。';
+          reply = tx('assistant.reply.canvasEmptyLayout', '画布为空，先添加一些节点再自动布局吧。');
         } else {
           Canvas.autoLayout();
-          reply = '✨ 已按连线关系自动排列节点。';
+          reply = tx('assistant.reply.autoLayoutDone', '✨ 已按连线关系自动排列节点。');
         }
       } else if (t.includes('说明书') || t.includes('帮助') || t.includes('使用手册') || t.includes('教程')) {
         switchView('manual');
-        reply = '📖 已为你打开使用说明书，包含快速上手、节点清单、FAQ 与快捷键。';
+        reply = tx('assistant.reply.manualOpened', '📖 已为你打开使用说明书，包含快速上手、节点清单、FAQ 与快捷键。');
       } else if (t.includes('清空') || t.includes('清除')) {
         Canvas.clearCanvas();
-        reply = '🧹 画布已清空。';
+        reply = tx('assistant.reply.cleared', '🧹 画布已清空。');
       } else if (t.includes('你好') || t.includes('hi') || t.includes('hello')) {
         reply = tx('assistant.greetingReply', '你好！我是小锴助手 🤖\n可以帮你搭建工作流、解释节点用法。\n试试说：「帮我生成详情页工作流」「添加 LLM 节点」「自动布局」');
       } else if (t.includes('运行')) {
         if (window.Engine) {
           Engine.runAll();
-          reply = '▶ 已开始运行工作流，可在右下角查看执行日志。';
+          reply = tx('assistant.reply.runStarted', '▶ 已开始运行工作流，可在右下角查看执行日志。');
         } else {
-          reply = '▶ 工作流运行中…';
+          reply = tx('assistant.reply.running', '▶ 工作流运行中…');
         }
       } else if (t.includes('优化') && (t.includes('工作流') || t.includes('画布'))) {
         // v0.9.0：优化工作流 = 自动布局 + 添加说明便签
@@ -1256,10 +1261,12 @@
     return k.slice(0, 4) + '****' + k.slice(-4);
   }
 
-  /* ---------- 首次启动自动预配置 wawapi 中转站（key 留空） ---------- */
+  /* ---------- 首次启动自动预配置 wawapi 中转站（key 留空） ----------
+   * 注意：boot() 中 ProviderStore.seedBuiltinIfEmpty() 已负责预置豆包/智谱。
+   * 本函数仅作补充：若内置种子已写入（list.length > 0），直接跳过，避免重复添加。 */
   function ensureDefaultProvider() {
     if (!window.ProviderStore) return;
-    if (ProviderStore.load().length > 0) return;
+    if (ProviderStore.load().length > 0) return; // 已有供应商（含 seedBuiltinIfEmpty 的预置），跳过
     const preset = (window.PROVIDER_PRESETS || []).find(p => /wawapi/i.test(p.name));
     if (!preset) return;
     ProviderStore.add({
@@ -1580,25 +1587,31 @@
     });
 
     // Key 显示 / 隐藏切换
-    document.getElementById('pf-key-toggle').addEventListener('click', () => {
+    const keyToggle = document.getElementById('pf-key-toggle');
+    if (keyToggle) keyToggle.addEventListener('click', () => {
       const inp = document.getElementById('pf-key');
-      inp.type = inp.type === 'password' ? 'text' : 'password';
+      if (inp) inp.type = inp.type === 'password' ? 'text' : 'password';
     });
 
     // 手动添加模型
-    document.getElementById('pf-model-add').addEventListener('click', addManualModel);
-    document.getElementById('pf-model-input').addEventListener('keydown', e => {
+    const modelAdd = document.getElementById('pf-model-add');
+    if (modelAdd) modelAdd.addEventListener('click', addManualModel);
+    const modelInput = document.getElementById('pf-model-input');
+    if (modelInput) modelInput.addEventListener('keydown', e => {
       if (e.key === 'Enter') { e.preventDefault(); addManualModel(); }
     });
 
     // 从 API 拉取模型
-    document.getElementById('pf-fetch-models').addEventListener('click', fetchModelsFromApi);
+    const fetchBtn = document.getElementById('pf-fetch-models');
+    if (fetchBtn) fetchBtn.addEventListener('click', fetchModelsFromApi);
 
     // 取消编辑
-    document.getElementById('pf-cancel').addEventListener('click', resetForm);
+    const cancelBtn = document.getElementById('pf-cancel');
+    if (cancelBtn) cancelBtn.addEventListener('click', resetForm);
 
     // 提交（添加 / 保存修改）
-    document.getElementById('provider-form').addEventListener('submit', e => {
+    const provForm = document.getElementById('provider-form');
+    if (provForm) provForm.addEventListener('submit', e => {
       e.preventDefault();
       const name = document.getElementById('pf-name').value.trim();
       const baseurl = document.getElementById('pf-baseurl').value.trim();

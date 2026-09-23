@@ -1290,7 +1290,24 @@
     'np.multiView': '多视角人设',
     'np.emoji': '表情包',
     'np.operationPlan': '运营规划',
-    'np.all': '全部'
+    'np.all': '全部',
+
+    /* ---------- AI 助手动态回复 (assistant.reply.*) ---------- */
+    'assistant.reply.videoWf': '✅ 已生成视频工作流：\n· 提示词节点 → Seedance 视频节点\n在右侧面板填写脚本即可出片。',
+    'assistant.reply.pptWf': '✅ 已生成 PPT 工作流：\n· PPT内容节点 → PPT 生成节点\n先生成大纲逐页内容，再导出 PPTX。',
+    'assistant.reply.imageTextWf': '✅ 已生成图文工作流：\n· 提示词节点 → 图文生成节点\n主题自动转成「文案 + N 屏配图」。',
+    'assistant.reply.detailWf': '✅ 已为你生成详情页工作流：\n· 提示词节点 → 详情页生成节点\n你可以在右侧面板配置产品名称和行业。',
+    'assistant.reply.nodeNotFound': '我没找到对应的节点。试试说具体名称，例如：\n· 「添加详情页生成节点」\n· 「加一个 LLM」',
+    'assistant.reply.nodeAdded': '✅ 已添加「{name}」节点（{cat}）：\n{desc}\n节点 id: {id}',
+    'assistant.reply.promptAdded': '✅ 已添加一个提示词节点（id: {id}）。',
+    'assistant.reply.nothingSelected': '当前没有选中任何节点。先点选画布上的节点再让我删除。',
+    'assistant.reply.nodeDeleted': '🗑 已删除选中节点「{name}」。',
+    'assistant.reply.canvasEmptyLayout': '画布为空，先添加一些节点再自动布局吧。',
+    'assistant.reply.autoLayoutDone': '✨ 已按连线关系自动排列节点。',
+    'assistant.reply.manualOpened': '📖 已为你打开使用说明书，包含快速上手、节点清单、FAQ 与快捷键。',
+    'assistant.reply.cleared': '🧹 画布已清空。',
+    'assistant.reply.runStarted': '▶ 已开始运行工作流，可在右下角查看执行日志。',
+    'assistant.reply.running': '▶ 工作流运行中…'
   };
 
   var EN = {
@@ -1531,7 +1548,7 @@
 
     /* ---------- Boot / User ---------- */
     'boot.sub': 'Loading workspace…',
-    'user.name': 'Li Jiancheng',
+    'user.name': 'KaiLi',
     'user.role': 'Admin',
 
     /* ---------- Manage Library Modal ---------- */
@@ -2566,7 +2583,24 @@
     'np.multiView': 'Multi-view Persona',
     'np.emoji': 'Emoji Pack',
     'np.operationPlan': 'Operations Plan',
-    'np.all': 'All'
+    'np.all': 'All',
+
+    /* ---------- AI Assistant dynamic replies (assistant.reply.*) ---------- */
+    'assistant.reply.videoWf': '✅ Video workflow created:\n· Prompt node → Seedance video node\nFill in the script in the right panel.',
+    'assistant.reply.pptWf': '✅ PPT workflow created:\n· PPT content node → PPT generator\nOutline pages first, then export PPTX.',
+    'assistant.reply.imageTextWf': '✅ Image-text workflow created:\n· Prompt node → Image-text generator\nTopic auto-converts to copy + N images.',
+    'assistant.reply.detailWf': '✅ Detail page workflow created:\n· Prompt node → Detail page generator\nConfigure product name and industry in the right panel.',
+    'assistant.reply.nodeNotFound': 'I couldn\'t find that node. Try being more specific, e.g.:\n· "Add a detail page generator node"\n· "Add an LLM"',
+    'assistant.reply.nodeAdded': '✅ Added "{name}" node ({cat}):\n{desc}\nNode id: {id}',
+    'assistant.reply.promptAdded': '✅ Added a prompt node (id: {id}).',
+    'assistant.reply.nothingSelected': 'No node selected. Click a node on the canvas first.',
+    'assistant.reply.nodeDeleted': '🗑 Deleted selected node "{name}".',
+    'assistant.reply.canvasEmptyLayout': 'Canvas is empty. Add some nodes before auto-layout.',
+    'assistant.reply.autoLayoutDone': '✨ Auto-arranged nodes by connection.',
+    'assistant.reply.manualOpened': '📖 Opened the user manual: quick start, node list, FAQ and shortcuts.',
+    'assistant.reply.cleared': '🧹 Canvas cleared.',
+    'assistant.reply.runStarted': '▶ Workflow started. Check the log panel for progress.',
+    'assistant.reply.running': '▶ Workflow running…'
   };
 
   var DICTS = { zh: ZH, en: EN };

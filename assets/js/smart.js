@@ -228,6 +228,19 @@
   /* ---------------- 中文数字解析 ---------------- */
   const CN_NUM = { 一: 1, 两: 2, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
 
+  // 中文数字复合词解析：十一=11、二十=20、二十五=25、十=10
+  function cnToInt(raw) {
+    if (!raw) return null;
+    if (/^\d+$/.test(raw)) return parseInt(raw, 10);
+    if (CN_NUM[raw] != null) return CN_NUM[raw];
+    const d = ch => CN_NUM[ch] != null ? CN_NUM[ch] : null;
+    let m;
+    if ((m = raw.match(/^十([一二两三四五六七八九])$/))) return 10 + d(m[1]);
+    if ((m = raw.match(/^([一二两三四五六七八九])十$/))) return d(m[1]) * 10;
+    if ((m = raw.match(/^([一二两三四五六七八九])十([一二两三四五六七八九])$/))) return d(m[1]) * 10 + d(m[2]);
+    return null;
+  }
+
   function parseNum(str, unitWords) {
     for (const u of unitWords) {
       // 数字 + 单位：「3 张」「八页」
@@ -235,7 +248,7 @@
       const m = str.match(re);
       if (m) {
         const raw = m[1];
-        const n = /^\d+$/.test(raw) ? parseInt(raw, 10) : (CN_NUM[raw] ?? null);
+        const n = /^\d+$/.test(raw) ? parseInt(raw, 10) : cnToInt(raw);
         if (n) return n;
       }
       // 单位 + 数字：「页 8」「镜头三个」
@@ -243,7 +256,7 @@
       const m2 = str.match(re2);
       if (m2) {
         const raw = m2[1];
-        const n = /^\d+$/.test(raw) ? parseInt(raw, 10) : (CN_NUM[raw] ?? null);
+        const n = /^\d+$/.test(raw) ? parseInt(raw, 10) : cnToInt(raw);
         if (n) return n;
       }
     }
@@ -373,9 +386,6 @@
     const corrections = [];
     if (slots.ratio && !/^\d{1,2}:\d{1,2}$/.test(slots.ratio)) {
       corrections.push('画幅 ' + slots.ratio + ' 非法，已回退 1:1'); slots.ratio = '1:1';
-    }
-    if (slots.count > 12) {
-      corrections.push('数量 ' + slots.count + ' 超出单次上限，已收为 12'); slots.count = 12;
     }
     if (slots.duration) {
       const sec = parseInt(slots.duration, 10);

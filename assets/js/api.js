@@ -53,6 +53,16 @@
     };
   }
 
+  // 判断是否本地/自托管地址（localhost / 127.0.0.1），本地服务允许空 API Key
+  function isLocalBase(baseurl) {
+    var u = String(baseurl || '').toLowerCase();
+    return u.indexOf('localhost') >= 0 || u.indexOf('127.0.0.1') >= 0 || u.indexOf('0.0.0.0') >= 0;
+  }
+  // 需要 API Key 吗：非本地地址且 key 为空时才需要
+  function missingRequiredKey(provider) {
+    return !!(provider && provider.baseurl && !provider.key && !isLocalBase(provider.baseurl));
+  }
+
   // 按协议适配器构建请求头：
   //   - 默认 Authorization: Bearer key（OpenAI 兼容）
   //   - anthropic → x-api-key + anthropic-version
@@ -240,8 +250,11 @@
   async function chatCompletion(provider, params, onStreamChunk, opts) {
     params = params || {};
     opts = opts || {};
-    if (!provider || !provider.baseurl || !provider.key) {
+    if (!provider || !provider.baseurl) {
       throw new Error(tr('api.err.providerMissing', '供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
+    }
+    if (missingRequiredKey(provider)) {
+      throw new Error(tr('api.err.providerMissing', '供应商缺少 API Key，请在「设置 → 供应商管理」中配置。（本地服务如 Ollama 可留空）'));
     }
 
     // ===== 协议适配层：解析适配器 =====
@@ -280,8 +293,9 @@
     };
 
     const stream = !!params.stream;
+    const _fbModel = (provider.models && provider.models[0] && provider.models[0].id) || '';
     const ctx = {
-      model: params.model || 'gpt-4o-mini',
+      model: params.model || _fbModel,
       systemPrompt: systemPrompt,
       msgs: norm,
       temperature: params.temperature != null ? params.temperature : 0.7,
@@ -317,6 +331,9 @@
     }, 0);
 
     const timeoutMs = opts.timeoutMs || TIMEOUT_CHAT;
+    if (!ctx.model) {
+      throw new Error(tr('api.err.noModel', '未指定模型，且当前供应商未配置模型列表，请在「设置 → 供应商管理」中选择模型。'));
+    }
     try {
       // v2.2.0-super：apiFetch 内置超时 + 5xx/网络/超时自动重试 + 错误分类
       const resp = await apiFetch(url, {
@@ -419,7 +436,7 @@
      第一个成功后记住形态（localStorage ljc_image_form_<id>），后续直接命中。 */
   function buildImageForms(provider, params) {
     var base = normalizeBaseUrl(provider.baseurl);
-    var model = params.model || 'dall-e-3';
+    var model = params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'dall-e-3';
     var prompt = params.prompt || 'a high-quality image';
     var size = params.size || '1024x1024';
     var n = params.n || 1;
@@ -481,8 +498,11 @@
   async function imageGeneration(provider, params, opts) {
     params = params || {};
     opts = opts || {};
-    if (!provider || !provider.baseurl || !provider.key) {
+    if (!provider || !provider.baseurl) {
       throw new Error(tr('api.err.imageProviderMissing', '图片供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
+    }
+    if (missingRequiredKey(provider)) {
+      throw new Error(tr('api.err.imageProviderMissing', '图片供应商缺少 API Key。（本地服务可留空）'));
     }
 
     // ===== APILogger 埋点 =====
@@ -623,12 +643,15 @@
   async function videoGeneration(provider, params, opts) {
     params = params || {};
     opts = opts || {};
-    if (!provider || !provider.baseurl || !provider.key) {
+    if (!provider || !provider.baseurl) {
       throw new Error(tr('api.err.videoProviderMissing', '视频供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
+    }
+    if (missingRequiredKey(provider)) {
+      throw new Error(tr('api.err.videoProviderMissing', '视频供应商缺少 API Key。（本地服务可留空）'));
     }
     const url = buildUrl(provider.baseurl, '/videos/generations');
     const body = {
-      model: params.model || 'seedance-1.0-pro',
+      model: params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'seedance-1.0-pro',
       prompt: params.prompt || 'a cinematic high-quality video',
       duration: params.duration || 5,
       resolution: params.resolution || '720p',
@@ -674,7 +697,7 @@
 
       const pollUrl = buildUrl(provider.baseurl, '/videos/generations/' + encodeURIComponent(taskId));
       const pollStart = Date.now();
-      const pollTimeout = 60000; // 轮询超时 60s
+      const pollTimeout = 300000; // 轮询超时 300s（5分钟），视频生成通常需2-5分钟
       while (Date.now() - pollStart < pollTimeout) {
         await sleep(VIDEO_POLL_INTERVAL, controller.signal);
         let pollResp;
@@ -690,6 +713,8 @@
           continue;
         }
         if (!pollResp.ok) {
+          // 5xx 视为中转站临时抖动，继续下一轮轮询；4xx 才真失败
+          if (pollResp.status >= 500) { try { await pollResp.text(); } catch (e3) {} continue; }
           throw makeHttpError(pollResp.status, await pollResp.text());
         }
         const pollData = await readBody(pollResp);
@@ -800,8 +825,11 @@
   async function model3DGeneration(provider, params, opts) {
     params = params || {};
     opts = opts || {};
-    if (!provider || !provider.baseurl || !provider.key) {
+    if (!provider || !provider.baseurl) {
       throw new Error(tr('api.err.model3DProviderMissing', '3D 供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
+    }
+    if (missingRequiredKey(provider)) {
+      throw new Error(tr('api.err.model3DProviderMissing', '3D 供应商缺少 API Key。（本地服务可留空）'));
     }
     const url = buildUrl(provider.baseurl, '/3d/generations');
     // M3：faceCount 支持 low/medium/high 枚举或纯数值（万）
@@ -809,7 +837,7 @@
     const fcNum = Number(params.faceCount);
     const faceCountVal = Number.isFinite(fcNum) ? fcNum * 10000 : (FACE_MAP[params.faceCount] || 50000);
     const body = {
-      model: params.model || 'triposr-1.0',
+      model: params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'triposr-1.0',
       prompt: params.prompt || 'a high-quality 3D model',
       format: params.format || 'glb',
       face_count: faceCountVal,
@@ -857,7 +885,7 @@
 
       const pollUrl = buildUrl(provider.baseurl, '/3d/generations/' + encodeURIComponent(taskId));
       const pollStart = Date.now();
-      const pollTimeout = 90000; // 轮询超时 90s
+      const pollTimeout = 180000; // 轮询超时 180s（3分钟）
       while (Date.now() - pollStart < pollTimeout) {
         await sleep(TD_POLL_INTERVAL, controller.signal);
         let pollResp;
@@ -872,6 +900,7 @@
           continue; // 轮询网络抖动，继续
         }
         if (!pollResp.ok) {
+          if (pollResp.status >= 500) { try { await pollResp.text(); } catch (e3) {} continue; }
           throw makeHttpError(pollResp.status, await pollResp.text());
         }
         const pollData = await readBody(pollResp);

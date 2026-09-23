@@ -577,7 +577,7 @@
       a.click();
       a.remove();
     } else {
-      fetch(src).then(function (r) { return r.blob(); }).then(function (blob) {
+      fetch(src).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.blob(); }).then(function (blob) {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -963,7 +963,7 @@
     const apiOpts = { timeoutMs: getNodeTimeout(node.type), signal: execCtl.signal };
     let cached = null;
     let cacheParams = node.params;
-    if (isGenNode && window.Cache && node.params && !Cache.shouldSkip(node.params)) {
+    if (isGenNode && window.Cache && node.params && !(typeof Cache.shouldSkip === 'function' && Cache.shouldSkip(node.params))) {
       // C1：把实际输入（上游拼接结果）纳入缓存 key，避免上游变化却命中旧结果
       let cacheInput = '';
       if (isLlmNode(node.type)) {
@@ -1377,8 +1377,8 @@
           const p = node.params || {};
           if (p.model) node._meta.model = p.model;
           else if (isLlmNode(node.type) || isImageNode(node.type) || isVideoNode(node.type) || is3DNode(node.type)) {
-            var _cat = isLlmNode(node.type) ? 'llm' : (isImageNode(node.type) ? 'image' : (isVideoNode(node.type) ? 'video' : '3d'));
-            var prov = resolveProvider(node, _cat);
+            const _cat = isLlmNode(node.type) ? 'llm' : (isImageNode(node.type) ? 'image' : (isVideoNode(node.type) ? 'video' : '3d'));
+            const prov = resolveProvider(node, _cat);
             node._meta.provider = prov ? prov.name : '';
           }
         }

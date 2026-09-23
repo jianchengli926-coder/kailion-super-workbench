@@ -147,7 +147,8 @@
     render(document.getElementById('skills-root'));
   }
   function rename(id) {
-    openSkillModal(null, (name) => {
+    const cur = loadUser().find(s => s.id === id);
+    openSkillModal(cur ? cur.name : null, (name) => {
       if (!name) return;
       const arr = loadUser().map(s => s.id === id ? Object.assign({}, s, { name }) : s);
       saveUser(arr);

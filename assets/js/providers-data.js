@@ -221,7 +221,7 @@
       id: 'builtin_zhipu_relay',
       name: '智谱中转站', nameEn: 'Zhipu Relay',
       baseurl: 'https://open.bigmodel.cn/api/paas/v4',
-      key: 'ffc4da9047c24fe28e7ac8f03bad592f.vKSWMuobEC1CetTZ',
+      key: '',
       category: 'universal', protocol: 'openai', isDefault: false,
       models: [
         { id: 'glm-4', label: 'GLM-4' },
@@ -331,13 +331,13 @@
       results.push({ name: '模型清单', passed: false, message: '拉取失败：' + (e.message || e), detail: base + '/models' });
     }
 
-    // 选一个测试模型
-    const testModel = (provider.models && provider.models[0] && provider.models[0].id)
-      || ((results[1] && results[1].detail.indexOf('gpt') >= 0) ? 'gpt-4o-mini' : '')
-      || 'gpt-4o-mini';
+    // 选一个测试模型：仅用供应商已配置的第一个模型，不再硬编码 gpt-4o-mini
+    const testModel = (provider.models && provider.models[0] && provider.models[0].id) || '';
 
-    // 3) 对话能否通
-    try {
+    // 3) 对话能否通（未配置模型则跳过）
+    if (!testModel) {
+      results.push({ name: '对话测试', passed: false, message: '未配置模型，跳过', detail: '请先在供应商管理中添加模型' });
+    } else try {
       const r = await timedFetch(base + '/chat/completions', {
         method: 'POST',
         headers: Object.assign({ 'Content-Type': 'application/json' }, auth),
@@ -571,15 +571,25 @@
   // 克隆替换按钮，剥离 ui.js 旧监听，避免双重请求/双重 toast
   function bindFetchButton() {
     var btn = document.getElementById('pf-fetch-models');
-    if (!btn) return;
+    if (!btn || btn.__pfBound) return; // 已接管过，避免重复克隆
     var fresh = btn.cloneNode(true);
     if (btn.parentNode) btn.parentNode.replaceChild(fresh, btn);
     fresh.addEventListener('click', onFetchClick);
+    fresh.__pfBound = true;
   }
 
-  // 需在 ui.js initSettings() 绑定之后接管（app.js 于 DOMContentLoaded 启动 UI.init）
-  if (document.readyState === 'complete') bindFetchButton();
-  else window.addEventListener('load', bindFetchButton);
+  // 需在 ui.js initSettings() 绑定之后接管。设置面板可能懒加载，
+  // 用 MutationObserver 监听 #pf-fetch-models 出现后再接管，避免时序竞态。
+  function watchFetchButton() {
+    bindFetchButton();
+    if (typeof MutationObserver === 'undefined') return;
+    var obs = new MutationObserver(function () { bindFetchButton(); });
+    obs.observe(document.body, { childList: true, subtree: true });
+    // 60s 后停止观察，避免长期开销
+    setTimeout(function () { try { obs.disconnect(); } catch (e) {} }, 60000);
+  }
+  if (document.readyState === 'complete') watchFetchButton();
+  else window.addEventListener('load', watchFetchButton);
 
   window.Providers = {
     discoverModels: discoverModels,

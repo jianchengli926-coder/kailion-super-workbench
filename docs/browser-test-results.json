@@ -1,0 +1,232 @@
+{
+  "passed": [
+    {
+      "name": "顶部工具栏存在",
+      "detail": ""
+    },
+    {
+      "name": "左侧导航存在",
+      "detail": ""
+    },
+    {
+      "name": "中央画布存在",
+      "detail": ""
+    },
+    {
+      "name": "右侧参数面板存在",
+      "detail": ""
+    },
+    {
+      "name": "小锴助手悬浮面板存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-run 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-stop 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-save 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-export-menu 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-autolayout 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-align-guides 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-grid-snap 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-sticky 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-marketplace 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-batch 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-cron 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-coach 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #zoom-out 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #zoom-in 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #zoom-reset 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-undo 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-redo 存在",
+      "detail": ""
+    },
+    {
+      "name": "工具栏按钮 #btn-settings 存在",
+      "detail": ""
+    },
+    {
+      "name": "左侧导航项充足",
+      "detail": "共18项"
+    },
+    {
+      "name": "节点库容器存在",
+      "detail": ""
+    },
+    {
+      "name": "节点分类充足",
+      "detail": "70个分类"
+    },
+    {
+      "name": "节点卡片充足",
+      "detail": "37个节点"
+    },
+    {
+      "name": "节点搜索框存在",
+      "detail": ""
+    },
+    {
+      "name": "双击画布添加节点成功",
+      "detail": "26个节点"
+    },
+    {
+      "name": "缩放功能正常",
+      "detail": "100% -> 120%"
+    },
+    {
+      "name": "设置面板打开成功",
+      "detail": ""
+    },
+    {
+      "name": "设置面板区域充足",
+      "detail": "12个区域"
+    },
+    {
+      "name": "供应商预设充足",
+      "detail": "13个预设"
+    },
+    {
+      "name": "语言切换存在",
+      "detail": ""
+    },
+    {
+      "name": "使用说明书渲染成功",
+      "detail": "内容长度39482字符"
+    },
+    {
+      "name": "说明书章节充足",
+      "detail": "8章"
+    },
+    {
+      "name": "说明书节点清单充足",
+      "detail": "76个节点"
+    },
+    {
+      "name": "工作流模板存在",
+      "detail": "20个模板"
+    },
+    {
+      "name": "资源库「素材」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「提示词」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「知识库」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「专家」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「数字人」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「选题」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「风格」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「角色」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「场景」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「品牌」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "资源库「商品」可点击",
+      "detail": "视图: view-resource"
+    },
+    {
+      "name": "小锴助手输入框和发送按钮存在",
+      "detail": ""
+    },
+    {
+      "name": "小锴助手对话功能正常",
+      "detail": "3条消息"
+    },
+    {
+      "name": "全局搜索(Ctrl+K)打开成功",
+      "detail": ""
+    },
+    {
+      "name": "运行按钮可点击",
+      "detail": "进度条未显示（可能无节点）"
+    },
+    {
+      "name": "工作流市场有内容",
+      "detail": "25个工作流"
+    },
+    {
+      "name": "智能工作台渲染成功",
+      "detail": "1163字符"
+    }
+  ],
+  "failed": [
+    {
+      "name": "导出菜单未打开",
+      "detail": ""
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

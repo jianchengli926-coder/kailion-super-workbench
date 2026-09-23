@@ -221,4 +221,57 @@
       sources: ['KaiLionCreator/library.js', 'KaiLionCrafts工作台.html']
     }
   };
+
+  /* ============ 自动迁移：首次启动时把合并数据灌入 resources.js 所用 localStorage ============
+     仅在目标 key 为空时写入，不覆盖用户已有数据。
+     字段映射：icon→emoji, name→title, text→content, category→cat, swatch→colors, img→emoji */
+  try {
+    var now = Date.now();
+    function seedOnce(key, seeds) {
+      var flag = 'kailion_migrated_' + key;
+      try { if (localStorage.getItem(flag)) return; } catch (e) {}
+      try {
+        var existing = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!Array.isArray(existing) || existing.length) { try { localStorage.setItem(flag, '1'); } catch (e2) {} return; }
+        localStorage.setItem(key, JSON.stringify(seeds));
+      } catch (e) {}
+      try { localStorage.setItem(flag, '1'); } catch (e) {}
+    }
+    // 专家：icon→emoji, role→specialty
+    seedOnce('ljc_experts', experts.map(function (e, i) {
+      return { id: e.id, emoji: e.icon || '👤', name: e.name, specialty: e.role || '', desc: e.desc || '', systemPrompt: '', addedAt: now - i * 60000 };
+    }));
+    // 提示词：name→title, text→content, category→cat
+    seedOnce('ljc_prompts', prompts.map(function (p, i) {
+      return { id: p.id, title: p.name, content: p.text, cat: p.category || '其他', addedAt: now - i * 60000 };
+    }));
+    // 数字人：avatar→emoji
+    seedOnce('ljc_digital_humans', digitalHumans.map(function (d, i) {
+      return { id: d.id, name: d.name, emoji: d.avatar || '🧑‍💻', desc: d.desc || '', voiceStyle: '', personality: '', systemPrompt: '', addedAt: now - i * 60000 };
+    }));
+    // 风格：swatch→colors
+    seedOnce('ljc_styles', styles.map(function (st, i) {
+      return { id: st.id, name: st.name, desc: st.desc || '', colors: st.swatch || [], prompt: '', addedAt: now - i * 60000 };
+    }));
+    // 角色：img→emoji, desc→background
+    seedOnce('ljc_roles', roles.map(function (r, i) {
+      return { id: r.id, name: r.name, emoji: r.img || '🎭', personality: '', background: r.desc || '', speechStyle: '', systemPrompt: '', addedAt: now - i * 60000 };
+    }));
+    // 场景：img→emoji, nodes 留空（用户手动加载画布模板）
+    seedOnce('ljc_scenes', scenes.map(function (sc, i) {
+      return { id: sc.id, name: sc.name, emoji: sc.img || '🏞️', desc: sc.desc || '', nodes: [], addedAt: now - i * 60000 };
+    }));
+    // 选题：name→title, hot(数字)→heat(高/中/低)
+    seedOnce('ljc_topics', topics.map(function (t, i) {
+      var heat = t.hot >= 90 ? '高' : (t.hot >= 80 ? '中' : '低');
+      return { id: t.id, title: t.name, platform: t.platform || '抖音', heat: heat, keywords: '', status: '待创作', addedAt: now - i * 60000 };
+    }));
+    // 商品
+    seedOnce('ljc_products', products.map(function (pr, i) {
+      return { id: pr.id, name: pr.name, image: '', price: pr.price || '', sellingPoints: '', targetAudience: '', platform: '', addedAt: now - i * 60000 };
+    }));
+    console.info('[SUPER_DATA] 合并资源已自动迁移到资源库（专家' + experts.length + '/提示词' + prompts.length + '/商品' + products.length + '等）');
+  } catch (e) {
+    console.warn('[SUPER_DATA] 自动迁移失败（不影响主流程）：', e);
+  }
 })();

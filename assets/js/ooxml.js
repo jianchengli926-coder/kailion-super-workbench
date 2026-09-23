@@ -222,7 +222,8 @@ function docxBlock(b) {
     case 'code':
       return b.text.split('\n').map(l => `<w:p><w:pPr><w:pStyle w:val="Code"/></w:pPr>${docxRun(l || ' ')}</w:p>`).join('');
     case 'table': {
-      const w = 9000, cols = Math.max(1, (b.header || []).length);
+      const w = 9000, rowMax = (b.rows||[]).reduce((a,r)=>Math.max(a,(r||[]).length),0);
+      const cols = Math.max(1, (b.header || []).length, rowMax);
       const cw = Math.floor(w / cols);
       const cell = (t, head) => `<w:tc><w:tcPr><w:tcW w:w="${cw}" w:type="dxa"/>${head ? '<w:shd w:val="clear" w:fill="F4F1EA"/>' : ''}</w:tcPr><w:p><w:pPr><w:spacing w:after="40"/></w:pPr>${head ? `<w:r><w:rPr><w:b/></w:rPr><w:t>${xmlEsc(t)}</w:t></w:r>` : docxRun(t)}</w:p></w:tc>`;
       const borders = '<w:tblBorders>' + ['top', 'left', 'bottom', 'right', 'insideH', 'insideV']
@@ -268,6 +269,7 @@ function buildXlsx(sheets, opts = {}) {
 <Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/>
 ${list.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('\n')}
 </Types>`;
+  const sheetNames = (() => { const used = {}; return list.map((s,i) => { let nm = safeSheetName(s.name, i); let cand = nm, k = 2; while (used[cand]) cand = nm.slice(0, 28) + '_' + (k++); used[cand] = true; return cand; }); })();
 
   const files = [
     { name: '[Content_Types].xml', data: contentTypes },
@@ -279,7 +281,7 @@ ${list.map((_, i) => `<Override PartName="/xl/worksheets/sheet${i + 1}.xml" Cont
     { name: 'xl/workbook.xml', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"
  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">
-<sheets>${list.map((s, i) => `<sheet name="${xmlEsc(safeSheetName(s.name, i))}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets>
+<sheets>${list.map((s, i) => `<sheet name="${xmlEsc(sheetNames[i])}" sheetId="${i + 1}" r:id="rId${i + 1}"/>`).join('')}</sheets>
 </workbook>` },
     { name: 'xl/_rels/workbook.xml.rels', data: `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
@@ -881,7 +883,7 @@ ${blocks.map(b => {
 }
 
 function blocksToRtf(blocks, title) {
-  const esc2 = s => String(s ?? '').replace(/\\/g, '\\\\').replace(/\{/g, '\\{').replace(/\}/g, '\\}').replace(/[^\x00-\x7F]/g, c => `\\u${c.charCodeAt(0)}?`);
+  const esc2 = s => String(s ?? '').replace(/\\/g, '\\\\').replace(/\{/g, '\\{').replace(/\}/g, '\\}').replace(/[^\x00-\x7F]/g, c => { const code = c.charCodeAt(0); return '\\u' + (code > 32767 ? code - 65536 : code) + '?'; });
   const body = blocks.map(b => {
     const size = b.t === 'h1' ? 36 : b.t === 'h2' ? 28 : b.t === 'h3' ? 24 : 22;
     if (b.t === 'table') {

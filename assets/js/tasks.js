@@ -322,9 +322,9 @@
             <input id="bt-name" class="input" placeholder="${t('tasks.batchNamePh', '任务名称（如：详情页批量生成）')}">
             <div class="task-form-row" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:6px 0">
               <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="__current__" checked> ${t('tasks.currentWf', '当前画布工作流')}</label>
-              <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="${t('tasks.wfImage', '图像创作')}"> ${t('tasks.wfImage', '图像创作')}</label>
-              <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="${t('tasks.wfDetail', '电商详情页')}"> ${t('tasks.wfDetail', '电商详情页')}</label>
-              <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="${t('tasks.wfVideo', '视频创作')}"> ${t('tasks.wfVideo', '视频创作')}</label>
+              <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="__image__"> ${t('tasks.wfImage', '图像创作')}</label>
+              <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="__detail__"> ${t('tasks.wfDetail', '电商详情页')}</label>
+              <label style="font-size:13px"><input type="checkbox" class="bt-wf" value="__video__"> ${t('tasks.wfVideo', '视频创作')}</label>
             </div>
             <input id="bt-conc" class="input" type="number" min="1" max="10" value="3" title="${t('tasks.concurrency', '并发数')}">
             <input id="bt-src" class="input" placeholder="${t('tasks.dataSourcePh', '数据源（CSV 路径 / 链接）')}">

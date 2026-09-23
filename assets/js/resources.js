@@ -400,9 +400,9 @@
         <div class="res-modal" style="width:560px">
           <div class="res-modal-head"><h3>📄 ${esc(d.name)}</h3><button class="btn btn-sm" id="res-close">✕</button></div>
           <div class="res-modal-body">
-            <p class="kb-detail-row">${window.I18N ? I18N.t('res.kbSize') : '大小：' + fmtSize(d.size)}</p>
-            <p class="kb-detail-row">${window.I18N ? I18N.t('res.kbUploadTime') : '上传时间：' + fmtTime(d.addedAt)}</p>
-            <p class="kb-detail-row">${window.I18N ? I18N.t('res.kbSummary') : '摘要：' + esc(d.summary || (window.I18N ? I18N.t('res.kbSummaryGen') : '（待生成）'))}</p>
+            <p class="kb-detail-row">${window.I18N ? I18N.t('res.kbSize') + '：' + fmtSize(d.size) : '大小：' + fmtSize(d.size)}</p>
+            <p class="kb-detail-row">${window.I18N ? I18N.t('res.kbUploadTime') + '：' + fmtTime(d.addedAt) : '上传时间：' + fmtTime(d.addedAt)}</p>
+            <p class="kb-detail-row">${window.I18N ? I18N.t('res.kbSummary') + '：' + esc(d.summary || (window.I18N ? I18N.t('res.kbSummaryGen') : '（待生成）')) : '摘要：' + esc(d.summary || (window.I18N ? I18N.t('res.kbSummaryGen') : '（待生成）'))}</p>
           </div>
           <div class="res-modal-foot"><button class="btn btn-sm btn-danger" id="res-del">${window.I18N ? I18N.t('res.kbDeleteDoc') : '🗑 删除文档'}</button></div>
         </div>`;
@@ -1308,12 +1308,18 @@
 
   function renderSemantic(root) {
     var activeSub = 'synonyms';
+    // 本地 i18n helper：I18N.t 缺失 key 时回退中文，避免显示 key 字符串
+    function str(key, zh) {
+      if (!window.I18N) return zh;
+      var v = I18N.t(key);
+      return (v === key || !v) ? zh : v;
+    }
     root.innerHTML =
       '<div class="res-wrap">'
-      + '<div class="res-header"><div><h2 class="res-title">🧠 语义库</h2>'
-      + '<p class="res-sub">同义词 / 关键词 / 命名实体，供 AI 节点做语义扩展与检索</p></div>'
-      + '<input id="sem-search" class="input" style="width:200px" placeholder="搜索…">'
-      + '<button id="sem-add" class="btn btn-primary btn-sm">➕ 新增</button></div>'
+      + '<div class="res-header"><div><h2 class="res-title">' + str('res.semTitle', '🧠 语义库') + '</h2>'
+      + '<p class="res-sub">' + str('res.semSub', '同义词 / 关键词 / 命名实体，供 AI 节点做语义扩展与检索') + '</p></div>'
+      + '<input id="sem-search" class="input" style="width:200px" placeholder="' + str('res.semSearch', '搜索…') + '">'
+      + '<button id="sem-add" class="btn btn-primary btn-sm">' + str('res.semAdd', '➕ 新增') + '</button></div>'
       + '<div class="res-tools" id="sem-tabs" style="display:flex;gap:6px;margin:8px 0;"></div>'
       + '<div id="sem-list"></div>'
       + '</div>';
@@ -1341,7 +1347,7 @@
         return JSON.stringify(it).toLowerCase().indexOf(q) !== -1;
       });
       if (!list.length) {
-        listEl.innerHTML = '<div class="manual-empty">暂无数据，点击右上角「新增」添加</div>';
+        listEl.innerHTML = '<div class="manual-empty">' + str('res.semEmpty', '暂无数据，点击右上角「新增」添加') + '</div>';
         return;
       }
       listEl.innerHTML = '<div style="display:flex;flex-direction:column;gap:8px;">' + list.map(function (it) {
@@ -1353,15 +1359,15 @@
           main = '<strong>' + esc(it.topic) + '</strong>';
           extra = (it.keywords || []).map(function (s) { return '<span class="tag" style="margin-right:4px;">' + esc(s) + '</span>'; }).join('');
         } else {
-          main = '<strong>' + esc(it.name) + '</strong> <span class="tag">' + esc(it.type || '未分类') + '</span>';
+          main = '<strong>' + esc(it.name) + '</strong> <span class="tag">' + esc(it.type || str('res.semUncategorized', '未分类')) + '</span>';
           extra = Object.keys(it.attrs || {}).map(function (k) {
             return '<span class="tag" style="margin-right:4px;">' + esc(k) + '=' + esc(it.attrs[k]) + '</span>';
           }).join('');
         }
         return '<div class="res-item" data-id="' + esc(it.id) + '" style="display:flex;align-items:center;gap:8px;padding:8px;border:1px solid rgba(128,128,128,0.2);border-radius:6px;">'
           + '<div style="flex:1;min-width:0;">' + main + '<div style="margin-top:4px;">' + extra + '</div></div>'
-          + '<button class="btn btn-sm sem-edit">编辑</button>'
-          + '<button class="btn btn-sm btn-danger sem-del">删除</button>'
+          + '<button class="btn btn-sm sem-edit">' + str('res.edit', '编辑') + '</button>'
+          + '<button class="btn btn-sm btn-danger sem-del">' + str('res.delete', '删除') + '</button>'
           + '</div>';
       }).join('') + '</div>';
 
@@ -1369,7 +1375,7 @@
         var id = row.getAttribute('data-id');
         row.querySelector('.sem-del').addEventListener('click', function () {
           var all = currentList().filter(function (x) { return x.id !== id; });
-          save(SEM_KEYS[activeSub], all); drawList(); toast('已删除');
+          save(SEM_KEYS[activeSub], all); drawList(); toast(str('res.semDeleted', '已删除'));
         });
         row.querySelector('.sem-edit').addEventListener('click', function () {
           var it = currentList().filter(function (x) { return x.id === id; })[0];
@@ -1390,23 +1396,23 @@
       else listVal = (it && it.attrs ? Object.keys(it.attrs).map(function (k) { return k + '=' + it.attrs[k]; }).join('\n') : '');
       ov.innerHTML =
         '<div class="settings-modal" style="max-width:460px;width:92%;">'
-        + '<div class="settings-header"><h2>' + (it ? '编辑' : '新增') + sub.title + '</h2><button class="btn btn-sm" data-c>✕</button></div>'
+        + '<div class="settings-header"><h2>' + (it ? str('res.edit','编辑') : str('res.new','新增')) + sub.title + '</h2><button class="btn btn-sm" data-c>✕</button></div>'
         + '<div style="padding:16px;">'
         + '<div class="form-row"><label>' + esc(sub.phWord) + '</label><input id="sem-f-w" class="input" value="' + esc(wordVal) + '"></div>'
-        + (activeSub === 'entities' ? '<div class="form-row"><label>类型（如：品牌/产品/人物）</label><input id="sem-f-type" class="input" value="' + esc(it && it.type ? it.type : '') + '"></div>' : '')
+        + (activeSub === 'entities' ? '<div class="form-row"><label>' + str('res.semTypeLabel','类型（如：品牌/产品/人物）') + '</label><input id="sem-f-type" class="input" value="' + esc(it && it.type ? it.type : '') + '"></div>' : '')
         + '<div class="form-row"><label>' + esc(sub.phList) + '</label>'
         + (activeSub === 'entities'
             ? '<textarea id="sem-f-l" class="textarea" rows="4">' + esc(listVal) + '</textarea>'
             : '<input id="sem-f-l" class="input" value="' + esc(listVal) + '">')
         + '</div>'
-        + '<div class="form-row" style="text-align:right;"><button id="sem-f-save" class="btn btn-primary btn-sm">保存</button></div>'
+        + '<div class="form-row" style="text-align:right;"><button id="sem-f-save" class="btn btn-primary btn-sm">' + str('res.save','保存') + '</button></div>'
         + '</div></div>';
       document.body.appendChild(ov);
       ov.querySelector('[data-c]').addEventListener('click', function () { ov.remove(); });
       ov.addEventListener('click', function (e) { if (e.target === ov) ov.remove(); });
       ov.querySelector('#sem-f-save').addEventListener('click', function () {
         var w = ov.querySelector('#sem-f-w').value.trim();
-        if (!w) { toast('请填写名称'); return; }
+        if (!w) { toast(str('res.semNameRequired','请填写名称')); return; }
         var all = currentList();
         var rec;
         if (activeSub === 'synonyms') rec = { word: w, synonyms: ov.querySelector('#sem-f-l').value.split(/[,，]/).map(function (s) { return s.trim(); }).filter(Boolean) };

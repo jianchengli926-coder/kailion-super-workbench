@@ -33,17 +33,17 @@
         let cleaned = 0;
         // a) 运行历史保留最新10条
         try {
-          const h = JSON.parse(localStorage.getItem('kailion_run_history') || '[]');
-          if (Array.isArray(h) && h.length > 10) { _origSetItem('kailion_run_history', JSON.stringify(h.slice(0, 10))); cleaned++; }
+          const h = JSON.parse(localStorage.getItem('ljc_run_history') || '[]');
+          if (Array.isArray(h) && h.length > 10) { _origSetItem('ljc_run_history', JSON.stringify(h.slice(0, 10))); cleaned++; }
         } catch (e2) {}
         // b) API 日志保留最新50条
         try {
-          const l = JSON.parse(localStorage.getItem('kailion_api_log') || '[]');
-          if (Array.isArray(l) && l.length > 50) { _origSetItem('kailion_api_log', JSON.stringify(l.slice(0, 50))); cleaned++; }
+          const l = JSON.parse(localStorage.getItem('ljc_api_log') || '[]');
+          if (Array.isArray(l) && l.length > 50) { _origSetItem('ljc_api_log', JSON.stringify(l.slice(0, 50))); cleaned++; }
         } catch (e2) {}
         // c) 节点缓存保留最新10条
         try {
-          const c = JSON.parse(localStorage.getItem('kailion_node_cache') || '{}');
+          const c = JSON.parse(localStorage.getItem('ljc_node_cache') || '{}');
           if (c && typeof c === 'object') {
             const keys = Object.keys(c);
             if (keys.length > 10) {
@@ -579,10 +579,16 @@
       if (Array.isArray(data.providers) && window.ProviderStore) {
         try { ProviderStore.save(data.providers); } catch (eP) {}
       }
-      // 导入资源库/素材等（best-effort，按 key 写 localStorage）
-      ['materials', 'prompts', 'knowledge', 'workflows'].forEach(function (k) {
+      // 导入资源库/素材等（best-effort，直接写入 resources.js 使用的 key）
+      const SEED_KEY_MAP = {
+        materials: 'ljc_materials',
+        prompts: 'ljc_prompts',
+        knowledge: 'ljc_kb_docs',
+        workflows: 'ljc_workflow_versions'
+      };
+      Object.keys(SEED_KEY_MAP).forEach(function (k) {
         if (data[k]) {
-          try { localStorage.setItem('kailion_seed_' + k, JSON.stringify(data[k])); } catch (e) {}
+          try { localStorage.setItem(SEED_KEY_MAP[k], JSON.stringify(data[k])); } catch (e) {}
         }
       });
       localStorage.setItem('kailion_seed_loaded', 'true');
@@ -665,11 +671,5 @@
     document.addEventListener('DOMContentLoaded', boot);
   } else {
     boot();
-  }
-if (window.I18N) {
-    I18N.onLangChange(function() {
-      var el = document.getElementById('workflow-name');
-      if (el) { var span = el.querySelector('span'); if (span) span.textContent = span.textContent; }
-    });
   }
 })();

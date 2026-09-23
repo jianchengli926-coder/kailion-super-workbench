@@ -295,14 +295,14 @@
     groupOrder.forEach(function (g) {
       var items = groups[g];
       var limit = expandedGroups[g] ? items.length : Math.min(GROUP_LIMIT, items.length);
-      html += '<div class="ljc-sg-title">' + g + ' · ' + items.length + '</div>';
+      html += '<div class="ljc-sg-title">' + escapeHtml(g) + ' · ' + items.length + '</div>';
       for (var i = 0; i < limit; i++) {
         var it = items[i];
         var fid = flatItems.length;
         flatItems.push(it);
         html += '<div class="ljc-sitem" data-i="' + fid + '">' +
-          '<span class="si">' + it.icon + '</span>' +
-          '<div class="st"><b>' + it.title + '</b><span>' + it.sub + '</span></div>' +
+          '<span class="si">' + escapeHtml(it.icon) + '</span>' +
+          '<div class="st"><b>' + escapeHtml(it.title) + '</b><span>' + escapeHtml(it.sub) + '</span></div>' +
           '</div>';
       }
       if (items.length > GROUP_LIMIT) {

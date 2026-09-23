@@ -49,8 +49,19 @@
 
   // 深拷贝当前可编辑状态（节点/连线/分组/便签/seq）
   function takeSnapshot() {
+    // 深拷贝节点时剥离运行时 transient 属性（_output/_meta/_running/_lastRun 等），
+    // 这些由 engine 运行时写入，不应进入撤销/重做历史。
+    const cleanNodes = {};
+    Object.keys(state.nodes).forEach(function (id) {
+      const src = state.nodes[id];
+      const dst = {};
+      Object.keys(src).forEach(function (key) {
+        if (key.charAt(0) !== '_') dst[key] = src[key];
+      });
+      cleanNodes[id] = dst;
+    });
     return JSON.parse(JSON.stringify({
-      nodes: state.nodes,
+      nodes: cleanNodes,
       links: state.links,
       groups: state.groups,
       notes: state.notes,
@@ -1279,7 +1290,7 @@
     const matched = [];
     Object.values(state.nodes).forEach(n => {
       const cx = n.x + 100; // 节点宽200，中心x
-      const cy = n.y + 39;  // 节点高78，中心y
+      const cy = n.y + getNodeHeight(n) / 2; // 用实际高度算中心y，结果展开后也准确
       if (cx >= bx1 && cx <= bx2 && cy >= by1 && cy <= by2) {
         matched.push(n.id);
       }
@@ -1556,12 +1567,22 @@
           removeNode(nodeId);
           if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.nodeDeleted') : '节点已删除');
         } else if (act === 'copy') {
+          // 复制操作统一只 push 一次历史：addNode 内部已 push，
+          // 随后手动复制连线并临时跳过 connect 的 pushHistory，避免多次撤销。
+          const preLen = undoStack.length;
           const copy = addNode(node.type, node.x + 40, node.y + 40, JSON.parse(JSON.stringify(node.params || {})));
           if (window.UI) UI.toast(window.I18N ? I18N.t('canvas.nodeCopied') : '已复制节点');
-          // 复制入向连线
+          // 复制入向连线（静默 push，不产生额外历史记录）
           state.links.forEach(l => {
-            if (l.to.node === nodeId) connect(l.from.node, copy.id);
+            if (l.to.node === nodeId) {
+              state.links.push({
+                id: 'l' + (state.seq++),
+                from: { node: l.from.node, port: 'out' },
+                to:   { node: copy.id, port: 'in' }
+              });
+            }
           });
+          renderLinks();
         } else if (act === 'template') {
           try {
             const tpl = JSON.parse(localStorage.getItem('ljc_node_templates') || '[]');
@@ -1988,7 +2009,7 @@
     pv.textContent = text;
     // 流式过程中节点结果区也同步（保留预览区，结果框由引擎最终写入）
     var box = el.querySelector('.node-result');
-    if (box) { box.style.display = ''; box.innerHTML = '<div class="stream-text">' + text + '</div>'; }
+    if (box) { box.style.display = ''; box.innerHTML = '<div class="stream-text">' + esc(text) + '</div>'; }
   });
 
   // Register language change callback

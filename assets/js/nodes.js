@@ -851,7 +851,7 @@
           cat: (window.I18N ? I18N.t('np.other') : '其他'), catColor: '#64748b', catIcon: '🔧'
         };
       }
-      var isEn = window.I18N && I18N.getLang() === 'en';
+      var isEn = window.I18N && typeof I18N.getLang === 'function' && I18N.getLang() === 'en';
       return {
         name: isEn && m.enName ? m.enName : m.name,
         type: m.type,
@@ -894,7 +894,7 @@
   };
 
   // Register language change callback - re-render right panel
-  if (window.I18N) {
+  if (window.I18N && typeof I18N.onLangChange === 'function') {
     I18N.onLangChange(function() {
       if (window.UI && UI.renderRightPanel) {
         var sel = document.querySelector('.node-card.selected');

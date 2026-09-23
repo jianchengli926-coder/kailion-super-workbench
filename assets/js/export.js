@@ -263,9 +263,10 @@
     ctx.textBaseline = 'top';
     ids.forEach(function (id) {
       var n = nodes[id];
+      var meta = (window.NodeDef && NodeDef.getMeta(n.type)) || {};
       var x = n.x + offX;
       var y = n.y + offY;
-      var color = n.catColor || '#6366f1';
+      var color = n.catColor || meta.catColor || '#6366f1';
 
       // 卡片底
       ctx.fillStyle = '#1e293b';
@@ -284,13 +285,13 @@
       // catIcon（emoji）
       ctx.font = '14px sans-serif';
       ctx.fillStyle = '#e2e8f0';
-      ctx.fillText(n.catIcon || '📦', x + 12, y + 16);
+      ctx.fillText(n.catIcon || meta.catIcon || '📦', x + 12, y + 16);
 
       // 节点名称
       ctx.font = '600 12px sans-serif';
       ctx.fillStyle = '#ffffff';
       var isEn = window.I18N && I18N.getLang() === 'en';
-      var name = n.name || (isEn && n._enName ? n._enName : n.type) || id;
+      var name = n.name || (isEn && meta.enName ? meta.enName : n.type) || id;
       // v1.2.0：按像素宽度精确截断（替代原固定 16 字符）
       name = truncateText(ctx, name, NODE_W - 50);
       ctx.fillText(name, x + 36, y + 18);

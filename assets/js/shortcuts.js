@@ -11,7 +11,7 @@
 
   /* ---------- 快捷键数据 ---------- */
 
-  var SHORTCUTS = [
+  function getShortcuts() { return [
     {
       group: (window.I18N ? I18N.t('shortcuts.groupCanvas') : '画布操作'),
       items: [
@@ -44,6 +44,7 @@
       ]
     }
   ];
+  }
 
   /* ---------- 工具函数 ---------- */
 
@@ -68,7 +69,7 @@
 
     // 分组列表
     html += '<div id="shortcuts-groups" style="max-height:60vh;overflow-y:auto;">';
-    SHORTCUTS.forEach(function (group, gi) {
+    getShortcuts().forEach(function (group, gi) {
       html += '<div class="shortcuts-group" data-gi="' + gi + '" style="margin-bottom:18px;">';
       html += '<div style="font-size:13px;font-weight:600;color:#7c8cff;margin-bottom:8px;letter-spacing:0.5px;text-transform:uppercase;">';
       html += group.group + '</div>';
@@ -216,7 +217,7 @@
   /* ---------- 公开 API ---------- */
 
   function getAll() {
-    return SHORTCUTS.map(function (g) {
+    return getShortcuts().map(function (g) {
       return {
         group: g.group,
         items: g.items.map(function (it) {

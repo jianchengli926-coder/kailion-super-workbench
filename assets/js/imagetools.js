@@ -411,7 +411,7 @@
     switch (rot) {
       case 90:
         ctx2.translate(finalW, 0); ctx2.rotate(Math.PI / 2);
-        ctx2.drawImage(c1, 0, 0, finalW, finalH);
+        ctx2.drawImage(c1, 0, 0, c1.width, c1.height);
         break;
       case 180:
         ctx2.translate(finalW, finalH); ctx2.rotate(Math.PI);
@@ -419,7 +419,7 @@
         break;
       case 270:
         ctx2.translate(0, finalH); ctx2.rotate(-Math.PI / 2);
-        ctx2.drawImage(c1, 0, 0, finalW, finalH);
+        ctx2.drawImage(c1, 0, 0, c1.width, c1.height);
         break;
       default:
         ctx2.drawImage(c1, 0, 0, finalW, finalH);
@@ -517,37 +517,37 @@
     if (prepStyleInjected) return;
     prepStyleInjected = true;
     const css = `
-.kaitl-prep-overlay{position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:100001;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
-.kaitl-prep-modal{background:#1a1d24;border:1px solid #2a2f3a;border-radius:12px;width:min(1100px,94vw);height:min(760px,92vh);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.55);color:#e6e8ec;overflow:hidden;}
-.kaitl-prep-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #2a2f3a;}
-.kaitl-prep-header h3{margin:0;font-size:16px;font-weight:600;}
-.kaitl-prep-close{background:none;border:none;color:#9aa0ab;font-size:24px;cursor:pointer;line-height:1;padding:2px 10px;border-radius:6px;}
-.kaitl-prep-close:hover{background:#2a2f3a;color:#fff;}
-.kaitl-prep-body{flex:1;display:flex;overflow:hidden;}
-.kaitl-prep-preview{flex:1;display:flex;gap:12px;padding:16px;overflow:auto;background:#0e1014;}
-.kaitl-prep-col{flex:1;display:flex;flex-direction:column;min-width:0;}
-.kaitl-prep-label{font-size:11px;color:#8a909c;margin-bottom:6px;letter-spacing:.5px;}
-.kaitl-prep-imgwrap{flex:1;display:flex;align-items:center;justify-content:center;background:#22262e;border-radius:8px;overflow:auto;min-height:200px;border:1px solid #2a2f3a;padding:8px;}
-.kaitl-prep-imgwrap img{max-width:100%;max-height:100%;object-fit:contain;}
-.kaitl-prep-info{font-size:12px;color:#9aa0ab;margin-top:6px;font-family:ui-monospace,Menlo,monospace;}
-.kaitl-prep-panel{width:300px;flex-shrink:0;padding:16px;overflow-y:auto;border-left:1px solid #2a2f3a;background:#1a1d24;}
-.kaitl-prep-group{margin-bottom:18px;}
-.kaitl-prep-group-title{font-size:11px;color:#8a909c;margin-bottom:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
-.kaitl-prep-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.kaitl-prep-row > label{font-size:12px;color:#b8bdc7;min-width:36px;}
-.kaitl-prep-row input[type=number],.kaitl-prep-row select{flex:1;background:#0e1014;border:1px solid #2a2f3a;color:#e6e8ec;border-radius:6px;padding:5px 8px;font-size:13px;min-width:0;}
-.kaitl-prep-row input[type=range]{flex:1;}
-.kaitl-prep-val{font-size:12px;color:#7fb3ff;min-width:38px;text-align:right;font-family:ui-monospace,Menlo,monospace;}
-.kaitl-prep-btns{display:flex;flex-wrap:wrap;gap:6px;}
-.kaitl-prep-btns button{background:#262b36;border:1px solid #333a48;color:#d0d4dc;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;}
-.kaitl-prep-btns button:hover{background:#333a48;color:#fff;}
-.kaitl-prep-chk{display:flex;align-items:center;gap:6px;font-size:12px;color:#b8bdc7;cursor:pointer;}
-.kaitl-prep-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #2a2f3a;}
-.kaitl-prep-footer button{padding:8px 18px;border-radius:8px;border:1px solid #333a48;background:#262b36;color:#e6e8ec;font-size:13px;cursor:pointer;}
-.kaitl-prep-footer button:hover{background:#333a48;}
-.kaitl-prep-footer .primary{background:#3a7afe;border-color:#3a7afe;color:#fff;}
-.kaitl-prep-footer .primary:hover{background:#2f6ae0;}
-.kaitl-prep-hint{font-size:11px;color:#6b7280;margin-top:4px;line-height:1.4;}
+.kaili-prep-overlay{position:fixed;inset:0;background:rgba(0,0,0,.66);z-index:100001;display:flex;align-items:center;justify-content:center;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;}
+.kaili-prep-modal{background:#1a1d24;border:1px solid #2a2f3a;border-radius:12px;width:min(1100px,94vw);height:min(760px,92vh);display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.55);color:#e6e8ec;overflow:hidden;}
+.kaili-prep-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #2a2f3a;}
+.kaili-prep-header h3{margin:0;font-size:16px;font-weight:600;}
+.kaili-prep-close{background:none;border:none;color:#9aa0ab;font-size:24px;cursor:pointer;line-height:1;padding:2px 10px;border-radius:6px;}
+.kaili-prep-close:hover{background:#2a2f3a;color:#fff;}
+.kaili-prep-body{flex:1;display:flex;overflow:hidden;}
+.kaili-prep-preview{flex:1;display:flex;gap:12px;padding:16px;overflow:auto;background:#0e1014;}
+.kaili-prep-col{flex:1;display:flex;flex-direction:column;min-width:0;}
+.kaili-prep-label{font-size:11px;color:#8a909c;margin-bottom:6px;letter-spacing:.5px;}
+.kaili-prep-imgwrap{flex:1;display:flex;align-items:center;justify-content:center;background:#22262e;border-radius:8px;overflow:auto;min-height:200px;border:1px solid #2a2f3a;padding:8px;}
+.kaili-prep-imgwrap img{max-width:100%;max-height:100%;object-fit:contain;}
+.kaili-prep-info{font-size:12px;color:#9aa0ab;margin-top:6px;font-family:ui-monospace,Menlo,monospace;}
+.kaili-prep-panel{width:300px;flex-shrink:0;padding:16px;overflow-y:auto;border-left:1px solid #2a2f3a;background:#1a1d24;}
+.kaili-prep-group{margin-bottom:18px;}
+.kaili-prep-group-title{font-size:11px;color:#8a909c;margin-bottom:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+.kaili-prep-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.kaili-prep-row > label{font-size:12px;color:#b8bdc7;min-width:36px;}
+.kaili-prep-row input[type=number],.kaili-prep-row select{flex:1;background:#0e1014;border:1px solid #2a2f3a;color:#e6e8ec;border-radius:6px;padding:5px 8px;font-size:13px;min-width:0;}
+.kaili-prep-row input[type=range]{flex:1;}
+.kaili-prep-val{font-size:12px;color:#7fb3ff;min-width:38px;text-align:right;font-family:ui-monospace,Menlo,monospace;}
+.kaili-prep-btns{display:flex;flex-wrap:wrap;gap:6px;}
+.kaili-prep-btns button{background:#262b36;border:1px solid #333a48;color:#d0d4dc;border-radius:6px;padding:5px 10px;font-size:12px;cursor:pointer;}
+.kaili-prep-btns button:hover{background:#333a48;color:#fff;}
+.kaili-prep-chk{display:flex;align-items:center;gap:6px;font-size:12px;color:#b8bdc7;cursor:pointer;}
+.kaili-prep-footer{display:flex;justify-content:flex-end;gap:10px;padding:12px 20px;border-top:1px solid #2a2f3a;}
+.kaili-prep-footer button{padding:8px 18px;border-radius:8px;border:1px solid #333a48;background:#262b36;color:#e6e8ec;font-size:13px;cursor:pointer;}
+.kaili-prep-footer button:hover{background:#333a48;}
+.kaili-prep-footer .primary{background:#3a7afe;border-color:#3a7afe;color:#fff;}
+.kaili-prep-footer .primary:hover{background:#2f6ae0;}
+.kaili-prep-hint{font-size:11px;color:#6b7280;margin-top:4px;line-height:1.4;}
 `;
     const style = document.createElement('style');
     style.textContent = css;
@@ -597,79 +597,79 @@
     };
 
     const overlay = document.createElement('div');
-    overlay.className = 'kaitl-prep-overlay';
+    overlay.className = 'kaili-prep-overlay';
     overlay.innerHTML =
-      '<div class="kaitl-prep-modal">' +
-        '<div class="kaitl-prep-header"><h3>图片预处理</h3>' +
-        '<button class="kaitl-prep-close" title="关闭">×</button></div>' +
-        '<div class="kaitl-prep-body">' +
-          '<div class="kaitl-prep-preview">' +
-            '<div class="kaitl-prep-col"><div class="kaitl-prep-label">原图</div>' +
-              '<div class="kaitl-prep-imgwrap"><img class="kaitl-prep-orig-img" alt=""></div>' +
-              '<div class="kaitl-prep-info kaitl-prep-orig-info"></div></div>' +
-            '<div class="kaitl-prep-col"><div class="kaitl-prep-label">处理后预览</div>' +
-              '<div class="kaitl-prep-imgwrap"><img class="kaitl-prep-result-img" alt=""></div>' +
-              '<div class="kaitl-prep-info kaitl-prep-result-info"></div></div>' +
+      '<div class="kaili-prep-modal">' +
+        '<div class="kaili-prep-header"><h3>图片预处理</h3>' +
+        '<button class="kaili-prep-close" title="关闭">×</button></div>' +
+        '<div class="kaili-prep-body">' +
+          '<div class="kaili-prep-preview">' +
+            '<div class="kaili-prep-col"><div class="kaili-prep-label">原图</div>' +
+              '<div class="kaili-prep-imgwrap"><img class="kaili-prep-orig-img" alt=""></div>' +
+              '<div class="kaili-prep-info kaili-prep-orig-info"></div></div>' +
+            '<div class="kaili-prep-col"><div class="kaili-prep-label">处理后预览</div>' +
+              '<div class="kaili-prep-imgwrap"><img class="kaili-prep-result-img" alt=""></div>' +
+              '<div class="kaili-prep-info kaili-prep-result-info"></div></div>' +
           '</div>' +
-          '<div class="kaitl-prep-panel">' +
-            '<div class="kaitl-prep-group"><div class="kaitl-prep-group-title">格式与质量</div>' +
-              '<div class="kaitl-prep-row"><label>格式</label>' +
-                '<select class="kaitl-prep-fmt"><option value="PNG">PNG</option>' +
+          '<div class="kaili-prep-panel">' +
+            '<div class="kaili-prep-group"><div class="kaili-prep-group-title">格式与质量</div>' +
+              '<div class="kaili-prep-row"><label>格式</label>' +
+                '<select class="kaili-prep-fmt"><option value="PNG">PNG</option>' +
                 '<option value="JPEG">JPEG</option><option value="WEBP">WebP</option></select></div>' +
-              '<div class="kaitl-prep-row"><label>质量</label>' +
-                '<input type="range" class="kaitl-prep-quality" min="0.1" max="1" step="0.05" value="0.92">' +
-                '<span class="kaitl-prep-val kaitl-prep-quality-val">0.92</span></div>' +
-              '<div class="kaitl-prep-hint">仅 JPEG/WebP 有损压缩有效；PNG 无损。</div></div>' +
-            '<div class="kaitl-prep-group"><div class="kaitl-prep-group-title">尺寸调整</div>' +
-              '<div class="kaitl-prep-row"><label>宽</label><input type="number" class="kaitl-prep-w" min="1" value="' + NW + '">' +
-                '<label>高</label><input type="number" class="kaitl-prep-h" min="1" value="' + NH + '"></div>' +
-              '<div class="kaitl-prep-row"><label class="kaitl-prep-chk"><input type="checkbox" class="kaitl-prep-lock" checked>锁定比例</label></div>' +
-              '<div class="kaitl-prep-row"><label>缩放</label>' +
-                '<select class="kaitl-prep-zoom"><option value="0.25">25%</option>' +
+              '<div class="kaili-prep-row"><label>质量</label>' +
+                '<input type="range" class="kaili-prep-quality" min="0.1" max="1" step="0.05" value="0.92">' +
+                '<span class="kaili-prep-val kaili-prep-quality-val">0.92</span></div>' +
+              '<div class="kaili-prep-hint">仅 JPEG/WebP 有损压缩有效；PNG 无损。</div></div>' +
+            '<div class="kaili-prep-group"><div class="kaili-prep-group-title">尺寸调整</div>' +
+              '<div class="kaili-prep-row"><label>宽</label><input type="number" class="kaili-prep-w" min="1" value="' + NW + '">' +
+                '<label>高</label><input type="number" class="kaili-prep-h" min="1" value="' + NH + '"></div>' +
+              '<div class="kaili-prep-row"><label class="kaili-prep-chk"><input type="checkbox" class="kaili-prep-lock" checked>锁定比例</label></div>' +
+              '<div class="kaili-prep-row"><label>缩放</label>' +
+                '<select class="kaili-prep-zoom"><option value="0.25">25%</option>' +
                 '<option value="0.5">50%</option><option value="0.75">75%</option>' +
                 '<option value="1" selected>100%</option><option value="2">200%</option></select></div></div>' +
-            '<div class="kaitl-prep-group"><div class="kaitl-prep-group-title">裁剪区域（原图像素）</div>' +
-              '<div class="kaitl-prep-row"><label>X</label><input type="number" class="kaitl-prep-cx" min="0" value="0">' +
-                '<label>Y</label><input type="number" class="kaitl-prep-cy" min="0" value="0"></div>' +
-              '<div class="kaitl-prep-row"><label>宽</label><input type="number" class="kaitl-prep-cw" min="1" value="' + NW + '">' +
-                '<label>高</label><input type="number" class="kaitl-prep-ch" min="1" value="' + NH + '"></div>' +
-              '<div class="kaitl-prep-btns kaitl-prep-crop-presets">' +
+            '<div class="kaili-prep-group"><div class="kaili-prep-group-title">裁剪区域（原图像素）</div>' +
+              '<div class="kaili-prep-row"><label>X</label><input type="number" class="kaili-prep-cx" min="0" value="0">' +
+                '<label>Y</label><input type="number" class="kaili-prep-cy" min="0" value="0"></div>' +
+              '<div class="kaili-prep-row"><label>宽</label><input type="number" class="kaili-prep-cw" min="1" value="' + NW + '">' +
+                '<label>高</label><input type="number" class="kaili-prep-ch" min="1" value="' + NH + '"></div>' +
+              '<div class="kaili-prep-btns kaili-prep-crop-presets">' +
                 '<button data-r="free">自由</button><button data-r="1:1">1:1</button>' +
                 '<button data-r="4:3">4:3</button><button data-r="16:9">16:9</button>' +
                 '<button data-r="9:16">9:16</button></div></div>' +
-            '<div class="kaitl-prep-group"><div class="kaitl-prep-group-title">旋转与翻转</div>' +
-              '<div class="kaitl-prep-btns">' +
-                '<button class="kaitl-prep-rot-l" title="左转90°">↺ 左转90°</button>' +
-                '<button class="kaitl-prep-rot-r" title="右转90°">↻ 右转90°</button>' +
-                '<button class="kaitl-prep-flip-h" title="水平翻转">⇋ 水平</button>' +
-                '<button class="kaitl-prep-flip-v" title="垂直翻转">⇵ 垂直</button></div></div>' +
+            '<div class="kaili-prep-group"><div class="kaili-prep-group-title">旋转与翻转</div>' +
+              '<div class="kaili-prep-btns">' +
+                '<button class="kaili-prep-rot-l" title="左转90°">↺ 左转90°</button>' +
+                '<button class="kaili-prep-rot-r" title="右转90°">↻ 右转90°</button>' +
+                '<button class="kaili-prep-flip-h" title="水平翻转">⇋ 水平</button>' +
+                '<button class="kaili-prep-flip-v" title="垂直翻转">⇵ 垂直</button></div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="kaitl-prep-footer">' +
-          '<button class="kaitl-prep-reset">重置</button>' +
-          '<button class="kaitl-prep-download">下载</button>' +
-          (cb ? '<button class="kaitl-prep-apply primary">应用</button>' : '') +
-          '<button class="kaitl-prep-closebtn">关闭</button>' +
+        '<div class="kaili-prep-footer">' +
+          '<button class="kaili-prep-reset">重置</button>' +
+          '<button class="kaili-prep-download">下载</button>' +
+          (cb ? '<button class="kaili-prep-apply primary">应用</button>' : '') +
+          '<button class="kaili-prep-closebtn">关闭</button>' +
         '</div>' +
       '</div>';
     document.body.appendChild(overlay);
 
     const $ = (sel) => overlay.querySelector(sel);
-    const origImg = $('.kaitl-prep-orig-img');
-    const resultImg = $('.kaitl-prep-result-img');
-    const origInfo = $('.kaitl-prep-orig-info');
-    const resultInfo = $('.kaitl-prep-result-info');
-    const fmtSel = $('.kaitl-prep-fmt');
-    const qSlider = $('.kaitl-prep-quality');
-    const qVal = $('.kaitl-prep-quality-val');
-    const wInput = $('.kaitl-prep-w');
-    const hInput = $('.kaitl-prep-h');
-    const lockChk = $('.kaitl-prep-lock');
-    const zoomSel = $('.kaitl-prep-zoom');
-    const cxInput = $('.kaitl-prep-cx');
-    const cyInput = $('.kaitl-prep-cy');
-    const cwInput = $('.kaitl-prep-cw');
-    const chInput = $('.kaitl-prep-ch');
+    const origImg = $('.kaili-prep-orig-img');
+    const resultImg = $('.kaili-prep-result-img');
+    const origInfo = $('.kaili-prep-orig-info');
+    const resultInfo = $('.kaili-prep-result-info');
+    const fmtSel = $('.kaili-prep-fmt');
+    const qSlider = $('.kaili-prep-quality');
+    const qVal = $('.kaili-prep-quality-val');
+    const wInput = $('.kaili-prep-w');
+    const hInput = $('.kaili-prep-h');
+    const lockChk = $('.kaili-prep-lock');
+    const zoomSel = $('.kaili-prep-zoom');
+    const cxInput = $('.kaili-prep-cx');
+    const cyInput = $('.kaili-prep-cy');
+    const cwInput = $('.kaili-prep-cw');
+    const chInput = $('.kaili-prep-ch');
 
     origImg.src = norm.url;
     fmtSel.value = state.fmt;
@@ -761,7 +761,7 @@
     });
     [cxInput, cyInput, cwInput, chInput].forEach(el => el.addEventListener('input', scheduleRender));
 
-    overlay.querySelectorAll('.kaitl-prep-crop-presets button').forEach(btn => {
+    overlay.querySelectorAll('.kaili-prep-crop-presets button').forEach(btn => {
       btn.addEventListener('click', () => {
         const r = btn.dataset.r;
         if (r === 'free') return;
@@ -784,12 +784,12 @@
       syncSizeInputs();
       scheduleRender();
     }
-    overlay.querySelector('.kaitl-prep-rot-l').addEventListener('click', () => doRotation(-90));
-    overlay.querySelector('.kaitl-prep-rot-r').addEventListener('click', () => doRotation(90));
-    overlay.querySelector('.kaitl-prep-flip-h').addEventListener('click', () => { state.flipH = !state.flipH; scheduleRender(); });
-    overlay.querySelector('.kaitl-prep-flip-v').addEventListener('click', () => { state.flipV = !state.flipV; scheduleRender(); });
+    overlay.querySelector('.kaili-prep-rot-l').addEventListener('click', () => doRotation(-90));
+    overlay.querySelector('.kaili-prep-rot-r').addEventListener('click', () => doRotation(90));
+    overlay.querySelector('.kaili-prep-flip-h').addEventListener('click', () => { state.flipH = !state.flipH; scheduleRender(); });
+    overlay.querySelector('.kaili-prep-flip-v').addEventListener('click', () => { state.flipV = !state.flipV; scheduleRender(); });
 
-    overlay.querySelector('.kaitl-prep-reset').addEventListener('click', () => {
+    overlay.querySelector('.kaili-prep-reset').addEventListener('click', () => {
       state.quality = 0.92; state.fmt = state.origFmt;
       state.rotation = 0; state.flipH = false; state.flipV = false;
       state.cropX = 0; state.cropY = 0; state.cropW = NW; state.cropH = NH;
@@ -800,14 +800,14 @@
       scheduleRender();
     });
 
-    overlay.querySelector('.kaitl-prep-download').addEventListener('click', async () => {
+    overlay.querySelector('.kaili-prep-download').addEventListener('click', async () => {
       if (!state.lastResult) await doRender();
       if (!state.lastResult) return;
       const ext = state.fmt.toLowerCase() === 'jpeg' ? 'jpg' : state.fmt.toLowerCase();
       downloadBlob(state.lastResult.blob, 'preprocessed.' + ext);
     });
 
-    const applyBtn = overlay.querySelector('.kaitl-prep-apply');
+    const applyBtn = overlay.querySelector('.kaili-prep-apply');
     if (applyBtn) {
       applyBtn.addEventListener('click', async () => {
         if (!state.lastResult) await doRender();
@@ -825,8 +825,8 @@
       overlay.remove();
       if (norm.revoke) URL.revokeObjectURL(norm.url);
     }
-    overlay.querySelector('.kaitl-prep-close').addEventListener('click', close);
-    overlay.querySelector('.kaitl-prep-closebtn').addEventListener('click', close);
+    overlay.querySelector('.kaili-prep-close').addEventListener('click', close);
+    overlay.querySelector('.kaili-prep-closebtn').addEventListener('click', close);
     overlay.addEventListener('mousedown', (e) => { if (e.target === overlay) close(); });
 
     syncSizeInputs();
