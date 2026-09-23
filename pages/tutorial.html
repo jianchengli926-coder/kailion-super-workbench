@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>入门教程 · 锴利超级AI工作台</title>
-<meta name="description" content="锴利超级AI工作台 新手入门教程：从下载配置到第一条工作流，68 个节点全景清单、20 类预设工作流速查、小白常见工作流派方与报错自查手册。">
+<meta name="description" content="锴利超级AI工作台 新手入门教程：从下载配置到第一条工作流，74 个节点全景清单、20 类预设工作流速查、小白常见工作流派方与报错自查手册。">
 <meta name="theme-color" content="#0f0f23">
 <link rel="icon" href="../assets/img/logo.png">
 <link rel="apple-touch-icon" href="../assets/img/logo.png">
@@ -289,7 +289,7 @@ footer .fl a:hover{color:var(--primary)}
     <h1>从装好锴利超级AI工作台，到<span class="grad">跑出第一条能用的工作流</span></h1>
     <p>这份教程按「先跑通、再理解、最后调优」的顺序写。不用先学概念，跟着四步走就能出第一张图；遇到问题直接翻「报错自查手册」。</p>
     <div class="hero-chips">
-      <span>68 个节点 · 17 个分类</span>
+      <span>74 个节点 · 14 个分类</span>
       <span>出厂可见 30 个节点</span>
       <span>20 类预设工作流</span>
       <span>10 组小白工作流派方</span>
@@ -528,7 +528,7 @@ footer .fl a:hover{color:var(--primary)}
     <section class="blk" id="nodes">
       <div class="sec-head">
         <span class="kicker">NODE CATALOG</span>
-        <h2>④ 节点库全景：68 个节点，出厂只显示 30 个</h2>
+        <h2>④ 节点库全景：74 个节点，出厂只显示 30 个</h2>
         <p>下面的清单与软件内节点库一一对应。带<span class="pill on">可见</span>的是开箱就显示的；带<span class="pill off">需开启</span>的要去节点库「管理」→ 自定义模式里勾出来。支持搜索与分类筛选。</p>
       </div>
       <div class="node-tools">
@@ -865,8 +865,8 @@ footer .fl a:hover{color:var(--primary)}
      '图像和视频是<b>异步任务</b>，服务端出图需要排队。看节点上的进度或任务状态就好。<b>千万不要连点运行</b> —— 连点会真的扣多次费用。'],
     ['想中断生成，点停就行吗？',
      '只读 / 查询类任务可以随时掐断。但<b>已经发出去的真实外呼任务不会撤回</b>，按次扣点的服务（比如店雷达选品榜）也不会退费，界面会提示你「点数已消耗不退回」。'],
-    ['明明有 68 个节点，为什么我只看到 30 个？',
-     '出厂只显示 30 个，剩下 38 个默认隐藏。打开节点库顶部的「管理」弹窗 → 开启<b>自定义模式</b> → 勾选你要的节点，本机永久生效，升级不会回退。侧边栏的资源库同理（专家、数字人、选题、风格、角色、场景、品牌、商品出厂默认隐藏）。'],
+    ['明明有 74 个节点，为什么我只看到 30 个？',
+     '出厂只显示 30 个，剩下 44 个默认隐藏。打开节点库顶部的「管理」弹窗 → 开启<b>自定义模式</b> → 勾选你要的节点，本机永久生效，升级不会回退。侧边栏的资源库同理（专家、数字人、选题、风格、角色、场景、品牌、商品出厂默认隐藏）。'],
     ['在自定义模式下勾了，节点还是不出现',
      '那多半是<b>权限禁用</b>在起作用。权限禁用的优先级高于可见性设置，即使把可见性改成显示也不会出现。'],
     ['生成好的图片 / 文件去哪了？',
@@ -1100,7 +1100,7 @@ footer .fl a:hover{color:var(--primary)}
     var list = f ? TUTS.filter(function(t){ return t.category === f; }) : TUTS;
     if (!list.length) {
       tutGrid.innerHTML = '';
-      tutNotice.innerHTML = '<div class="notice">内容库还没有已发布的教程。进 <a href="tutorial-admin.html" style="color:#fde68a;text-decoration:underline">教程后台</a> 发布第一篇。</div>';
+      tutNotice.innerHTML = '<div class="notice">内容库还没有已发布的教程。进 教程后台 发布第一篇。</div>';
       return;
     }
     tutNotice.innerHTML = '';

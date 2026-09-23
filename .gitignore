@@ -2,9 +2,9 @@
 node_modules/
 
 # Build output
-dist/
-build/
-out/
+/dist/
+/build/
+/out/
 
 # OS files
 .DS_Store

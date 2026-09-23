@@ -13,9 +13,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   saveFile: (options) => ipcRenderer.invoke('save-file', options),
   writeFile: (filePath, content) => ipcRenderer.invoke('write-file', filePath, content),
 
-  // 菜单动作监听
+  // 菜单动作监听（返回取消订阅函数，防止内存泄漏）
   onMenuAction: (callback) => {
-    ipcRenderer.on('menu-action', (event, action) => callback(action));
+    const handler = (_event, action) => callback(action);
+    ipcRenderer.on('menu-action', handler);
+    // 返回取消订阅函数
+    return () => ipcRenderer.removeListener('menu-action', handler);
   },
 
   // 平台检测

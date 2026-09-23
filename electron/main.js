@@ -22,6 +22,10 @@ if (!gotTheLock) {
 
 let mainWindow = null;
 
+// 安全：允许写入的文件路径白名单
+// 只有用户通过 dialog 选择的路径才允许写入，防止渲染进程任意写文件
+const allowedWritePaths = new Set();
+
 // 应用配置目录
 function getUserDataPath() {
   return app.getPath('userData');
@@ -42,6 +46,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      sandbox: true,
       webSecurity: true,
       allowRunningInsecureContent: false
     },
@@ -58,14 +63,20 @@ function createWindow() {
     mainWindow.show();
   });
 
-  // 外部链接在浏览器中打开
-  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
-    shell.openExternal(url);
-    return { action: 'deny' };
+  // 导航拦截：仅允许 file:// 协议，外部URL交系统浏览器打开
+  mainWindow.webContents.on('will-navigate', (e, url) => {
+    if (!url.startsWith('file://')) {
+      e.preventDefault();
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        shell.openExternal(url);
+      }
+    }
   });
 
-  // 开发工具（生产环境可注释掉）
-  // mainWindow.webContents.openDevTools();
+  // 开发工具（生产环境自动禁用）
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 
   mainWindow.on('closed', () => {
     mainWindow = null;
@@ -178,7 +189,7 @@ function createMenu() {
         { type: 'separator' },
         {
           label: '官方网站',
-          click: () => shell.openExternal('https://wfw.asia/')
+          click: () => shell.openExternal('https://kailioncrafts.com/')
         },
         {
           label: '关于',
@@ -209,36 +220,42 @@ ipcMain.handle('get-app-info', () => {
   };
 });
 
-// IPC：选择文件
-ipcMain.handle('select-file', async (event, options) => {
-  const result = await dialog.showOpenDialog(mainWindow, options || {
+// IPC：选择文件（安全：主进程硬编码对话框属性，仅接受渲染进程传入的 filters）
+ipcMain.handle('select-file', async (_event, filters) => {
+  const result = await dialog.showOpenDialog(mainWindow, {
     properties: ['openFile'],
-    filters: [{ name: 'JSON', extensions: ['json'] }]
+    filters: filters || [{ name: 'All Files', extensions: ['*'] }]
   });
   if (!result.canceled && result.filePaths.length > 0) {
     const filePath = result.filePaths[0];
+    allowedWritePaths.add(filePath);
     const content = fs.readFileSync(filePath, 'utf-8');
     return { filePath, content };
   }
   return null;
 });
 
-// IPC：保存文件
-ipcMain.handle('save-file', async (event, options) => {
+// IPC：保存文件（安全：将用户选择的路径加入写入白名单）
+ipcMain.handle('save-file', async (_event, options) => {
   const result = await dialog.showSaveDialog(mainWindow, options || {
     defaultPath: 'workflow.json',
     filters: [{ name: 'JSON', extensions: ['json'] }]
   });
   if (!result.canceled && result.filePath) {
+    allowedWritePaths.add(result.filePath);
     return { filePath: result.filePath };
   }
   return null;
 });
 
-// IPC：写入文件
-ipcMain.handle('write-file', async (event, filePath, content) => {
+// IPC：写入文件（安全：仅允许写入白名单中的路径，防止任意文件覆盖）
+ipcMain.handle('write-file', async (_event, filePath, content) => {
+  const normalizedPath = path.resolve(filePath);
+  if (!allowedWritePaths.has(normalizedPath) && !allowedWritePaths.has(filePath)) {
+    return { success: false, error: '安全限制：此文件路径未通过用户选择，禁止写入。请先通过"另存为"选择文件位置。' };
+  }
   try {
-    fs.writeFileSync(filePath, content);
+    fs.writeFileSync(normalizedPath, content);
     return { success: true };
   } catch (e) {
     return { success: false, error: e.message };

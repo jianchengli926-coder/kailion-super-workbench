@@ -21,6 +21,11 @@
   --bg-hover: rgba(255, 255, 255, 0.07);
   --bg-input: rgba(0, 0, 0, 0.3);
 
+  /* 深层背景层级（v0.9.0+ 市场/3D/表单等组件使用） */
+  --bg-1: #1a1a2e;
+  --bg-2: rgba(255, 255, 255, 0.04);
+  --bg-3: rgba(255, 255, 255, 0.06);
+
   /* 文字 */
   --text-1: #f1f5f9;
   --text-2: #94a3b8;
@@ -136,6 +141,11 @@ input, textarea, select { font-family: inherit; font-size: 13px; }
   --bg-card: rgba(0, 0, 0, 0.03);
   --bg-hover: rgba(0, 0, 0, 0.06);
   --bg-input: #ffffff;
+
+  /* 深层背景层级（亮色主题） */
+  --bg-1: #f8fafc;
+  --bg-2: rgba(0, 0, 0, 0.03);
+  --bg-3: rgba(0, 0, 0, 0.05);
 
   /* 文字 */
   --text-1: #1d1d1f;

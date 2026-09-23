@@ -403,7 +403,7 @@
       // 导入资源库/素材等（best-effort，按 key 写 localStorage）
       ['materials', 'prompts', 'knowledge', 'workflows'].forEach(function (k) {
         if (data[k]) {
-          try { localStorage.setItem('ljc_seed_' + k, JSON.stringify(data[k])); } catch (e) {}
+          try { localStorage.setItem('kailion_seed_' + k, JSON.stringify(data[k])); } catch (e) {}
         }
       });
       localStorage.setItem('kailion_seed_loaded', 'true');

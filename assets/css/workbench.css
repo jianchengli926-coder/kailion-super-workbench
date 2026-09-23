@@ -1127,15 +1127,9 @@ input[type="color"].color-input { padding: 3px; height: 38px; cursor: pointer; }
   to { stroke-dashoffset: 0; }
 }
 
-/* ---------- 节点运行脉冲动画 ---------- */
-.node-running {
-  animation: node-pulse 1.2s ease-in-out infinite;
-  box-shadow: 0 0 0 2px rgba(99,102,241,0.4);
-}
-@keyframes node-pulse {
-  0%, 100% { box-shadow: 0 0 0 2px rgba(99,102,241,0.4); }
-  50% { box-shadow: 0 0 0 4px rgba(99,102,241,0.15); }
-}
+/* ---------- 节点运行动画 ----------
+ * 已合并至 v0.6.0 区块的 .node-card.node-running（nodeBreath 动画）。
+ * 此处原裸 .node-running 选择器会造成样式泄漏，已删除。 */
 
 /* ---------- 缓存命中标签 ---------- */
 .cache-badge {

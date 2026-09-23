@@ -1415,7 +1415,6 @@
                         <circle cx="8.5" cy="8.5" r="1.6"/>
                         <polyline points="21 15 16 10 5 21"/>
                     </svg>图片下载器</a></li>
-                <li>
             </ul>
             <button class="nav-toggle" id="navToggle" aria-label="菜单" aria-expanded="false">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2238,10 +2237,11 @@
                     <div class="os-icon">🖥️</div>
                     <h3>Windows</h3>
                     <p>支持 Windows 10 及以上版本</p>
-                    <div class="version" id="versionDisplay">版本 v0.3.1.8</div>
+                    <div class="version" id="versionDisplay">版本 v0.3.1</div>
                     <div class="update-time" id="updateTime">📅 更新时间：加载中...</div>
                     <div class="download-stats">
                         <span id="downloadCount" class="download-count">📥 累计下载 0 次</span>
+                        <span id="fileSize" class="file-size"></span>
                     </div>
                     <button id="downloadBtn" class="btn btn-primary" style="cursor: pointer; position: relative; z-index: 100;">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -2477,10 +2477,10 @@
             // ===== 配置 =====
             var DOWNLOADS_DIR = 'downloads/';
             var VERSION_JSON = 'version.json';
-            var EXE_REGEX = /Lijiancheng_(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?_x64-setup\.exe/i;
+            var EXE_REGEX = /Kailion_(\d+)\.(\d+)\.(\d+)(?:\.(\d+))?_x64-setup\.exe/i;
             var DEFAULT_VERSION = {
                 displayVersion: '0.3.1.57',
-                filename: 'Lijiancheng_0.3.1.57_x64-setup.exe'
+                filename: 'Kailion_0.3.1.57_x64-setup.exe'
             };
 
             var latestExe = null;
@@ -2529,7 +2529,7 @@
                         if (tMatch) {
                             lastTime = tMatch[1];
                         }
-                        var fMatch = line.match(/Lijiancheng_\d+\.\d+\.\d+(?:\.\d+)?_x64-setup\.exe/i);
+                        var fMatch = line.match(/Kailion_\d+\.\d+\.\d+(?:\.\d+)?_x64-setup\.exe/i);
                         if (fMatch && lastTime) {
                             fileTimeMap[fMatch[0]] = lastTime;
                         }
