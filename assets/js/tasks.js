@@ -403,7 +403,7 @@
     const ov = overlay();
     ov.innerHTML = `
       <div class="res-modal" style="width:720px;max-height:85vh">
-        <div class="res-modal-head"><h3>⏰ ${t('tasks.cronTitle', '定时任务')}</h3><button class="btn btn-sm" id="t-close">✕</button></div>
+        <div class="res-modal-head"><h3>${t('tasks.cronTitle', '定时任务')}</h3><button class="btn btn-sm" id="t-close">✕</button></div>
         <div class="res-modal-body">
           <div class="task-form">
             <input id="ct-name" class="input" placeholder="${t('tasks.cronNamePh', '任务名称（如：每日 8 点出图）')}">
