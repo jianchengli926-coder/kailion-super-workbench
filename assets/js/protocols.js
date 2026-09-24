@@ -81,13 +81,28 @@
         ...(c.stream ? { stream: true } : {})
       }),
       readText: (j) => {
-        const c = j?.choices?.[0]?.message?.content;
-        if (typeof c === 'string') return c;
-        // 有些实现返回 content 数组
-        if (Array.isArray(c)) return c.map(x => x.text || x.content || '').join('');
-        return '';
+        const msg = j?.choices?.[0]?.message || {};
+        let c = msg.content;
+        const reasoning = msg.reasoning_content || '';
+        if (typeof c === 'string') {
+          if (c) return reasoning ? '【思考过程】\n' + reasoning + '\n\n【最终回答】\n' + c : c;
+          if (reasoning) return '【思考过程】\n' + reasoning;
+          return '';
+        }
+        if (Array.isArray(c)) {
+          const text = c.map(x => x.text || x.content || '').join('');
+          if (text) return reasoning ? '【思考过程】\n' + reasoning + '\n\n【最终回答】\n' + text : text;
+          if (reasoning) return '【思考过程】\n' + reasoning;
+          return '';
+        }
+        return reasoning ? '【思考过程】\n' + reasoning : '';
       },
-      readDelta: (j) => j?.choices?.[0]?.delta?.content || j?.choices?.[0]?.message?.content || '',
+      readDelta: (j) => {
+        const delta = j?.choices?.[0]?.delta || {};
+        const content = delta.content || j?.choices?.[0]?.message?.content || '';
+        const reasoning = delta.reasoning_content || '';
+        return content || reasoning || '';
+      },
       readUsage: (j) => j?.usage || null
     },
 
