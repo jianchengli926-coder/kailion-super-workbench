@@ -1167,6 +1167,55 @@
           output = '[图片生成·降级模拟]';
           bodyHtml = buildPlaceholderImageResult(node.type);
         }
+      } else if (node.type === 'douyinVideoNode') {
+        // ---- v2.4.3：抖音视频生成节点（竖版9:16专用） ----
+        const dvp = node.params || {};
+        const dvpUp = collectInputs(node.id) || '';
+        const dvpTopic = dvp.topic || dvpUp || '抖音短视频';
+        const dvpStyle = dvp.style || 'realistic';
+        const dvpDuration = dvp.duration || '10';
+        const dvpRatio = dvp.ratio || '9:16';
+        const dvpProv = dvp.providerId ? resolveProvider(node, 'video') : null;
+        const styleNames = { realistic: '真实风', anime: '动漫风', cinematic: '电影感', vlog: 'Vlog风', aesthetic: '唯美风', funny: '搞笑风' };
+        const dvpPrompt = `抖音竖版短视频，比例${dvpRatio}，时长${dvpDuration}秒，${styleNames[dvpStyle]}风格。主题：${dvpTopic}。要求：画面有冲击力，前3秒抓人眼球，适合手机竖屏观看，节奏明快，转场流畅。`;
+        if (dvpProv && dvpProv.baseurl && (dvpProv.key || /localhost/.test(dvpProv.baseurl))) {
+          try {
+            const dvpResp = await fetch(dvpProv.baseurl.replace(/\/$/, '') + '/videos/generations', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (dvpProv.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify({ model: (dvpProv.models && dvpProv.models[0] && dvpProv.models[0].id) || 'sora', prompt: dvpPrompt, duration: Number(dvpDuration), ratio: dvpRatio })
+            });
+            const dvpData = await dvpResp.json();
+            const videoUrl = (dvpData.data && dvpData.data[0] && dvpData.data[0].url) || dvpData.url || dvpData.video_url || '';
+            if (videoUrl) {
+              output = videoUrl;
+              resultTitle = '🎬 抖音视频生成';
+              bodyHtml = '<video src="' + esc(videoUrl) + '" controls style="max-width:100%;border-radius:8px;"></video>';
+              node._meta = { real: true, simulated: false, failed: false, provider: dvpProv.name };
+            } else {
+              throw new Error('未返回视频URL');
+            }
+          } catch (dvpe) {
+            output = '【抖音视频生成降级】' + dvpe.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(1500);
+          let mockOutput = `【抖音视频生成（模拟）】\n\n主题：${dvpTopic}\n风格：${styleNames[dvpStyle]}\n时长：${dvpDuration}秒\n比例：${dvpRatio}\n\n`;
+          if (dvp.includeCaption) {
+            mockOutput += `📝 字幕文案：\n  "你敢相信吗？${dvpTopic}竟然可以这样！"\n  "点赞收藏，下期更精彩"\n\n`;
+          }
+          if (dvp.includeBgm) {
+            mockOutput += `🎵 BGM推荐：\n  • 轻快电子：适合产品展示/好物分享\n  • 治愈钢琴：适合vlog/生活记录\n  • 动感鼓点：适合舞蹈/运动/转场\n\n`;
+          }
+          mockOutput += `🎬 分镜建议：\n  0-3秒：黄金钩子 - ${dvpTopic}痛点/悬念\n  3-8秒：核心内容 - 展示/讲解/演示\n  8-${dvpDuration}秒：引导互动 - 点赞关注评论\n\n`;
+          mockOutput += `在「设置 → 供应商管理」中配置视频生成供应商后，将返回真实视频。`;
+          output = mockOutput;
+          resultTitle = '🎬 抖音视频生成（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
       } else if (isVideoNode(node.type)) {
         const v = await callVideoAPI(node, apiOpts);
         if (v.status === 'ok' && v.urls && v.urls.length) {
@@ -1829,6 +1878,48 @@
             '</div></div>';
           node._meta = { real: false, simulated: true, failed: false, videoId: vid };
         }
+      } else if (node.type === 'douyinTrendingNode') {
+        // ---- v2.4.3：抖音热门话题节点 ----
+        const dtp = node.params || {};
+        const dtpCat = dtp.category || 'all';
+        const dtpCount = Number(dtp.count) || 10;
+        const catNames = { all: '综合热门', entertainment: '娱乐八卦', tech: '科技数码', food: '美食探店', travel: '旅游出行', fashion: '时尚穿搭', sports: '体育运动', education: '知识教育', emotion: '情感生活', business: '商业财经' };
+        const trendingTopics = {
+          all: ['#普通人的生活瞬间', '#今天你emo了吗', '#挑战不可能', '#这操作绝了', '#谁懂啊家人们', '#原来还能这样', '#沉浸式体验', '#反差感拉满', '#DNA动了', '#一整个爱住', '#破防了', '#神仙颜值', '#名场面', '#前方高能', '#笑死我了'],
+          entertainment: ['#明星那些事', '#娱乐圈八卦', '#神级现场', '#综艺名场面', '#追星日常', '#偶像来了', '#红毯造型', '#剧组那些事', '#粉丝应援', '#颁奖礼'],
+          tech: ['#AI改变生活', '#数码好物分享', '#黑科技体验', '#效率工具推荐', '#编程日常', '#手机评测', '#电脑装机', '#智能家居', '#未来科技', '#开源项目'],
+          food: ['#美食探店', '#家常菜教程', '#深夜放毒', '#网红店打卡', '#减脂餐', '#一人食', '#甜品控', '#路边摊', '#厨房小白', '#吃货日常'],
+          travel: ['#旅行vlog', '#小众景点', '#穷游攻略', '#自驾游', '#海边度假', '#城市漫步', '#民宿推荐', '#背包客', '#打卡圣地', '#说走就走'],
+          fashion: ['#穿搭分享', '#平价好物', '#显瘦穿搭', '#通勤穿搭', '#学生党穿搭', '#妆容教程', '#发型推荐', '#配饰分享', '#换季穿搭', '#氛围感'],
+          sports: ['#健身打卡', '#篮球日常', '#足球集锦', '#极限运动', '#跑步记录', '#瑜伽冥想', '#运动装备', '#减脂塑形', '#体育赛事', '#户外探险'],
+          education: ['#学习方法', '#考研上岸', '#英语学习', '#编程入门', '#读书笔记', '#知识分享', '#考试技巧', '#网课推荐', '#学霸日常', '#职业技能'],
+          emotion: ['#情感语录', '#治愈系', '#爱情故事', '#友情岁月', '#家庭日常', '#成长感悟', '#深夜emo', '#正能量', '#暖心瞬间', '#人生感悟'],
+          business: ['#创业日记', '#副业推荐', '#理财知识', '#职场干货', '#商业思维', '#行业分析', '#投资笔记', '#搞钱日常', '#个人IP', '#品牌营销']
+        };
+        const topics = (trendingTopics[dtpCat] || trendingTopics.all).slice(0, dtpCount);
+        output = `【抖音${catNames[dtpCat]}话题榜】\n\n`;
+        topics.forEach((t, i) => {
+          const heat = dtp.includeHeat ? ` 🔥 ${(Math.random() * 500 + 50).toFixed(0)}万热度` : '';
+          output += `${i + 1}. ${t}${heat}\n`;
+        });
+        if (dtp.includeTips) {
+          output += `\n💡 创作建议：\n`;
+          output += `  • 选择1-2个话题标签加入视频描述\n`;
+          output += `  • 话题要与内容相关，避免堆砌\n`;
+          output += `  • 热门话题+垂直话题组合效果最佳\n`;
+          output += `  • 发布时间选在12:00-14:00或18:00-22:00\n`;
+        }
+        resultTitle = '🔥 抖音' + catNames[dtpCat] + '话题';
+        bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;">' +
+          '<div style="font-size:16px;font-weight:700;margin-bottom:12px;color:#1e293b;">🔥 抖音' + catNames[dtpCat] + '话题榜</div>' +
+          topics.map((t, i) => '<div style="padding:8px 12px;background:#fff;margin-bottom:6px;border-radius:6px;display:flex;align-items:center;gap:8px;">' +
+            '<span style="background:' + (i < 3 ? '#ef4444' : '#94a3b8') + ';color:#fff;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;">' + (i + 1) + '</span>' +
+            '<span style="font-size:13px;font-weight:500;color:#1e293b;">' + t + '</span>' +
+            (dtp.includeHeat ? '<span style="margin-left:auto;font-size:11px;color:#f59e0b;">🔥 ' + (Math.random() * 500 + 50).toFixed(0) + '万</span>' : '') +
+            '</div>').join('') +
+          (dtp.includeTips ? '<div style="margin-top:12px;padding:10px;background:#eff6ff;border-radius:6px;border-left:3px solid #3b82f6;font-size:12px;color:#1e40af;line-height:1.8;">💡 创作建议：选择1-2个相关话题标签加入视频描述，热门+垂直组合效果最佳</div>' : '') +
+          '</div>';
+        node._meta = { real: true, simulated: false, failed: false, category: dtpCat, count: topics.length };
       } else if (/fileUpload|documentConvert|imageConvert|modelConvert|imageGrid/i.test(node.type)) {
         await sleep(300);
         output = '[' + node.type + '] 处理完成';

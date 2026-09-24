@@ -404,6 +404,51 @@
       ], value: 'mp4' },
       { key: 'cookies', label: '抖音Cookies（可选）', type: 'textarea', placeholder: '粘贴sessionid，可下载更高清视频' }
     ],
+    // v2.4.3：抖音热门话题节点
+    douyinTrendingNode: [
+      { key: 'category', label: '话题分类', type: 'select', options: [
+        { value: 'all', label: '综合热门' },
+        { value: 'entertainment', label: '娱乐八卦' },
+        { value: 'tech', label: '科技数码' },
+        { value: 'food', label: '美食探店' },
+        { value: 'travel', label: '旅游出行' },
+        { value: 'fashion', label: '时尚穿搭' },
+        { value: 'sports', label: '体育运动' },
+        { value: 'education', label: '知识教育' },
+        { value: 'emotion', label: '情感生活' },
+        { value: 'business', label: '商业财经' }
+      ], value: 'all' },
+      { key: 'count', label: '话题数量', type: 'number', min: 5, max: 20, value: 10 },
+      { key: 'includeHeat', label: '包含热度值', type: 'checkbox', value: true },
+      { key: 'includeTips', label: '包含创作建议', type: 'checkbox', value: true },
+      { key: 'providerId', label: 'AI模型供应商（可选）', type: 'select', dynamic: 'provider', providerCategory: 'llm' }
+    ],
+    // v2.4.3：抖音视频生成节点（竖版9:16专用）
+    douyinVideoNode: [
+      { key: 'topic', label: '视频主题', type: 'textarea', placeholder: '输入视频主题或创意描述…' },
+      { key: 'style', label: '视频风格', type: 'select', options: [
+        { value: 'realistic', label: '真实风' },
+        { value: 'anime', label: '动漫风' },
+        { value: 'cinematic', label: '电影感' },
+        { value: 'vlog', label: 'Vlog风' },
+        { value: 'aesthetic', label: '唯美风' },
+        { value: 'funny', label: '搞笑风' }
+      ], value: 'realistic' },
+      { key: 'duration', label: '视频时长', type: 'select', options: [
+        { value: '5', label: '5秒' },
+        { value: '10', label: '10秒' },
+        { value: '15', label: '15秒' },
+        { value: '30', label: '30秒' }
+      ], value: '10' },
+      { key: 'ratio', label: '画面比例', type: 'select', options: [
+        { value: '9:16', label: '9:16 竖屏（抖音标准）' },
+        { value: '1:1', label: '1:1 方形' },
+        { value: '16:9', label: '16:9 横屏' }
+      ], value: '9:16' },
+      { key: 'includeCaption', label: '自动生成字幕文案', type: 'checkbox', value: true },
+      { key: 'includeBgm', label: 'BGM风格推荐', type: 'checkbox', value: true },
+      { key: 'providerId', label: '视频生成供应商', type: 'select', dynamic: 'provider', providerCategory: 'video' }
+    ],
 
     /* 协同与优化 */
     expertDiscussionNode: [

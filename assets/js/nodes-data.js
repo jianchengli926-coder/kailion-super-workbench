@@ -250,7 +250,11 @@ window.NODE_DATA = [
       ['抖音数据分析', 'douyinDataNode', '输入视频数据自动计算互动率/点赞率/评论率/转发率，给出优化建议', 1,
        'Douyin Analytics', 'Input video data to calculate engagement rates and get optimization tips'],
       ['抖音视频下载', 'douyinDownloadNode', '解析抖音视频链接，支持去水印/MP4/MP3/封面提取（需后端代理）', 0,
-       'Douyin Download', 'Parse Douyin video links, support watermark removal/MP4/MP3/cover (needs proxy)']
+       'Douyin Download', 'Parse Douyin video links, support watermark removal/MP4/MP3/cover (needs proxy)'],
+      ['抖音热门话题', 'douyinTrendingNode', '10大分类热门话题榜，含热度值和创作建议，零配置开箱即用', 1,
+       'Douyin Trending', 'Top trending hashtags in 10 categories with heat values and creation tips'],
+      ['抖音视频生成', 'douyinVideoNode', '竖版9:16抖音视频专用生成，6种风格+自动字幕+BGM推荐+分镜建议', 1,
+       'Douyin Video', 'Vertical 9:16 Douyin video generation, 6 styles with auto-captions and BGM']
     ]
   }
 ];
