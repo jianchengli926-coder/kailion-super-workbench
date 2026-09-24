@@ -115,6 +115,15 @@ function proxyRequest(req, res, targetHost, targetPort, targetPath, options = {}
   // 添加CORS头
   headers['Origin'] = `http://${targetHost}:${targetPort}`;
 
+  // 限制请求体大小（防止DoS攻击，最大50MB）
+  const MAX_BODY_SIZE = 50 * 1024 * 1024;
+  const contentLength = parseInt(req.headers['content-length'] || '0', 10);
+  if (contentLength > MAX_BODY_SIZE) {
+    res.writeHead(413, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Request entity too large', maxSize: '50MB' }));
+    return;
+  }
+
   const proxyReq = http.request({
     hostname: targetHost,
     port: targetPort,

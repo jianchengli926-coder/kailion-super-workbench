@@ -15,7 +15,7 @@
   /* ====================== v2.7.2：公网部署智能检测 ======================
    * 根据当前访问域名自动选择 Ollama 地址：
    * - 本地访问（localhost/127.0.0.1/局域网IP）→ http://localhost:11434/v1
-   * - 公网访问（creator.kailioncrafts.com）→ https://ollama.kailioncrafts.com/v1
+   * - 公网访问（creator.kailioncrafts.com）→ /api/ollama/v1（后端代理，安全）
    */
   function detectOllamaBaseUrl() {
     try {
