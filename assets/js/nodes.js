@@ -89,8 +89,12 @@
 
     /* 视频生成类 */
     seedanceGeneratorNode: [
+      { key: 'mode', label: '生成模式', type: 'select', options: [
+        { value: 't2v', label: '🎬 文生视频' }, { value: 'i2v', label: '🖼️ 图生视频' }, { value: 'edit', label: '✂️ 视频编辑' }
+      ], value: 't2v' },
       { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'video', hint: '在设置中配置供应商后在此选择' },
       { key: 'model', label: '模型', type: 'select', dynamic: 'model', hint: '选择供应商后自动加载可用模型' },
+      { key: 'builtInPrompt', label: '内置提示词', type: 'textarea', placeholder: '输入视频场景描述，支持变量引用上游节点输出…', hint: '可编辑的内置提示词模板，运行时自动填充变量' },
       { key: 'duration', label: '时长（秒）', type: 'select', options: [
         { value: '5', label: '5 秒' }, { value: '10', label: '10 秒' }, { value: '15', label: '15 秒' }
       ]},
@@ -118,6 +122,13 @@
       { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'llm', hint: '在设置中配置供应商后在此选择' },
       { key: 'model', label: '模型', type: 'select', dynamic: 'model', hint: '选择供应商后自动加载可用模型' },
       { key: 'system', label: '系统提示词', type: 'textarea', placeholder: '设定 AI 角色与行为…' },
+      { key: 'dialogMode', label: '对话模式', type: 'select', options: [
+        { value: 'single', label: '单次生成' }, { value: 'chat', label: '多轮对话' }, { value: 'agent', label: '智能体模式' }
+      ], value: 'single' },
+      { key: 'enableMCP', label: '🧩 MCP & 技能（调用外部工具）', type: 'checkbox', value: false, hint: '启用后可调用MCP服务器和已安装技能' },
+      { key: 'enableRAG', label: '🔍 检索增强（RAG）', type: 'checkbox', value: false, hint: '从知识库检索相关内容增强回答' },
+      { key: 'enableKnowledge', label: '📚 知识库引用', type: 'checkbox', value: false, hint: '回答中引用知识库内容并标注来源' },
+      { key: 'enableThinking', label: '🧠 思考模式（深度推理）', type: 'checkbox', value: false, hint: '启用深度思考链，先思考再输出答案' },
       { key: 'temperature', label: '温度', type: 'number', min: 0, max: 2, step: 0.1, value: 0.7 },
       { key: 'maxTokens', label: '最大输出 Token', type: 'number', min: 100, max: 8192, value: 2048 },
       { key: 'skipCache', label: '跳过缓存（强制重新生成）', type: 'checkbox', value: false }

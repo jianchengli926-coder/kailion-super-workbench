@@ -137,6 +137,7 @@
 
   // 已实化为资源视图的模块（v0.5.0 起 expert/digital/topic/style/role/scene/brand/product 全部实化）
   const RESOURCE_KEYS = {
+    agent: '智能体库',
     material: '素材库', prompt: '提示词库', kb: '知识库',
     expert: '专家库', digital: '数字人库', topic: '选题库',
     style: '风格库', role: '角色库', scene: '场景库',
@@ -169,6 +170,9 @@
       // v0.9.0 工作流市场
       targetView = document.getElementById('view-marketplace');
       if (window.Marketplace) renderMarketplace();
+    } else if (key === 'agent') {
+      targetView = document.getElementById('view-resource');
+      if (window.Agents) Agents.render(document.getElementById('resource-root'));
     } else if (key === 'skill') {
       // v2.0.0-super 技能库（实化视图）
       targetView = document.getElementById('view-skills');
@@ -1922,6 +1926,73 @@
 
   /* ====================== v2.0.0-super 执行步骤可视化 ====================== */
   let _stepperTimer = null;
+  /* v2.3.0 工作台/画布双模式切换 */
+  function initModeSwitch() {
+    const btnWb = document.getElementById('mode-workbench');
+    const btnCv = document.getElementById('mode-canvas');
+    const sidebar = document.getElementById('sidebar');
+    const rightPanel = document.getElementById('right-panel');
+    if (!btnWb || !btnCv) return;
+    btnWb.addEventListener('click', () => {
+      btnWb.classList.add('active'); btnCv.classList.remove('active');
+      if (sidebar) sidebar.style.display = '';
+      if (rightPanel) rightPanel.style.display = '';
+      toast('已切换到工作台模式');
+    });
+    btnCv.addEventListener('click', () => {
+      btnCv.classList.add('active'); btnWb.classList.remove('active');
+      if (sidebar) sidebar.style.display = 'none';
+      if (rightPanel) rightPanel.style.display = 'none';
+      toast('已切换到纯画布模式（最大化编辑空间）');
+    });
+  }
+
+  /* v2.3.0 智能编排：AI分析节点关系并优化布局 */
+  function initSmartArrange() {
+    const btn = document.getElementById('btn-smart-arrange');
+    if (!btn) return;
+    btn.addEventListener('click', () => {
+      if (!window.Canvas) { toast('画布未就绪'); return; }
+      const st = Canvas.getState() || {};
+      const nodes = Object.values(st.nodes || {});
+      const links = st.links || [];
+      if (!nodes.length) { toast('画布为空，请先添加节点'); return; }
+      // 拓扑排序：计算每个节点的层级
+      const inDeg = {}, outMap = {};
+      nodes.forEach(n => { inDeg[n.id] = 0; outMap[n.id] = []; });
+      links.forEach(l => {
+        if (inDeg[l.to.node] != null) inDeg[l.to.node]++;
+        if (outMap[l.from.node]) outMap[l.from.node].push(l.to.node);
+      });
+      // BFS分层
+      const layer = {}, queue = [];
+      nodes.forEach(n => { if (inDeg[n.id] === 0) { layer[n.id] = 0; queue.push(n.id); } });
+      while (queue.length) {
+        const id = queue.shift();
+        (outMap[id] || []).forEach(nxt => {
+          layer[nxt] = Math.max(layer[nxt] || 0, (layer[id] || 0) + 1);
+          inDeg[nxt]--;
+          if (inDeg[nxt] === 0) queue.push(nxt);
+        });
+      }
+      // 按层分组
+      const layers = {};
+      nodes.forEach(n => { const l = layer[n.id] || 0; if (!layers[l]) layers[l] = []; layers[l].push(n); });
+      // 布局
+      const startX = 200, startY = 150, gapX = 300, gapY = 160;
+      Object.entries(layers).forEach(([l, ns]) => {
+        ns.forEach((n, i) => {
+          const x = startX + parseInt(l) * gapX;
+          const y = startY + i * gapY - (ns.length - 1) * gapY / 2;
+          if (Canvas.moveNode) Canvas.moveNode(n.id, x, y);
+          else if (n.x != null) { n.x = x; n.y = y; }
+        });
+      });
+      if (Canvas.render) Canvas.render();
+      toast('🧠 智能编排完成：已按数据流优化 ' + nodes.length + ' 个节点布局');
+    });
+  }
+
   function initStepper() {
     if (!window.Engine || !Engine.onEvent) return;
     const stepEl = document.getElementById('exec-stepper-step');
@@ -1974,6 +2045,10 @@
 
     // v2.0.0-super：执行步骤可视化订阅
     initStepper();
+
+    // v2.3.0：双模式切换 + 智能编排
+    initModeSwitch();
+    initSmartArrange();
 
     // v1.0.0：全局搜索索引（Ctrl/Cmd+K 已在 search.js 自动绑定）
     if (window.Search && Search.indexData) {

@@ -274,8 +274,9 @@ window.WORKFLOW_CATS = [
    'Cross-border Supply Chain', 'Cross-border sourcing, RFQ, listing and distribution pipeline']
 ];
 
-/** 资源库入口（15类，v0.5.0 起后7项已实化，默认可见；运行时可用 kailion_lib_visibility 覆盖） */
+/** 资源库入口（16类，v0.5.0 起后7项已实化，默认可见；运行时可用 kailion_lib_visibility 覆盖） */
 window.RESOURCE_LIBS = [
+  { key: 'agent',    name: '智能体', nameEn: 'Agents',          icon: '🤖', visible: 1 },
   { key: 'canvas',   name: '画布',   nameEn: 'Canvas',          icon: '🖼️', visible: 1 },
   { key: 'nodes',    name: '节点库', nameEn: 'Node Library',    icon: '🧩', visible: 1 },
   { key: 'workflow', name: '工作流', nameEn: 'Workflows',       icon: '⚡', visible: 1 },

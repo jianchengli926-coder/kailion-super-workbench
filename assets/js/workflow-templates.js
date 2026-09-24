@@ -1,6 +1,6 @@
 /**
  * 锴利超级AI工作台 - 工作流模板库
- * 为 WORKFLOW_CATS 全部 19 个分类 + 跨境供应链（共 20 个）各提供一组 3-6 节点的合理模板。
+ * 为 WORKFLOW_CATS 全部 21 个分类各提供一组 3-6 节点的合理模板。
  * 模板格式：{ nodes: [{type, x, y}, ...], links: [{from, to}, ...] }
  * 节点横向自动布局：x 从 150 开始，间隔 320，y = 200；连线按顺序串联。
  */
@@ -62,7 +62,7 @@
     ]),
 
     /* 单页 / 图文 / 多页完整生成 */
-    'PPT 制作': build([
+    'PPT制作': build([
       'promptNode',
       'pptContentNode',
       'pptGeneratorNode',

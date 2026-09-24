@@ -221,81 +221,125 @@
 
   /* ====================== 提示词库 ====================== */
   function renderPrompt(root) {
+    const presets = window.PRESET_PROMPTS || [];
+    const allCats = ['全部', ...presets.map(p => p.cat), '我的收藏'];
+    let activeCat = '全部';
+    let collapsed = {};
+
     root.innerHTML = `
-      <div class="res-wrap">
+      <div class="res-wrap prompt-tree-layout">
         <div class="res-header">
-          <div><h2 class="res-title">${window.I18N ? I18N.t('res.promptTitle') : '💬 提示词库'}</h2><p class="res-sub">${window.I18N ? I18N.t('res.promptSub') : '收藏常用提示词，可一键发送到画布'}</p></div>
+          <div><h2 class="res-title">💬 提示词库</h2><p class="res-sub">15大分类 324+预设提示词，树形浏览，一键发送到画布</p></div>
           <div class="res-tools">
-            <input id="prm-search" class="input" style="width:200px" placeholder="${window.I18N ? I18N.t('res.searchPrompt') : '搜索标题或内容…'}">
-            <button id="prm-new" class="btn btn-primary btn-sm">${window.I18N ? I18N.t('res.newPrompt') : '➕ 新建提示词'}</button>
+            <input id="prm-search" class="input" style="width:200px" placeholder="搜索提示词…">
+            <button id="prm-new" class="btn btn-primary btn-sm">➕ 新建</button>
           </div>
         </div>
-        <div id="prm-list" class="prm-list"></div>
+        <div class="prompt-body">
+          <div class="prompt-sidebar" id="prm-cats"></div>
+          <div class="prompt-content" id="prm-list"></div>
+        </div>
       </div>
       <div id="prm-form-overlay" class="overlay hidden">
         <div class="res-modal" style="width:520px">
-          <div class="res-modal-head"><h3 id="prm-form-title">${window.I18N ? I18N.t('res.createPrompt') : '新建提示词'}</h3><button class="btn btn-sm" id="prm-form-close">✕</button></div>
+          <div class="res-modal-head"><h3 id="prm-form-title">新建提示词</h3><button class="btn btn-sm" id="prm-form-close">✕</button></div>
           <div class="res-modal-body">
-            <input id="prm-title" class="input" placeholder="${window.I18N ? I18N.t('res.promptTitlePh') : '标题（如：产品主图生成）'}" style="margin-bottom:10px">
-            <select id="prm-cat" class="select" style="margin-bottom:10px">${PRM_CATS.map(c => `<option>${c}</option>`).join('')}</select>
-            <textarea id="prm-content" class="textarea" style="min-height:140px" placeholder="${window.I18N ? I18N.t('res.promptContentPh') : '输入提示词内容…'}"></textarea>
+            <input id="prm-title" class="input" placeholder="标题" style="margin-bottom:10px">
+            <select id="prm-cat" class="select" style="margin-bottom:10px">${allCats.filter(c=>c!=='全部'&&c!=='我的收藏').map(c=>`<option>${c}</option>`).join('')}</select>
+            <textarea id="prm-content" class="textarea" style="min-height:140px" placeholder="输入提示词内容…"></textarea>
           </div>
-          <div class="res-modal-foot"><button id="prm-save" class="btn btn-primary btn-sm">${window.I18N ? I18N.t('res.save') : '保存'}</button></div>
+          <div class="res-modal-foot"><button id="prm-save" class="btn btn-primary btn-sm">保存</button></div>
         </div>
       </div>`;
 
     let list = load(PRM_KEY);
     let editingId = null;
 
-    function draw() {
-      const q = document.getElementById('prm-search').value.trim().toLowerCase();
-      const box = document.getElementById('prm-list');
-      const filtered = list.filter(p => !q || (p.title + ' ' + p.content).toLowerCase().includes(q));
-      if (!filtered.length) {
-        box.innerHTML = '<div class="manual-empty">' + (window.I18N ? I18N.t('res.noPrompt') : '暂无提示词，点击右上角「新建提示词」') + '</div>';
-        return;
-      }
-      box.innerHTML = filtered.map(p => `
-        <div class="prm-card" data-id="${p.id}">
-          <div class="prm-head">
-            <span class="prm-title">${esc(p.title)}</span>
-            <span class="tag">${esc(p.cat)}</span>
-          </div>
-          <div class="prm-content">${esc(p.content)}</div>
-          <div class="prm-actions">
-            <button class="btn btn-sm prm-send">${window.I18N ? I18N.t('res.sendToCanvas') : '🚀 发送到画布'}</button>
-            <button class="btn btn-sm prm-edit">${window.I18N ? I18N.t('res.edit') : '编辑'}</button>
-            <button class="btn btn-sm btn-danger prm-del">${window.I18N ? I18N.t('res.delete') : '🗑 删除'}</button>
-          </div>
-        </div>`).join('');
-      box.querySelectorAll('.prm-card').forEach(c => {
-        const id = c.dataset.id;
-        c.querySelector('.prm-send').addEventListener('click', () => sendToCanvas(id));
-        c.querySelector('.prm-edit').addEventListener('click', () => openForm(id));
-        c.querySelector('.prm-del').addEventListener('click', () => {
-          list = list.filter(x => x.id !== id);
-          save(PRM_KEY, list);
-          draw();
-          if (window.UI) UI.toast(window.I18N ? I18N.t('res.promptDeleted') : '提示词已删除');
-        });
+    function countCat(cat) {
+      if (cat === '全部') return presets.reduce((s,p)=>s+p.items.length,0) + list.length;
+      if (cat === '我的收藏') return list.length;
+      const p = presets.find(x => x.cat === cat);
+      return p ? p.items.length : 0;
+    }
+
+    function drawCats() {
+      const box = document.getElementById('prm-cats');
+      let html = `<div class="prm-cat-item ${activeCat==='全部'?'active':''}" data-cat="全部">
+        <span>📚 全部</span><span class="prm-cat-count">${countCat('全部')}</span></div>`;
+      presets.forEach(p => {
+        html += `<div class="prm-cat-item ${activeCat===p.cat?'active':''}" data-cat="${esc(p.cat)}">
+          <span>${esc(p.cat)}</span><span class="prm-cat-count">${p.items.length}</span></div>`;
+      });
+      html += `<div class="prm-cat-item ${activeCat==='我的收藏'?'active':''}" data-cat="我的收藏">
+        <span>⭐ 我的收藏</span><span class="prm-cat-count">${list.length}</span></div>`;
+      box.innerHTML = html;
+      box.querySelectorAll('.prm-cat-item').forEach(el => {
+        el.addEventListener('click', () => { activeCat = el.dataset.cat; drawCats(); drawList(); });
       });
     }
 
-    function sendToCanvas(id) {
-      const p = list.find(x => x.id === id);
-      if (!p || !window.Canvas) return;
-      const node = Canvas.addNode('promptNode', 200 + Math.random() * 200, 180 + Math.random() * 120, { text: p.content });
-      if (window.UI) {
-        UI.switchView('canvas');
-        UI.renderRightPanel(node);
-        UI.toast(window.I18N ? I18N.t('res.sentToCanvas', {title: p.title}) : '已将「' + p.title + '」发送到画布');
+    function drawList() {
+      const q = document.getElementById('prm-search').value.trim().toLowerCase();
+      const box = document.getElementById('prm-list');
+      let items = [];
+      if (activeCat === '全部') {
+        presets.forEach(p => p.items.forEach(it => items.push({...it, cat: p.cat, preset: true})));
+        list.forEach(it => items.push({...it, preset: false}));
+      } else if (activeCat === '我的收藏') {
+        items = list.map(it => ({...it, preset: false}));
+      } else {
+        const p = presets.find(x => x.cat === activeCat);
+        if (p) items = p.items.map(it => ({...it, cat: p.cat, preset: true}));
       }
+      if (q) items = items.filter(it => (it.title + ' ' + it.content).toLowerCase().includes(q));
+      if (!items.length) {
+        box.innerHTML = '<div class="manual-empty">暂无提示词</div>';
+        return;
+      }
+      box.innerHTML = items.map((p, i) => `
+        <div class="prm-card" data-idx="${i}" data-preset="${p.preset?'1':'0'}" data-id="${p.id||''}">
+          <div class="prm-head">
+            <span class="prm-title">${esc(p.title)}</span>
+            <span class="tag">${esc(p.cat||'')}</span>
+            ${p.preset?'<span class="tag tag-success">预设</span>':''}
+          </div>
+          <div class="prm-content">${esc(p.content)}</div>
+          <div class="prm-actions">
+            <button class="btn btn-sm prm-send">🚀 发送到画布</button>
+            <button class="btn btn-sm prm-copy">📋 复制</button>
+            ${!p.preset?'<button class="btn btn-sm prm-edit">编辑</button><button class="btn btn-sm btn-danger prm-del">🗑 删除</button>':''}
+          </div>
+        </div>`).join('');
+      box.querySelectorAll('.prm-card').forEach(c => {
+        const idx = parseInt(c.dataset.idx);
+        const item = items[idx];
+        c.querySelector('.prm-send').addEventListener('click', () => sendToCanvas(item));
+        c.querySelector('.prm-copy').addEventListener('click', () => {
+          navigator.clipboard.writeText(item.content).then(()=>{ if(window.UI) UI.toast('已复制到剪贴板'); });
+        });
+        if (!item.preset && c.querySelector('.prm-edit')) {
+          c.querySelector('.prm-edit').addEventListener('click', () => openForm(item.id));
+        }
+        if (!item.preset && c.querySelector('.prm-del')) {
+          c.querySelector('.prm-del').addEventListener('click', () => {
+            list = list.filter(x => x.id !== item.id);
+            save(PRM_KEY, list); drawCats(); drawList();
+            if (window.UI) UI.toast('提示词已删除');
+          });
+        }
+      });
+    }
+
+    function sendToCanvas(p) {
+      if (!window.Canvas) return;
+      const node = Canvas.addNode('promptNode', 200 + Math.random()*200, 180 + Math.random()*120, { text: p.content });
+      if (window.UI) { UI.switchView('canvas'); UI.renderRightPanel(node); UI.toast('已将「' + p.title + '」发送到画布'); }
     }
 
     function openForm(id) {
       editingId = id || null;
       const ov = document.getElementById('prm-form-overlay');
-      document.getElementById('prm-form-title').textContent = id ? (window.I18N ? I18N.t('res.editPrompt') : '编辑提示词') : (window.I18N ? I18N.t('res.createPrompt') : '新建提示词');
+      document.getElementById('prm-form-title').textContent = id ? '编辑提示词' : '新建提示词';
       if (id) {
         const p = list.find(x => x.id === id);
         document.getElementById('prm-title').value = p.title;
@@ -309,31 +353,491 @@
     }
 
     document.getElementById('prm-new').addEventListener('click', () => openForm(null));
-    document.getElementById('prm-form-close').addEventListener('click', () =>
-      document.getElementById('prm-form-overlay').classList.add('hidden'));
-    document.getElementById('prm-form-overlay').addEventListener('click', e => {
-      if (e.target.id === 'prm-form-overlay') e.target.classList.add('hidden');
-    });
+    document.getElementById('prm-form-close').addEventListener('click', () => document.getElementById('prm-form-overlay').classList.add('hidden'));
+    document.getElementById('prm-form-overlay').addEventListener('click', e => { if(e.target.id==='prm-form-overlay') e.target.classList.add('hidden'); });
     document.getElementById('prm-save').addEventListener('click', () => {
       const title = document.getElementById('prm-title').value.trim();
       const content = document.getElementById('prm-content').value.trim();
       const cat = document.getElementById('prm-cat').value;
-      if (!title || !content) { if (window.UI) UI.toast(window.I18N ? I18N.t('res.promptRequired') : '请填写标题和内容'); return; }
+      if (!title || !content) { if(window.UI) UI.toast('请填写标题和内容'); return; }
       if (editingId) {
         const p = list.find(x => x.id === editingId);
-        if (!p) { toast(window.I18N ? I18N.t('res.recordNotFound') : '记录已不存在'); draw(); return; }
-        Object.assign(p, { title, content, cat });
+        if (p) Object.assign(p, { title, content, cat });
       } else {
         list.push({ id: uid(), title, content, cat, addedAt: Date.now() });
       }
       save(PRM_KEY, list);
       document.getElementById('prm-form-overlay').classList.add('hidden');
-      draw();
-      if (window.UI) UI.toast(window.I18N ? I18N.t('res.promptSaved') : '提示词已保存');
+      drawCats(); drawList();
+      if (window.UI) UI.toast('提示词已保存');
     });
-    document.getElementById('prm-search').addEventListener('input', draw);
+    document.getElementById('prm-search').addEventListener('input', drawList);
+
+    drawCats();
+    drawList();
+  }
+
+  /* ====================== 知识库 ====================== */
+  function renderKB(root) {
+    const KB_CATS = ['全部', '产品知识', '技术文档', '市场资料', '学习笔记', '灵感创意', '其他'];
+    const KB_STATUS = ['全部状态', '草稿', '在用', '已验证', '已归档'];
+    let activeCat = '全部', activeStatus = '全部状态', viewMode = 'list';
+
+    root.innerHTML = `
+      <div class="res-wrap">
+        <div class="res-header">
+          <div><h2 class="res-title">📚 知识库</h2><p class="res-sub">分类管理企业知识，支持认知拓扑视图与链接导入（本地存储）</p></div>
+          <div class="res-tools">
+            <input id="kb-search" class="input" style="width:160px" placeholder="搜索文档…">
+            <button id="kb-upload" class="btn btn-primary btn-sm">📤 上传文档</button>
+            <button id="kb-import-url" class="btn btn-sm">🔗 导入链接</button>
+            <button id="kb-topology" class="btn btn-sm" title="认知拓扑视图">🕸️ 拓扑</button>
+            <input type="file" id="kb-file" accept=".txt,.md,.pdf,.docx" style="display:none" multiple>
+          </div>
+        </div>
+        <div class="kb-filters">
+          <div class="kb-cat-bar" id="kb-cats"></div>
+          <div class="kb-status-bar" id="kb-status"></div>
+        </div>
+        <div id="kb-list" class="kb-list"></div>
+      </div>
+      <div id="kb-url-modal" class="modal-overlay hidden">
+        <div class="modal-box" style="max-width:480px">
+          <div class="modal-header"><span>导入网页链接</span><button class="modal-close" onclick="document.getElementById('kb-url-modal').classList.add('hidden')">✕</button></div>
+          <div class="modal-body">
+            <div class="form-row"><label>网页 URL</label><input id="kb-url-input" class="input" placeholder="https://example.com/article"></div>
+            <div class="form-row"><label>分类</label><select id="kb-url-cat" class="select">${KB_CATS.filter(c=>c!=='全部').map(c=>`<option>${c}</option>`).join('')}</select></div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" onclick="document.getElementById('kb-url-modal').classList.add('hidden')">取消</button>
+            <button id="kb-url-ok" class="btn btn-primary">导入</button>
+          </div>
+        </div>
+      </div>`;
+
+    let list = load(KB_KEY);
+
+    function drawCats() {
+      const box = document.getElementById('kb-cats');
+      box.innerHTML = KB_CATS.map(c => {
+        const cnt = c === '全部' ? list.length : list.filter(d => (d.cat||'其他') === c).length;
+        return `<span class="kb-cat ${activeCat===c?'active':''}" data-cat="${esc(c)}">${esc(c)} <span class="kb-cat-count">${cnt}</span></span>`;
+      }).join('');
+      box.querySelectorAll('.kb-cat').forEach(el => el.addEventListener('click', () => { activeCat = el.dataset.cat; drawCats(); draw(); }));
+    }
+    function drawStatus() {
+      const box = document.getElementById('kb-status');
+      box.innerHTML = KB_STATUS.map(s => `<span class="kb-status ${activeStatus===s?'active':''}" data-status="${esc(s)}">${esc(s)}</span>`).join('');
+      box.querySelectorAll('.kb-status').forEach(el => el.addEventListener('click', () => { activeStatus = el.dataset.status; drawStatus(); draw(); }));
+    }
+
+    function draw() {
+      const q = document.getElementById('kb-search').value.trim().toLowerCase();
+      const box = document.getElementById('kb-list');
+      let filtered = list.filter(d => {
+        if (activeCat !== '全部' && (d.cat||'其他') !== activeCat) return false;
+        if (activeStatus !== '全部状态' && (d.status||'草稿') !== activeStatus) return false;
+        if (q && !d.name.toLowerCase().includes(q)) return false;
+        return true;
+      });
+      if (viewMode === 'topology') {
+        box.innerHTML = renderTopology(filtered);
+        return;
+      }
+      if (!filtered.length) {
+        box.innerHTML = '<div class="manual-empty">暂无文档，点击「上传文档」或「导入链接」</div>';
+        return;
+      }
+      box.innerHTML = filtered.map(d => `
+        <div class="kb-card" data-id="${d.id}">
+          <div class="kb-icon">📄</div>
+          <div class="kb-body">
+            <div class="kb-name">${esc(d.name)} <span class="tag">${esc(d.cat||'其他')}</span> <span class="tag tag-${(d.status||'草稿')}">${esc(d.status||'草稿')}</span></div>
+            <div class="kb-meta">${fmtSize(d.size)} · 上传于 ${fmtTime(d.addedAt)}</div>
+            <div class="kb-summary">${esc(d.summary || '（摘要待生成）')}</div>
+          </div>
+          <div class="kb-actions">
+            <button class="btn btn-sm kb-view">👁 查看</button>
+            <button class="btn btn-sm kb-status-btn">🔄 状态</button>
+            <button class="btn btn-sm btn-danger kb-del">🗑 删除</button>
+          </div>
+        </div>`).join('');
+      box.querySelectorAll('.kb-card').forEach(c => {
+        const id = c.dataset.id;
+        c.querySelector('.kb-view').addEventListener('click', () => openKBDetail(id));
+        c.querySelector('.kb-status-btn').addEventListener('click', () => cycleStatus(id));
+        c.querySelector('.kb-del').addEventListener('click', () => {
+          list = list.filter(x => x.id !== id); save(KB_KEY, list); drawCats(); draw();
+          if (window.UI) UI.toast('文档已删除');
+        });
+      });
+    }
+
+    function renderTopology(items) {
+      if (!items.length) return '<div class="manual-empty">暂无文档可展示拓扑</div>';
+      const cats = {};
+      items.forEach(d => { const c = d.cat || '其他'; if (!cats[c]) cats[c] = []; cats[c].push(d); });
+      let html = '<div class="kb-topology">';
+      html += '<div class="kb-topo-center">🧠 知识中枢</div>';
+      html += '<div class="kb-topo-nodes">';
+      Object.entries(cats).forEach(([cat, docs]) => {
+        html += `<div class="kb-topo-group"><div class="kb-topo-cat">${esc(cat)} (${docs.length})</div>`;
+        docs.forEach(d => { html += `<div class="kb-topo-item" title="${esc(d.name)}">📄 ${esc(d.name.length>12?d.name.slice(0,12)+'…':d.name)}</div>`; });
+        html += '</div>';
+      });
+      html += '</div></div>';
+      return html;
+    }
+
+    function cycleStatus(id) {
+      const d = list.find(x => x.id === id);
+      if (!d) return;
+      const order = ['草稿', '在用', '已验证', '已归档'];
+      const cur = order.indexOf(d.status || '草稿');
+      d.status = order[(cur + 1) % order.length];
+      save(KB_KEY, list); drawCats(); draw();
+      if (window.UI) UI.toast('状态已更新为：' + d.status);
+    }
+
+    function openKBDetail(id) {
+      const d = list.find(x => x.id === id);
+      if (!d) return;
+      let ov = document.getElementById('res-overlay');
+      if (!ov) { ov = document.createElement('div'); ov.id = 'res-overlay'; ov.className = 'overlay hidden'; document.body.appendChild(ov); }
+      ov.innerHTML = `
+        <div class="res-modal" style="width:560px">
+          <div class="res-modal-head"><h3>📄 ${esc(d.name)}</h3><button class="btn btn-sm" id="res-close">✕</button></div>
+          <div class="res-modal-body">
+            <p class="kb-detail-row">分类：${esc(d.cat||'其他')} · 状态：${esc(d.status||'草稿')}</p>
+            <p class="kb-detail-row">大小：${fmtSize(d.size)} · 上传时间：${fmtTime(d.addedAt)}</p>
+            <p class="kb-detail-row">摘要：${esc(d.summary || '（待生成）')}</p>
+          </div>
+          <div class="res-modal-foot"><button class="btn btn-sm btn-danger" id="res-del">🗑 删除文档</button></div>
+        </div>`;
+      ov.classList.remove('hidden');
+      ov.querySelector('#res-close').addEventListener('click', () => ov.classList.add('hidden'));
+      ov.onclick = function(e){ if (e.target === ov) ov.classList.add('hidden'); };
+      ov.querySelector('#res-del').addEventListener('click', () => {
+        list = list.filter(x => x.id !== id); save(KB_KEY, list); ov.classList.add('hidden'); drawCats(); draw();
+        if (window.UI) UI.toast('文档已删除');
+      });
+    }
+
+    document.getElementById('kb-upload').addEventListener('click', () => document.getElementById('kb-file').click());
+    document.getElementById('kb-file').addEventListener('change', e => {
+      const files = Array.from(e.target.files || []);
+      files.forEach(file => {
+        const reader = new FileReader();
+        if (/\.(txt|md)$/i.test(file.name)) {
+          reader.onload = ev => {
+            const text = String(ev.target.result || '').slice(0, 200);
+            list.push({ id: uid(), name: file.name, size: file.size, cat: activeCat==='全部'?'其他':activeCat, status: '草稿', summary: text.replace(/\s+/g,' ').trim(), addedAt: Date.now() });
+            save(KB_KEY, list); drawCats(); draw();
+            if (window.UI) UI.toast('已入库「' + file.name + '」');
+          };
+          reader.readAsText(file);
+        } else {
+          list.push({ id: uid(), name: file.name, size: file.size, cat: activeCat==='全部'?'其他':activeCat, status: '草稿', summary: '（二进制文档，已入库）', addedAt: Date.now() });
+          save(KB_KEY, list); drawCats(); draw();
+          if (window.UI) UI.toast('已入库「' + file.name + '」');
+        }
+      });
+    });
+    document.getElementById('kb-import-url').addEventListener('click', () => document.getElementById('kb-url-modal').classList.remove('hidden'));
+    document.getElementById('kb-url-ok').addEventListener('click', () => {
+      const url = document.getElementById('kb-url-input').value.trim();
+      if (!url) { if (window.UI) UI.toast('请输入URL'); return; }
+      const cat = document.getElementById('kb-url-cat').value;
+      list.push({ id: uid(), name: url.replace(/^https?:\/\//,'').slice(0,40), size: 0, cat, status: '草稿', summary: '链接导入：' + url, url, addedAt: Date.now() });
+      save(KB_KEY, list); document.getElementById('kb-url-modal').classList.add('hidden'); drawCats(); draw();
+      if (window.UI) UI.toast('链接已导入知识库');
+    });
+    document.getElementById('kb-topology').addEventListener('click', () => {
+      viewMode = viewMode === 'topology' ? 'list' : 'topology';
+      document.getElementById('kb-topology').textContent = viewMode === 'topology' ? '📋 列表' : '🕸️ 拓扑';
+      draw();
+    });
+    document.getElementById('kb-search').addEventListener('input', draw);
+
+    drawCats(); drawStatus(); draw();
+  }
+
+  /* ====================== 素材库 ====================== */
+  function renderMaterial(root) {
+    root.innerHTML = `
+      <div class="res-wrap">
+        <div class="res-header">
+          <div><h2 class="res-title">${window.I18N ? I18N.t('res.materialTitle') : '🖼️ 素材库'}</h2><p class="res-sub">${window.I18N ? I18N.t('res.materialSub') : '上传并管理图片素材（仅保存在本地浏览器）'}</p></div>
+          <div class="res-tools">
+            <select id="mat-cat" class="select" style="width:120px">${MAT_CATS.map(c => `<option>${c}</option>`).join('')}</select>
+            <input id="mat-search" class="input" style="width:200px" placeholder="${window.I18N ? I18N.t('res.searchMaterial') : '搜索素材名称…'}">
+            <button id="mat-upload" class="btn btn-primary btn-sm">${window.I18N ? I18N.t('res.uploadMaterial') : '📤 上传素材'}</button>
+            <input type="file" id="mat-file" accept="image/*" style="display:none" multiple>
+          </div>
+        </div>
+        <div id="mat-grid" class="mat-grid"></div>
+      </div>`;
+
+    let list = load(MAT_KEY);
+    function draw() {
+      const cat = document.getElementById('mat-cat').value;
+      const q = document.getElementById('mat-search').value.trim().toLowerCase();
+      const grid = document.getElementById('mat-grid');
+      const filtered = list.filter(m =>
+        (cat === '全部' || m.cat === cat) &&
+        (!q || m.name.toLowerCase().includes(q))
+      );
+      if (!filtered.length) {
+        grid.innerHTML = '<div class="manual-empty">' + (window.I18N ? I18N.t('res.noMaterial') : '暂无素材，点击右上角「上传素材」添加') + '</div>';
+        return;
+      }
+      grid.innerHTML = filtered.map(m => `
+        <div class="mat-card" data-id="${m.id}">
+          <div class="mat-img-wrap"></div>
+          <div class="mat-meta"><div class="mat-name">${esc(m.name)}</div>
+          <div class="mat-tags"><span class="tag">${esc(m.cat)}</span><span class="tag">${fmtSize(m.size)}</span></div></div>
+        </div>`).join('');
+      // 用 DOM API 创建 img，避免 base64 data URL 拼入 innerHTML 的 XSS 风险
+      filtered.forEach((m, i) => {
+        const wrap = grid.querySelectorAll('.mat-card')[i].querySelector('.mat-img-wrap');
+        const img = document.createElement('img');
+        img.src = m.data;
+        img.alt = m.name;
+        wrap.appendChild(img);
+      });
+      grid.querySelectorAll('.mat-card').forEach(c => {
+        c.addEventListener('click', () => openMaterialPreview(c.dataset.id));
+      });
+    }
+
+    document.getElementById('mat-cat').addEventListener('change', draw);
+    document.getElementById('mat-search').addEventListener('input', draw);
+    document.getElementById('mat-upload').addEventListener('click', () => document.getElementById('mat-file').click());
+    document.getElementById('mat-file').addEventListener('change', e => {
+      const files = Array.from(e.target.files || []);
+      let processed = 0;
+      let uploaded = 0;
+      files.forEach(file => {
+        if (!file.type.startsWith('image/')) { processed++; return; }
+        const reader = new FileReader();
+        reader.onload = ev => {
+          list.push({
+            id: uid(), name: file.name, cat: '其他',
+            data: ev.target.result, size: file.size, addedAt: Date.now()
+          });
+          save(MAT_KEY, list);
+          processed++;
+          uploaded++;
+          if (processed === files.length) {
+            draw();
+            if (window.UI) UI.toast(window.I18N ? I18N.t('res.uploadedCount', {count: uploaded}) : '已上传 ' + uploaded + ' 个素材');
+          }
+        };
+        reader.onerror = () => {
+          processed++;
+          if (window.UI) UI.toast('文件读取失败：' + file.name);
+          if (processed === files.length) draw();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = '';
+    });
+
+    function openMaterialPreview(id) {
+      const m = list.find(x => x.id === id);
+      if (!m) return;
+      let ov = document.getElementById('res-overlay');
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = 'res-overlay';
+        ov.className = 'overlay hidden';
+        document.body.appendChild(ov);
+      }
+      ov.innerHTML = `
+        <div class="res-modal">
+          <div class="res-modal-head"><h3>${esc(m.name)}</h3><button class="btn btn-sm" id="res-close">✕</button></div>
+          <div class="res-modal-body" id="res-modal-img-wrap"></div>
+          <div class="res-modal-foot">
+            <span class="tag">${esc(m.cat)}</span><span class="tag">${fmtSize(m.size)}</span>
+            <span class="tag">${fmtTime(m.addedAt)}</span>
+            <button class="btn btn-sm btn-danger" id="res-del">🗑 删除</button>
+          </div>
+        </div>`;
+      ov.classList.remove('hidden');
+      var _prevImg = document.createElement('img');
+      _prevImg.src = m.data;
+      _prevImg.style.cssText = 'max-width:100%;border-radius:8px';
+      document.getElementById('res-modal-img-wrap').appendChild(_prevImg);
+      ov.querySelector('#res-close').addEventListener('click', () => ov.classList.add('hidden'));
+      ov.onclick = function(e){ if (e.target === ov) ov.classList.add('hidden'); };
+      ov.querySelector('#res-del').addEventListener('click', () => {
+        list = list.filter(x => x.id !== id);
+        save(MAT_KEY, list);
+        ov.classList.add('hidden');
+        draw();
+        if (window.UI) UI.toast(window.I18N ? I18N.t('res.materialDeleted') : '素材已删除');
+      });
+    }
 
     draw();
+  }
+
+  /* ====================== 提示词库 ====================== */
+  function renderPrompt(root) {
+    const presets = window.PRESET_PROMPTS || [];
+    const allCats = ['全部', ...presets.map(p => p.cat), '我的收藏'];
+    let activeCat = '全部';
+    let collapsed = {};
+
+    root.innerHTML = `
+      <div class="res-wrap prompt-tree-layout">
+        <div class="res-header">
+          <div><h2 class="res-title">💬 提示词库</h2><p class="res-sub">15大分类 324+预设提示词，树形浏览，一键发送到画布</p></div>
+          <div class="res-tools">
+            <input id="prm-search" class="input" style="width:200px" placeholder="搜索提示词…">
+            <button id="prm-new" class="btn btn-primary btn-sm">➕ 新建</button>
+          </div>
+        </div>
+        <div class="prompt-body">
+          <div class="prompt-sidebar" id="prm-cats"></div>
+          <div class="prompt-content" id="prm-list"></div>
+        </div>
+      </div>
+      <div id="prm-form-overlay" class="overlay hidden">
+        <div class="res-modal" style="width:520px">
+          <div class="res-modal-head"><h3 id="prm-form-title">新建提示词</h3><button class="btn btn-sm" id="prm-form-close">✕</button></div>
+          <div class="res-modal-body">
+            <input id="prm-title" class="input" placeholder="标题" style="margin-bottom:10px">
+            <select id="prm-cat" class="select" style="margin-bottom:10px">${allCats.filter(c=>c!=='全部'&&c!=='我的收藏').map(c=>`<option>${c}</option>`).join('')}</select>
+            <textarea id="prm-content" class="textarea" style="min-height:140px" placeholder="输入提示词内容…"></textarea>
+          </div>
+          <div class="res-modal-foot"><button id="prm-save" class="btn btn-primary btn-sm">保存</button></div>
+        </div>
+      </div>`;
+
+    let list = load(PRM_KEY);
+    let editingId = null;
+
+    function countCat(cat) {
+      if (cat === '全部') return presets.reduce((s,p)=>s+p.items.length,0) + list.length;
+      if (cat === '我的收藏') return list.length;
+      const p = presets.find(x => x.cat === cat);
+      return p ? p.items.length : 0;
+    }
+
+    function drawCats() {
+      const box = document.getElementById('prm-cats');
+      let html = `<div class="prm-cat-item ${activeCat==='全部'?'active':''}" data-cat="全部">
+        <span>📚 全部</span><span class="prm-cat-count">${countCat('全部')}</span></div>`;
+      presets.forEach(p => {
+        html += `<div class="prm-cat-item ${activeCat===p.cat?'active':''}" data-cat="${esc(p.cat)}">
+          <span>${esc(p.cat)}</span><span class="prm-cat-count">${p.items.length}</span></div>`;
+      });
+      html += `<div class="prm-cat-item ${activeCat==='我的收藏'?'active':''}" data-cat="我的收藏">
+        <span>⭐ 我的收藏</span><span class="prm-cat-count">${list.length}</span></div>`;
+      box.innerHTML = html;
+      box.querySelectorAll('.prm-cat-item').forEach(el => {
+        el.addEventListener('click', () => { activeCat = el.dataset.cat; drawCats(); drawList(); });
+      });
+    }
+
+    function drawList() {
+      const q = document.getElementById('prm-search').value.trim().toLowerCase();
+      const box = document.getElementById('prm-list');
+      let items = [];
+      if (activeCat === '全部') {
+        presets.forEach(p => p.items.forEach(it => items.push({...it, cat: p.cat, preset: true})));
+        list.forEach(it => items.push({...it, preset: false}));
+      } else if (activeCat === '我的收藏') {
+        items = list.map(it => ({...it, preset: false}));
+      } else {
+        const p = presets.find(x => x.cat === activeCat);
+        if (p) items = p.items.map(it => ({...it, cat: p.cat, preset: true}));
+      }
+      if (q) items = items.filter(it => (it.title + ' ' + it.content).toLowerCase().includes(q));
+      if (!items.length) {
+        box.innerHTML = '<div class="manual-empty">暂无提示词</div>';
+        return;
+      }
+      box.innerHTML = items.map((p, i) => `
+        <div class="prm-card" data-idx="${i}" data-preset="${p.preset?'1':'0'}" data-id="${p.id||''}">
+          <div class="prm-head">
+            <span class="prm-title">${esc(p.title)}</span>
+            <span class="tag">${esc(p.cat||'')}</span>
+            ${p.preset?'<span class="tag tag-success">预设</span>':''}
+          </div>
+          <div class="prm-content">${esc(p.content)}</div>
+          <div class="prm-actions">
+            <button class="btn btn-sm prm-send">🚀 发送到画布</button>
+            <button class="btn btn-sm prm-copy">📋 复制</button>
+            ${!p.preset?'<button class="btn btn-sm prm-edit">编辑</button><button class="btn btn-sm btn-danger prm-del">🗑 删除</button>':''}
+          </div>
+        </div>`).join('');
+      box.querySelectorAll('.prm-card').forEach(c => {
+        const idx = parseInt(c.dataset.idx);
+        const item = items[idx];
+        c.querySelector('.prm-send').addEventListener('click', () => sendToCanvas(item));
+        c.querySelector('.prm-copy').addEventListener('click', () => {
+          navigator.clipboard.writeText(item.content).then(()=>{ if(window.UI) UI.toast('已复制到剪贴板'); });
+        });
+        if (!item.preset && c.querySelector('.prm-edit')) {
+          c.querySelector('.prm-edit').addEventListener('click', () => openForm(item.id));
+        }
+        if (!item.preset && c.querySelector('.prm-del')) {
+          c.querySelector('.prm-del').addEventListener('click', () => {
+            list = list.filter(x => x.id !== item.id);
+            save(PRM_KEY, list); drawCats(); drawList();
+            if (window.UI) UI.toast('提示词已删除');
+          });
+        }
+      });
+    }
+
+    function sendToCanvas(p) {
+      if (!window.Canvas) return;
+      const node = Canvas.addNode('promptNode', 200 + Math.random()*200, 180 + Math.random()*120, { text: p.content });
+      if (window.UI) { UI.switchView('canvas'); UI.renderRightPanel(node); UI.toast('已将「' + p.title + '」发送到画布'); }
+    }
+
+    function openForm(id) {
+      editingId = id || null;
+      const ov = document.getElementById('prm-form-overlay');
+      document.getElementById('prm-form-title').textContent = id ? '编辑提示词' : '新建提示词';
+      if (id) {
+        const p = list.find(x => x.id === id);
+        document.getElementById('prm-title').value = p.title;
+        document.getElementById('prm-cat').value = p.cat;
+        document.getElementById('prm-content').value = p.content;
+      } else {
+        document.getElementById('prm-title').value = '';
+        document.getElementById('prm-content').value = '';
+      }
+      ov.classList.remove('hidden');
+    }
+
+    document.getElementById('prm-new').addEventListener('click', () => openForm(null));
+    document.getElementById('prm-form-close').addEventListener('click', () => document.getElementById('prm-form-overlay').classList.add('hidden'));
+    document.getElementById('prm-form-overlay').addEventListener('click', e => { if(e.target.id==='prm-form-overlay') e.target.classList.add('hidden'); });
+    document.getElementById('prm-save').addEventListener('click', () => {
+      const title = document.getElementById('prm-title').value.trim();
+      const content = document.getElementById('prm-content').value.trim();
+      const cat = document.getElementById('prm-cat').value;
+      if (!title || !content) { if(window.UI) UI.toast('请填写标题和内容'); return; }
+      if (editingId) {
+        const p = list.find(x => x.id === editingId);
+        if (p) Object.assign(p, { title, content, cat });
+      } else {
+        list.push({ id: uid(), title, content, cat, addedAt: Date.now() });
+      }
+      save(PRM_KEY, list);
+      document.getElementById('prm-form-overlay').classList.add('hidden');
+      drawCats(); drawList();
+      if (window.UI) UI.toast('提示词已保存');
+    });
+    document.getElementById('prm-search').addEventListener('input', drawList);
+
+    drawCats();
+    drawList();
   }
 
   /* ====================== 知识库 ====================== */
