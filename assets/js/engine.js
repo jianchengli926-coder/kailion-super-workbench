@@ -195,7 +195,7 @@
 
   /* ====================== 节点类型识别与超时配置 ====================== */
   function isImageNode(type) {
-    return /image|GeneratorPro|gptImage|creativeInspiration|dalle|flux|zImage|agnesImage/i.test(type);
+    return /image|GeneratorPro|gptImage|creativeInspiration|dalle|flux|zImage|agnesImage|doubaoGenerator/i.test(type);
   }
   function isVideoNode(type) {
     return /video|seedance|omni|minimax|grok|veo|kling|agnesVideo/i.test(type);
@@ -1063,7 +1063,7 @@
   /* ====================== 单节点执行 ====================== */
 
   // ===== v2.5.0：专业内容生成节点辅助函数 =====
-  const PROFESSIONAL_NODES = ['brandIPGeneratorNode','aipSuperIndividualNode','storyOutlineNode','shotGeneratorNode','storyAssemblerNode','contentReviewNode','geoOptimizerNode','expertDiscussionNode','infoRetrievalNode','digitalHumanCollaborationNode','directorConsoleNode','fortuneMasterNode','topicDiscoveryNode','dianLeiDaBillboardNode','productCustomizerNode','productParserNode','detailPageGeneratorNode','detailPageReplicaNode','salesScriptNode','imageTextNode','batchGeneratorNode','pptAssemblerNode','pptContentNode','newtonInquiryNode','newtonInquiryResultNode','miaoshouCollectDetailNode','miaoshouCollectSubmitNode','miaoshouPublishNode','miaoshouWritebackNode','klCertPackNode','klInquiryReplyNode','klProductShotNode','klSpecSheetNode','klSupplierScoreNode','klSiteCopyNode','cliNode'];
+  const PROFESSIONAL_NODES = ['brandIPGeneratorNode','aipSuperIndividualNode','storyOutlineNode','shotGeneratorNode','storyAssemblerNode','contentReviewNode','geoOptimizerNode','expertDiscussionNode','infoRetrievalNode','digitalHumanCollaborationNode','directorConsoleNode','fortuneMasterNode','topicDiscoveryNode','dianLeiDaBillboardNode','productCustomizerNode','productParserNode','detailPageGeneratorNode','detailPageReplicaNode','salesScriptNode','imageTextNode','batchGeneratorNode','pptAssemblerNode','pptContentNode','newtonInquiryNode','newtonInquiryResultNode','miaoshouCollectDetailNode','miaoshouCollectSubmitNode','miaoshouPublishNode','miaoshouWritebackNode','klCertPackNode','klInquiryReplyNode','klProductShotNode','klSpecSheetNode','klSupplierScoreNode','klSiteCopyNode','cliNode','expertCollaborationNode'];
 
   function isProfessionalContentNode(type) {
     return PROFESSIONAL_NODES.includes(type);
@@ -1106,7 +1106,8 @@
       klSpecSheetNode: '📋 锴利规格表',
       klSupplierScoreNode: '⭐ 锴利供应商评分',
       klSiteCopyNode: '✍️ 锴利独立站文案',
-      cliNode: '💻 CLI命令'
+      cliNode: '💻 CLI命令',
+      expertCollaborationNode: '👥 多专家协作'
     };
     return titles[type] || '📊 专业内容生成';
   }
@@ -1144,7 +1145,8 @@
       klSpecSheetNode: `你是一位产品规格表专家。请根据以下产品生成规格表：\n产品：${input || '未指定'}\n\n请包含：基本信息、技术参数、物理规格、性能指标、认证信息、包装信息、保修条款。规格表要准确、专业、符合外贸规范。`,
       klSupplierScoreNode: `你是一位供应商评估专家。请根据以下信息对供应商评分：\n供应商：${input || '未指定'}\n\n请包含：评分维度（质量/价格/交期/服务/资质）、各项评分、加权总分、等级评定、优势分析、风险提示、合作建议。评估要客观、有参考价值。`,
       klSiteCopyNode: `你是一位独立站文案专家。请根据以下产品生成独立站文案：\n产品：${input || '未指定'}\n\n请包含：产品标题、Meta描述、产品描述（卖点/参数/场景）、FAQ、用户评价模板、CTA文案。文案要符合SEO、有转化力、符合海外用户阅读习惯。`,
-      cliNode: `你是一位命令行工具专家。请根据以下需求生成CLI命令：\n需求：${input || '未指定'}\n\n请包含：命令语法、参数说明、使用示例、常见错误处理、最佳实践。命令要准确、可执行。`
+      cliNode: `你是一位命令行工具专家。请根据以下需求生成CLI命令：\n需求：${input || '未指定'}\n\n请包含：命令语法、参数说明、使用示例、常见错误处理、最佳实践。命令要准确、可执行。`,
+      expertCollaborationNode: `你是一位项目管理专家，负责组织多位专家按阶段分工协作完成任务。\n总任务：${input || '未指定'}\n\n请按以下格式输出：\n【阶段1-专家A-领域】任务分解+交付物\n【阶段2-专家B-领域】任务分解+交付物\n【阶段3-专家C-领域】任务分解+交付物\n【协作流程】各阶段如何衔接、信息如何传递\n【质量把控】每个阶段的验收标准\n【风险提示】可能的风险和应对方案\n\n要求：分工明确、衔接顺畅、可执行性强。`
     };
     return prompts[type] || `请根据以下输入生成专业内容：\n${input}`;
   }
@@ -1811,7 +1813,7 @@
         const sp = node.params || {};
         const query = collectInputs(node.id) || sp.query || '';
         if (!query) throw new Error('网页搜索节点未填写搜索关键词');
-        const count = parseInt(sp.count) || 10;
+        const count = parseInt(sp.count, 10) || 10;
         const engine = sp.engine || 'auto';
         const timeRange = sp.timeRange || 'any';
         // 尝试调用搜索API（需配置供应商），否则降级模拟
@@ -2256,20 +2258,30 @@
         // ---- v2.5.0：专业内容生成节点（修复无执行逻辑bug）----
         const pcn = node.params || {};
         const pcnUp = collectInputs(node.id) || '';
-        const pcnInput = pcn.prompt || pcn.topic || pcn.theme || pcn.subject || pcn.keyword || pcn.content || pcn.brand || pcn.name || pcn.product || pcn.url || pcn.title || pcn.text || pcn.input || pcnUp || '';
+        // 收集所有参数值作为输入（兼容各种参数名）
+        const pcnInputVals = [];
+        Object.keys(pcn).forEach(function(k) {
+          const v = pcn[k];
+          if (v && typeof v === 'string' && v.length > 0 && k !== 'providerId' && k !== 'model') {
+            pcnInputVals.push(k + ': ' + v);
+          }
+        });
+        const pcnInput = pcnInputVals.length > 0 ? pcnInputVals.join('\n') : (pcnUp || '');
         const pcnPrompt = getProfessionalPrompt(node.type, pcnInput, pcn);
         const pcnProv = resolveProvider(node, 'llm') || getDefaultLLMProvider();
         const pcnIsLocal = /localhost|127\.0\.0\.1/i.test(pcnProv ? pcnProv.baseurl : '');
         if (pcnProv && pcnProv.baseurl && (pcnProv.key || pcnIsLocal) && window.API) {
           try {
             const pcnModel = (pcnProv.models && pcnProv.models[0] && pcnProv.models[0].id) || 'gpt-4o-mini';
+            let pcnFullText = '';
             const pcnResult = await window.API.chatCompletion(pcnProv, {
               model: pcnModel,
               messages: [{ role: 'user', content: pcnPrompt }],
               temperature: 0.7,
-              maxTokens: 2048
-            }, null, { timeoutMs: 120000 });
-            const pcnText = typeof pcnResult === 'string' ? pcnResult : ((pcnResult && pcnResult.text) || (pcnResult && pcnResult.content) || '');
+              maxTokens: 1024,
+              stream: true
+            }, function(chunk) { pcnFullText += (chunk || ''); }, { timeoutMs: 90000 });
+            const pcnText = pcnFullText || (typeof pcnResult === 'string' ? pcnResult : ((pcnResult && pcnResult.text) || (pcnResult && pcnResult.content) || ''));
             if (pcnText) {
               output = pcnText;
               resultTitle = getProfessionalTitle(node.type);
