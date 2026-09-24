@@ -1061,6 +1061,107 @@
   }
 
   /* ====================== 单节点执行 ====================== */
+
+  // ===== v2.5.0：专业内容生成节点辅助函数 =====
+  const PROFESSIONAL_NODES = ['brandIPGeneratorNode','aipSuperIndividualNode','storyOutlineNode','shotGeneratorNode','storyAssemblerNode','contentReviewNode','geoOptimizerNode','expertDiscussionNode','infoRetrievalNode','digitalHumanCollaborationNode','directorConsoleNode','fortuneMasterNode','topicDiscoveryNode','dianLeiDaBillboardNode','productCustomizerNode','productParserNode','detailPageGeneratorNode','detailPageReplicaNode','salesScriptNode','imageTextNode','batchGeneratorNode','pptAssemblerNode','pptContentNode','newtonInquiryNode','newtonInquiryResultNode','miaoshouCollectDetailNode','miaoshouCollectSubmitNode','miaoshouPublishNode','miaoshouWritebackNode','klCertPackNode','klInquiryReplyNode','klProductShotNode','klSpecSheetNode','klSupplierScoreNode','klSiteCopyNode','cliNode'];
+
+  function isProfessionalContentNode(type) {
+    return PROFESSIONAL_NODES.includes(type);
+  }
+
+  function getProfessionalTitle(type) {
+    const titles = {
+      brandIPGeneratorNode: '🏆 品牌IP全案',
+      aipSuperIndividualNode: '👤 个人IP方案',
+      storyOutlineNode: '📋 视频大纲',
+      shotGeneratorNode: '🎬 视频分镜',
+      storyAssemblerNode: '🎞️ 视频组装',
+      contentReviewNode: '✅ 内容合规审查',
+      geoOptimizerNode: '🔍 GEO优化方案',
+      expertDiscussionNode: '💬 专家讨论',
+      infoRetrievalNode: '📚 信息检索',
+      digitalHumanCollaborationNode: '🤖 数字人协作',
+      directorConsoleNode: '🎥 导演台',
+      fortuneMasterNode: '🔮 命理分析',
+      topicDiscoveryNode: '🔥 选题挖掘',
+      dianLeiDaBillboardNode: '📊 选品榜单',
+      productCustomizerNode: '🎨 印刷定制',
+      productParserNode: '📦 详情页解析',
+      detailPageGeneratorNode: '🛍️ 详情页生成',
+      detailPageReplicaNode: '📐 详情页复刻',
+      salesScriptNode: '💰 带货脚本',
+      imageTextNode: '🖼️ 图文生成',
+      batchGeneratorNode: '📦 批量生成',
+      pptAssemblerNode: '📊 PPT组装',
+      pptContentNode: '📑 PPT内容',
+      newtonInquiryNode: '🔍 牛顿询盘',
+      newtonInquiryResultNode: '📋 询盘结果',
+      miaoshouCollectDetailNode: '📝 妙手采集详情',
+      miaoshouCollectSubmitNode: '📤 妙手采集提交',
+      miaoshouPublishNode: '🚀 妙手发布',
+      miaoshouWritebackNode: '↩️ 妙手回写',
+      klCertPackNode: '📜 锴利证书包',
+      klInquiryReplyNode: '💬 锴利询盘回复',
+      klProductShotNode: '📸 锴利产品拍摄',
+      klSpecSheetNode: '📋 锴利规格表',
+      klSupplierScoreNode: '⭐ 锴利供应商评分',
+      klSiteCopyNode: '✍️ 锴利独立站文案',
+      cliNode: '💻 CLI命令'
+    };
+    return titles[type] || '📊 专业内容生成';
+  }
+
+  function getProfessionalPrompt(type, input, params) {
+    const prompts = {
+      brandIPGeneratorNode: `你是一位资深品牌全案策划专家。请根据以下信息生成完整的品牌IP全案：\n品牌信息：${input || '未指定'}\n\n请包含：品牌核心定位、品牌故事、Slogan（3个备选）、目标受众画像、视觉风格建议（主色/辅助色/字体）、品牌人格设定、内容运营规划（3个月内容方向）、传播策略、IP衍生建议（表情包/周边/联名）。全案要系统、专业、可落地。`,
+      aipSuperIndividualNode: `你是一位个人IP打造专家。请根据以下信息生成个人IP打造方案：\n个人信息：${input || '未指定'}\n\n请包含：个人定位（一句话标签）、价值主张、目标受众画像、内容矩阵规划（3-5个内容方向）、差异化优势、能力飞轮构建、增长路径（0-1万粉/1-10万粉/10万+）、变现模式建议。方案要务实、可执行、有增长逻辑。`,
+      storyOutlineNode: `你是一位资深视频策划人。请根据以下主题生成完整的视频大纲：\n主题：${input || '未指定'}\n\n请包含：视频主题、核心信息、目标受众、视频时长建议、章节结构（每章标题+内容要点+时长分配）、关键镜头建议、配乐风格建议。大纲要逻辑清晰、有故事性、适合视频呈现。`,
+      shotGeneratorNode: `你是一位资深视频分镜师。请根据以下大纲生成详细的分镜脚本：\n大纲：${input || '未提供'}\n\n请以表格形式输出：镜号、时长、景别（远景/全景/中景/近景/特写）、运镜（固定/推/拉/摇/移/跟）、画面描述、台词/旁白、字幕、音效/配乐提示。分镜要专业、可执行、画面感强。`,
+      storyAssemblerNode: `你是一位视频剪辑师。请根据以下素材规划视频组装方案：\n素材：${input || '未提供'}\n\n请包含：素材整理、转场设计、节奏把控、配乐选择、字幕排版、导出设置（分辨率/帧率/码率）。方案要专业、可执行。`,
+      contentReviewNode: `你是一位资深内容合规审查专家。请对以下内容进行多维度合规审查：\n内容：${input || '未提供'}\n\n请逐项审查：政治敏感检查、低俗色情检查、虚假宣传检查、侵权风险检查、广告法合规检查（极限词/绝对化用语）、平台规则合规检查。每项给出【通过/警告/不通过】评级和具体说明，最后给出【修改建议】和【总体评级】。`,
+      geoOptimizerNode: `你是一位GEO（生成式引擎优化）专家。请根据以下信息生成GEO优化方案：\n品牌/内容：${input || '未指定'}\n\n请包含：AI引擎检索友好度诊断、内容结构优化建议（语义标记/结构化数据/引用价值）、关键词策略（AI问答场景关键词）、权威性建设建议、引用诱饵内容建议、优化优先级排序。目标是让品牌在ChatGPT/Perplexity/Gemini等AI引擎回答时被引用。`,
+      expertDiscussionNode: `你是一个专家讨论主持人。请围绕以下主题组织多位专家进行多轮讨论：\n主题：${input || '未指定'}\n\n请组织3-5位不同领域的专家，每位专家从自己的专业领域出发给出观点，专家之间要有碰撞和回应，最后给出综合结论。格式：【专家名-身份】观点... 【综合结论】...`,
+      infoRetrievalNode: `你是一位信息检索与研究专家。请根据以下查询进行多源信息检索和综合分析：\n查询：${input || '未指定'}\n\n请包含：核心发现（3-5条）、详细分析（分点论述）、数据支撑（如有）、不同观点对比、信息来源说明、结论与建议。内容要客观、有深度、有依据。`,
+      digitalHumanCollaborationNode: `你是一位数字人内容策划专家。请根据以下需求生成数字人协作方案：\n需求：${input || '未指定'}\n\n请包含：数字人人设（姓名/身份/性格）、协作模式（顺序/并行/讨论/混合）、各数字人分工、口播文案（分段落，标注语气和表情）、场景建议、动作建议、配乐建议、时长预估。文案要口语化、有亲和力。`,
+      directorConsoleNode: `你是一位资深导演。请根据以下需求进行一站式脚本解析与分镜规划：\n需求：${input || '未指定'}\n\n请包含：脚本核心解析、主题提炼、人物设定、场景规划、分镜表（镜号/景别/运镜/画面/台词）、拍摄建议、后期建议。方案要专业、可执行、有画面感。`,
+      fortuneMasterNode: `你是一位融合十大命理体系的命理师。请根据以下信息进行命理分析：\n信息：${input || '未提供'}\n\n请包含：八字分析、五行分析、运势解读、事业建议、财运分析、感情运势、健康提示、改运建议。分析要客观、有文化内涵、不迷信。`,
+      topicDiscoveryNode: `你是一位资深内容选题策划。请根据以下方向挖掘热门选题：\n方向：${input || '未指定'}\n\n请包含：10个热门选题（每个含标题/热度预估/切入点/目标受众）、跨平台热点分析、选题差异化建议、内容形式推荐、发布时间建议。选题要新颖、有传播力、可执行。`,
+      dianLeiDaBillboardNode: `你是一位电商选品专家。请根据以下品类生成选品榜单：\n品类：${input || '未指定'}\n\n请包含：日销榜TOP10（商品名/销量/销售额/价格区间）、周销趋势、月销增长、选品建议、供应链建议、风险提示。数据要合理、有参考价值。`,
+      productCustomizerNode: `你是一位印刷定制设计师。请根据以下需求生成印刷定制效果图方案：\n需求：${input || '未指定'}\n\n请包含：产品类型、材质选择、尺寸规格、设计风格、配色方案、图案布局、印刷工艺、成本估算、效果图描述。方案要专业、可落地。`,
+      productParserNode: `你是一位电商数据分析专家。请解析以下电商详情页：\n链接/内容：${input || '未提供'}\n\n请提取：商品标题、核心卖点（3-5条）、产品参数、主图分析、价格策略、促销信息、用户评价摘要、竞品对比建议。解析要全面、结构化。`,
+      detailPageGeneratorNode: `你是一位电商详情页策划专家。请根据以下产品信息生成详情页大纲：\n产品：${input || '未指定'}\n\n请包含：详情页结构（首屏/痛点/卖点/参数/场景/信任/促销）、每屏文案、配图建议、配色风格、排版布局、转化钩子设计。大纲要专业、有转化力、可落地。`,
+      detailPageReplicaNode: `你是一位详情页复刻专家。请根据参考图复刻同款版式的详情页：\n参考：${input || '未提供'}\n\n请包含：版式分析、布局复刻、配色提取、字体匹配、内容替换建议、适配调整、导出规格。复刻要精准、保留原版式精髓。`,
+      salesScriptNode: `你是一位资深短视频带货脚本策划专家。请根据以下商品信息生成完整的带货短视频脚本：\n商品：${input || '未指定'}\n\n请包含：商品名称、核心卖点（3-5条）、目标人群、使用场景、前三秒钩子（3个备选）、完整分镜表（序号/时长/景别/运镜/口播文案/字幕/画面描述）、结尾转化话术。脚本要符合抖音/快手带货风格，节奏快、卖点突出、有转化力。`,
+      imageTextNode: `你是一位资深社交媒体内容创作者。请根据以下主题生成一套完整的图文笔记内容：\n主题：${input || '未指定'}\n\n请包含：吸引人的标题（含emoji）、正文（分3-5段，每段100-200字）、3-5个话题标签、配图建议（每张图的画面描述）。内容要符合小红书/朋友圈风格，口语化、有共鸣、有实用价值。`,
+      batchGeneratorNode: `你是一位批量内容生成专家。请根据以下数据源规划批量图片生成：\n数据源：${input || '未指定'}\n\n请包含：数据解析、批量模板设计、变量映射、生成参数（尺寸/风格/数量）、命名规则、输出目录规划、质量控制建议。方案要高效、可批量执行。`,
+      pptAssemblerNode: `你是一位PPT制作专家。请根据以下内容规划PPT组装与导出：\n内容：${input || '未提供'}\n\n请包含：PPT结构（封面/目录/内容页/结尾）、每页布局、配色方案、字体选择、图表设计、动画建议、导出设置（分辨率/格式）。方案要专业、美观、可演示。`,
+      pptContentNode: `你是一位专业PPT内容策划。请根据以下主题生成PPT大纲与逐页内容：\n主题：${input || '未指定'}\n\n请包含：PPT标题、目录结构、每页标题与核心内容、数据图表建议、案例引用、演讲备注。内容要逻辑清晰、重点突出、适合演示。`,
+      newtonInquiryNode: `你是一位外贸询盘专家。请根据以下信息处理询盘：\n询盘：${input || '未提供'}\n\n请包含：询盘分析、客户画像、需求识别、回复策略、报价建议、跟进计划、风险提示。处理要专业、有转化力。`,
+      newtonInquiryResultNode: `你是一位外贸询盘结果分析师。请整理以下询盘结果：\n结果：${input || '未提供'}\n\n请包含：询盘汇总、客户分类、转化分析、跟进建议、数据统计、经验总结。分析要全面、有指导意义。`,
+      klCertPackNode: `你是一位跨境电商证书专家。请根据以下产品生成证书包：\n产品：${input || '未指定'}\n\n请包含：所需证书清单（CE/FCC/RoHS/REACH等）、办理流程、费用估算、周期预估、资料准备清单、注意事项。方案要专业、可执行。`,
+      klInquiryReplyNode: `你是一位外贸询盘回复专家。请根据以下询盘生成专业回复：\n询盘：${input || '未提供'}\n\n请包含：回复主题、开场白、产品介绍、报价方案、交货期、付款方式、跟进话术。回复要专业、有转化力、符合外贸规范。`,
+      klProductShotNode: `你是一位产品摄影专家。请根据以下产品规划拍摄方案：\n产品：${input || '未指定'}\n\n请包含：拍摄场景（白底/场景/ lifestyle）、布光方案、角度规划（主图/细节/使用场景）、道具建议、后期处理、输出规格。方案要专业、有电商转化力。`,
+      klSpecSheetNode: `你是一位产品规格表专家。请根据以下产品生成规格表：\n产品：${input || '未指定'}\n\n请包含：基本信息、技术参数、物理规格、性能指标、认证信息、包装信息、保修条款。规格表要准确、专业、符合外贸规范。`,
+      klSupplierScoreNode: `你是一位供应商评估专家。请根据以下信息对供应商评分：\n供应商：${input || '未指定'}\n\n请包含：评分维度（质量/价格/交期/服务/资质）、各项评分、加权总分、等级评定、优势分析、风险提示、合作建议。评估要客观、有参考价值。`,
+      klSiteCopyNode: `你是一位独立站文案专家。请根据以下产品生成独立站文案：\n产品：${input || '未指定'}\n\n请包含：产品标题、Meta描述、产品描述（卖点/参数/场景）、FAQ、用户评价模板、CTA文案。文案要符合SEO、有转化力、符合海外用户阅读习惯。`,
+      cliNode: `你是一位命令行工具专家。请根据以下需求生成CLI命令：\n需求：${input || '未指定'}\n\n请包含：命令语法、参数说明、使用示例、常见错误处理、最佳实践。命令要准确、可执行。`
+    };
+    return prompts[type] || `请根据以下输入生成专业内容：\n${input}`;
+  }
+
+  function getProfessionalSimulatedOutput(type, input) {
+    const title = getProfessionalTitle(type);
+    return `【${title}（模拟）】\n\n输入：${(input || '未指定').substring(0, 100)}\n\n（模拟输出）配置LLM供应商后将返回专业生成结果。\n\n提示词已准备好，包含完整的专业框架和要求。\n\n请在「设置 → 供应商管理」中配置LLM供应商（如智谱/OpenAI/DeepSeek），然后重新运行此节点。`;
+  }
+
+  function getDefaultLLMProvider() {
+    try {
+      const providers = JSON.parse(localStorage.getItem('kailion_workbench_providers') || '[]');
+      return providers.find(p => p.category === 'llm' && p.key) || providers.find(p => p.key) || null;
+    } catch(e) { return null; }
+  }
+
+
   async function execOne(node) {
     const t0 = Date.now();
     const meta = (window.NodeDef && NodeDef.getMeta(node.type)) || { name: node.type };
@@ -2151,6 +2252,45 @@
         await sleep(300);
         output = '[' + node.type + '] 处理完成';
         bodyHtml = buildFileResult({ name: node.type });
+      } else if (isProfessionalContentNode(node.type)) {
+        // ---- v2.5.0：专业内容生成节点（修复无执行逻辑bug）----
+        const pcn = node.params || {};
+        const pcnUp = collectInputs(node.id) || '';
+        const pcnInput = pcn.prompt || pcn.topic || pcn.theme || pcn.subject || pcn.keyword || pcn.content || pcn.brand || pcn.name || pcn.product || pcn.url || pcn.title || pcn.text || pcn.input || pcnUp || '';
+        const pcnPrompt = getProfessionalPrompt(node.type, pcnInput, pcn);
+        const pcnProv = resolveProvider(node, 'llm') || getDefaultLLMProvider();
+        const pcnIsLocal = /localhost|127\.0\.0\.1/i.test(pcnProv ? pcnProv.baseurl : '');
+        if (pcnProv && pcnProv.baseurl && (pcnProv.key || pcnIsLocal) && window.API) {
+          try {
+            const pcnModel = (pcnProv.models && pcnProv.models[0] && pcnProv.models[0].id) || 'gpt-4o-mini';
+            const pcnResult = await window.API.chatCompletion(pcnProv, {
+              model: pcnModel,
+              messages: [{ role: 'user', content: pcnPrompt }],
+              temperature: 0.7,
+              maxTokens: 2048
+            }, null, { timeoutMs: 120000 });
+            const pcnText = typeof pcnResult === 'string' ? pcnResult : ((pcnResult && pcnResult.text) || (pcnResult && pcnResult.content) || '');
+            if (pcnText) {
+              output = pcnText;
+              resultTitle = getProfessionalTitle(node.type);
+              bodyHtml = buildTextResult(pcnText);
+              node._meta = { real: true, simulated: false, failed: false, provider: pcnProv.name, model: pcnModel };
+            } else {
+              throw new Error('未返回内容');
+            }
+          } catch (pcne) {
+            output = '【生成失败】' + (pcne.message || String(pcne)) + '\n\n提示词：\n' + pcnPrompt.substring(0, 200);
+            resultTitle = '⚠️ 生成失败';
+            bodyHtml = buildTextResult(output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(800);
+          output = getProfessionalSimulatedOutput(node.type, pcnInput);
+          resultTitle = getProfessionalTitle(node.type) + '（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
       } else {
         await sleep(250);
         output = '[' + node.type + '] 执行完成';
