@@ -2055,6 +2055,9 @@
     initModeSwitch();
     initSmartArrange();
 
+    // v2.4.2：抖音集成配置
+    initDouyinConfig();
+
     // v1.0.0：全局搜索索引（Ctrl/Cmd+K 已在 search.js 自动绑定）
     if (window.Search && Search.indexData) {
       try { Search.indexData(); } catch (e) {}
@@ -2187,9 +2190,76 @@
     });
   }
 
+  /* ====================== v2.4.2：抖音集成配置 ====================== */
+  function initDouyinConfig() {
+    const STORAGE_KEY = 'kailion_douyin_config';
+    const sessionInput = document.getElementById('douyin-sessionid');
+    const statusEl = document.getElementById('douyin-status');
+    const saveBtn = document.getElementById('douyin-save-btn');
+    const testBtn = document.getElementById('douyin-test-btn');
+    const clearBtn = document.getElementById('douyin-clear-btn');
+    if (!sessionInput || !saveBtn) return;
+
+    function showStatus(msg, type) {
+      if (!statusEl) return;
+      const colors = { success: '#16a34a', error: '#dc2626', info: '#3b82f6', warn: '#f59e0b' };
+      statusEl.innerHTML = '<span style="color:' + (colors[type] || colors.info) + ';">' + msg + '</span>';
+    }
+
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const cfg = JSON.parse(saved);
+        sessionInput.value = cfg.sessionid || '';
+        showStatus('✅ 已加载抖音配置', 'success');
+      }
+    } catch (e) {}
+
+    saveBtn.addEventListener('click', function () {
+      const sessionid = sessionInput.value.trim();
+      if (!sessionid) { showStatus('⚠️ 请输入 sessionid', 'warn'); return; }
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ sessionid: sessionid, savedAt: Date.now() }));
+        showStatus('✅ 抖音配置已保存', 'success');
+      } catch (e) { showStatus('❌ 保存失败：' + e.message, 'error'); }
+    });
+
+    testBtn.addEventListener('click', async function () {
+      const sessionid = sessionInput.value.trim();
+      if (!sessionid) { showStatus('⚠️ 请先输入并保存 sessionid', 'warn'); return; }
+      showStatus('🔄 正在测试抖音连接…', 'info');
+      try {
+        const resp = await fetch('https://www.douyin.com/', {
+          credentials: 'include',
+          headers: { 'Cookie': 'sessionid=' + sessionid }
+        });
+        showStatus('⚠️ 测试受CORS限制，配置已保存，实际使用需后端代理', 'warn');
+      } catch (e) {
+        showStatus('⚠️ 测试受CORS限制，配置已保存，实际使用需后端代理', 'warn');
+      }
+    });
+
+    clearBtn.addEventListener('click', function () {
+      localStorage.removeItem(STORAGE_KEY);
+      sessionInput.value = '';
+      showStatus('🗑️ 抖音配置已清除', 'info');
+    });
+  }
+
+  // Expose DouyinConfig globally
+  window.DouyinConfig = {
+    get: function () {
+      try { return JSON.parse(localStorage.getItem('kailion_douyin_config') || '{}'); }
+      catch (e) { return {}; }
+    },
+    getSessionId: function () {
+      return this.get().sessionid || '';
+    }
+  };
+
   window.UI = {
     init, switchView, toast, renderRightPanel, renderNodeLibrary,
     openManageModal, renderVersionList, renderStatsCards,
-    getFavorites, isFavorite, toggleFavorite
+    getFavorites, isFavorite, toggleFavorite, initDouyinConfig
   };
 })();

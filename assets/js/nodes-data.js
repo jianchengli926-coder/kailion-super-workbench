@@ -239,6 +239,19 @@ window.NODE_DATA = [
       ['供应商评分', 'klSupplierScoreNode', '把询盘结果汇总为加权评分表并给出议价建议', 1,
        'Supplier Scorecard', 'Aggregate RFQ results into a weighted scorecard with negotiation advice']
     ]
+  },
+  {
+    cat: '抖音运营', catEn: 'Douyin Ops', icon: '🎵', color: '#ec4899',
+    nodes: [
+      ['抖音文案', 'douyinCopyNode', 'AI生成抖音爆款文案：标题/口播/评论/钩子/话题标签，5种风格', 1,
+       'Douyin Copy', 'AI generate viral Douyin copy: titles/scripts/comments/hooks/hashtags, 5 styles'],
+      ['抖音脚本', 'douyinScriptNode', 'AI生成抖音视频脚本：分镜/Vlog/教程/测评/剧情，含BGM和拍摄建议', 1,
+       'Douyin Script', 'AI generate Douyin video scripts: storyboard/vlog/tutorial/review/story with BGM'],
+      ['抖音数据分析', 'douyinDataNode', '输入视频数据自动计算互动率/点赞率/评论率/转发率，给出优化建议', 1,
+       'Douyin Analytics', 'Input video data to calculate engagement rates and get optimization tips'],
+      ['抖音视频下载', 'douyinDownloadNode', '解析抖音视频链接，支持去水印/MP4/MP3/封面提取（需后端代理）', 0,
+       'Douyin Download', 'Parse Douyin video links, support watermark removal/MP4/MP3/cover (needs proxy)']
+    ]
   }
 ];
 

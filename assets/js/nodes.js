@@ -343,6 +343,68 @@
       { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'llm', hint: '在设置中配置xAI Grok或兼容中转站' }
     ],
 
+    /* v2.4.2：抖音集成 */
+    douyinCopyNode: [
+      { key: 'copyType', label: '文案类型', type: 'select', options: [
+        { value: 'title', label: '爆款标题' },
+        { value: 'script', label: '口播文案' },
+        { value: 'comment', label: '评论区话术' },
+        { value: 'hook', label: '黄金3秒钩子' },
+        { value: 'hashtag', label: '话题标签' }
+      ], value: 'title' },
+      { key: 'topic', label: '视频主题', type: 'textarea', placeholder: '输入视频主题或产品卖点…' },
+      { key: 'style', label: '文案风格', type: 'select', options: [
+        { value: 'emotional', label: '情感共鸣' },
+        { value: 'humorous', label: '幽默搞笑' },
+        { value: 'professional', label: '专业干货' },
+        { value: 'controversial', label: '争议话题' },
+        { value: 'storytelling', label: '故事叙述' }
+      ], value: 'emotional' },
+      { key: 'count', label: '生成数量', type: 'number', min: 1, max: 10, value: 5 },
+      { key: 'providerId', label: 'AI模型供应商', type: 'select', dynamic: 'provider', providerCategory: 'llm' }
+    ],
+    douyinScriptNode: [
+      { key: 'topic', label: '视频主题', type: 'textarea', placeholder: '输入视频主题…' },
+      { key: 'duration', label: '视频时长', type: 'select', options: [
+        { value: '15', label: '15秒' },
+        { value: '30', label: '30秒' },
+        { value: '60', label: '1分钟' },
+        { value: '180', label: '3分钟' }
+      ], value: '30' },
+      { key: 'scriptType', label: '脚本类型', type: 'select', options: [
+        { value: 'storyboard', label: '分镜脚本' },
+        { value: 'vlog', label: 'Vlog脚本' },
+        { value: 'tutorial', label: '教程脚本' },
+        { value: 'review', label: '测评脚本' },
+        { value: 'story', label: '剧情脚本' }
+      ], value: 'storyboard' },
+      { key: 'includeBgm', label: '包含BGM推荐', type: 'checkbox', value: true },
+      { key: 'includeShot', label: '包含拍摄建议', type: 'checkbox', value: true },
+      { key: 'providerId', label: 'AI模型供应商', type: 'select', dynamic: 'provider', providerCategory: 'llm' }
+    ],
+    douyinDataNode: [
+      { key: 'dataType', label: '分析类型', type: 'select', options: [
+        { value: 'video', label: '视频数据分析' },
+        { value: 'follower', label: '粉丝画像分析' },
+        { value: 'content', label: '内容方向分析' },
+        { value: 'competitor', label: '竞品账号分析' }
+      ], value: 'video' },
+      { key: 'videoViews', label: '播放量', type: 'number', placeholder: '输入播放量' },
+      { key: 'videoLikes', label: '点赞数', type: 'number', placeholder: '输入点赞数' },
+      { key: 'videoComments', label: '评论数', type: 'number', placeholder: '输入评论数' },
+      { key: 'videoShares', label: '转发数', type: 'number', placeholder: '输入转发数' }
+    ],
+    douyinDownloadNode: [
+      { key: 'videoUrl', label: '抖音视频链接', type: 'text', placeholder: '粘贴抖音分享链接…' },
+      { key: 'watermark', label: '去水印', type: 'checkbox', value: true },
+      { key: 'outputFormat', label: '输出格式', type: 'select', options: [
+        { value: 'mp4', label: 'MP4视频' },
+        { value: 'mp3', label: 'MP3音频' },
+        { value: 'cover', label: '视频封面' }
+      ], value: 'mp4' },
+      { key: 'cookies', label: '抖音Cookies（可选）', type: 'textarea', placeholder: '粘贴sessionid，可下载更高清视频' }
+    ],
+
     /* 协同与优化 */
     expertDiscussionNode: [
       { key: 'experts', label: '专家数量', type: 'number', min: 2, max: 6, value: 3 },

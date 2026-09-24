@@ -1699,6 +1699,136 @@
           bodyHtml = buildTextResult(output);
           node._meta = { real: false, simulated: true, failed: false };
         }
+      } else if (node.type === 'douyinCopyNode') {
+        // ---- v2.4.2：抖音文案生成节点 ----
+        const dcp = node.params || {};
+        const dcpUp = collectInputs(node.id) || '';
+        const dcpTopic = dcp.topic || dcpUp || '抖音短视频';
+        const dcpType = dcp.copyType || 'title';
+        const dcpStyle = dcp.style || 'emotional';
+        const dcpCount = Number(dcp.count) || 5;
+        const dcpProv = dcp.providerId ? resolveProvider(node, 'llm') : null;
+        const typeNames = { title: '爆款标题', script: '口播文案', comment: '评论区话术', hook: '黄金3秒钩子', hashtag: '话题标签' };
+        const styleNames = { emotional: '情感共鸣', humorous: '幽默搞笑', professional: '专业干货', controversial: '争议话题', storytelling: '故事叙述' };
+        if (dcpProv && dcpProv.baseurl && (dcpProv.key || /localhost/.test(dcpProv.baseurl))) {
+          try {
+            const dcpPrompt = `你是抖音爆款文案专家。请为主题「${dcpTopic}」生成${dcpCount}个${styleNames[dcpStyle]}风格的${typeNames[dcpType]}，要求：1.符合抖音平台调性 2.有吸引力 3.简洁有力。直接输出列表，不要解释。`;
+            const dcpResp = await fetch(dcpProv.baseurl.replace(/\/$/, '') + '/chat/completions', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (dcpProv.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify({ model: dcpProv.models?.[0]?.id || 'gpt-3.5-turbo', messages: [{ role: 'user', content: dcpPrompt }], max_tokens: 1000 })
+            });
+            const dcpData = await dcpResp.json();
+            output = dcpData.choices?.[0]?.message?.content || '生成失败';
+            resultTitle = '🎵 抖音' + typeNames[dcpType] + '生成';
+            bodyHtml = buildTextResult(output);
+            node._meta = { real: true, simulated: false, failed: false, provider: dcpProv.name };
+          } catch (dcpe) {
+            output = '【抖音文案降级】' + dcpe.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(600);
+          const mockTitles = [];
+          for (let i = 1; i <= dcpCount; i++) {
+            mockTitles.push(`${i}. 【${styleNames[dcpStyle]}】${dcpTopic}的第${i}个爆款${typeNames[dcpType]}…`);
+          }
+          output = `【模拟抖音${typeNames[dcpType]}】主题：${dcpTopic}\n风格：${styleNames[dcpStyle]}\n\n${mockTitles.join('\n')}\n\n在「设置 → 供应商管理」中配置LLM供应商后，将返回真实AI生成结果。`;
+          resultTitle = '🎵 抖音' + typeNames[dcpType] + '（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
+      } else if (node.type === 'douyinScriptNode') {
+        // ---- v2.4.2：抖音视频脚本节点 ----
+        const dsp = node.params || {};
+        const dspUp = collectInputs(node.id) || '';
+        const dspTopic = dsp.topic || dspUp || '抖音短视频';
+        const dspDuration = dsp.duration || '30';
+        const dspType = dsp.scriptType || 'storyboard';
+        const dspProv = dsp.providerId ? resolveProvider(node, 'llm') : null;
+        const typeNames = { storyboard: '分镜脚本', vlog: 'Vlog脚本', tutorial: '教程脚本', review: '测评脚本', story: '剧情脚本' };
+        if (dspProv && dspProv.baseurl && (dspProv.key || /localhost/.test(dspProv.baseurl))) {
+          try {
+            let dspPrompt = `你是抖音资深编导。请为主题「${dspTopic}」撰写一个${dspDuration}秒的${typeNames[dspType]}。`;
+            if (dsp.includeShot) dspPrompt += '包含每个镜头的拍摄建议（景别/运镜/时长）。';
+            if (dsp.includeBgm) dspPrompt += '包含BGM音乐推荐（风格/具体歌曲参考）。';
+            dspPrompt += '直接输出脚本，不要解释。';
+            const dspResp = await fetch(dspProv.baseurl.replace(/\/$/, '') + '/chat/completions', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (dspProv.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify({ model: dspProv.models?.[0]?.id || 'gpt-3.5-turbo', messages: [{ role: 'user', content: dspPrompt }], max_tokens: 2000 })
+            });
+            const dspData = await dspResp.json();
+            output = dspData.choices?.[0]?.message?.content || '生成失败';
+            resultTitle = '🎬 抖音' + typeNames[dspType];
+            bodyHtml = buildTextResult(output);
+            node._meta = { real: true, simulated: false, failed: false, provider: dspProv.name };
+          } catch (dspe) {
+            output = '【抖音脚本降级】' + dspe.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(800);
+          output = `【模拟抖音${typeNames[dspType]}】\n主题：${dspTopic}\n时长：${dspDuration}秒\n\n【镜头1】0-3秒 | 近景 | 黄金钩子：${dspTopic}的痛点\n【镜头2】3-10秒 | 中景 | 展开叙述：核心内容展示\n【镜头3】10-20秒 | 特写 | 细节放大：产品/效果展示\n【镜头4】20-25秒 | 全景 | 场景升华：使用场景\n【镜头5】25-30秒 | 近景 | 引导互动：点赞关注评论\n\n${dsp.includeBgm ? '【BGM推荐】轻快节奏电子音乐，BPM 120-128\n' : ''}${dsp.includeShot ? '【拍摄建议】手机竖屏9:16，自然光，稳定器\n' : ''}\n在「设置 → 供应商管理」中配置LLM供应商后，将返回真实AI生成脚本。`;
+          resultTitle = '🎬 抖音' + typeNames[dspType] + '（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
+      } else if (node.type === 'douyinDataNode') {
+        // ---- v2.4.2：抖音数据分析节点 ----
+        const ddp = node.params || {};
+        const views = Number(ddp.videoViews) || 0;
+        const likes = Number(ddp.videoLikes) || 0;
+        const comments = Number(ddp.videoComments) || 0;
+        const shares = Number(ddp.videoShares) || 0;
+        const interactions = likes + comments + shares;
+        const engagementRate = views > 0 ? ((interactions / views) * 100).toFixed(2) : 0;
+        const likeRate = views > 0 ? ((likes / views) * 100).toFixed(2) : 0;
+        const commentRate = views > 0 ? ((comments / views) * 100).toFixed(2) : 0;
+        const shareRate = views > 0 ? ((shares / views) * 100).toFixed(2) : 0;
+        let level = '需优化';
+        if (engagementRate > 5) level = '优秀';
+        else if (engagementRate > 3) level = '良好';
+        else if (engagementRate > 1) level = '一般';
+        output = `【抖音数据分析报告】\n\n📊 基础数据：\n  播放量：${views.toLocaleString()}\n  点赞数：${likes.toLocaleString()}\n  评论数：${comments.toLocaleString()}\n  转发数：${shares.toLocaleString()}\n\n📈 互动指标：\n  总互动：${interactions.toLocaleString()}\n  互动率：${engagementRate}%（${level}）\n  点赞率：${likeRate}%\n  评论率：${commentRate}%\n  转发率：${shareRate}%\n\n💡 优化建议：\n${engagementRate < 1 ? '  • 互动率偏低，建议优化标题钩子和内容质量' : ''}${likeRate < 2 ? '  • 点赞率偏低，建议增强内容价值感' : ''}${commentRate < 0.5 ? '  • 评论率偏低，建议在结尾设置互动话题' : ''}${shareRate < 0.3 ? '  • 转发率偏低，建议增加实用或情感共鸣内容' : ''}${engagementRate >= 3 ? '  • 数据表现良好，继续保持内容风格' : ''}`;
+        resultTitle = '📊 抖音数据分析';
+        bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;font-size:13px;line-height:1.8;"><div style="font-size:16px;font-weight:700;margin-bottom:12px;color:#1e293b;">📊 抖音数据分析报告</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="color:#64748b;font-size:11px;">播放量</div><div style="font-size:18px;font-weight:700;color:#0f172a;">' + views.toLocaleString() + '</div></div>' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="color:#64748b;font-size:11px;">互动率</div><div style="font-size:18px;font-weight:700;color:' + (engagementRate > 3 ? '#16a34a' : engagementRate > 1 ? '#f59e0b' : '#dc2626') + ';">' + engagementRate + '%</div></div>' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="color:#64748b;font-size:11px;">点赞</div><div style="font-size:16px;font-weight:600;">' + likes.toLocaleString() + '</div></div>' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="color:#64748b;font-size:11px;">评论</div><div style="font-size:16px;font-weight:600;">' + comments.toLocaleString() + '</div></div>' +
+          '</div>' +
+          '<div style="background:#eff6ff;padding:10px;border-radius:6px;border-left:3px solid #3b82f6;"><span style="font-weight:600;color:#1e40af;">综合评级：' + level + '</span></div>' +
+          '</div>';
+        node._meta = { real: true, simulated: false, failed: false, engagementRate: engagementRate };
+      } else if (node.type === 'douyinDownloadNode') {
+        // ---- v2.4.2：抖音视频下载节点 ----
+        const ddlp = node.params || {};
+        const ddlUrl = ddlp.videoUrl || '';
+        if (!ddlUrl) {
+          output = '【抖音下载】请输入抖音视频链接\n\n在抖音APP中点击分享 → 复制链接，然后粘贴到这里。';
+          resultTitle = '⬇️ 抖音视频下载（未配置）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: true };
+        } else {
+          await sleep(1000);
+          const videoId = ddlUrl.match(/\/(\d{15,})/) || ddlUrl.match(/video\/(\d+)/);
+          const vid = videoId ? videoId[1] : 'unknown';
+          output = `【抖音视频解析完成】\n视频ID：${vid}\n链接：${ddlUrl}\n去水印：${ddlp.watermark ? '是' : '否'}\n输出格式：${ddlp.outputFormat.toUpperCase()}\n\n⚠️ 纯前端环境无法直接下载抖音视频（受CORS限制）。\n\n解决方案：\n1. 复制视频链接到第三方解析网站下载\n2. 或配置后端代理服务后可直接下载\n3. 已配置Cookies可获取更高清版本`;
+          resultTitle = '⬇️ 抖音视频解析';
+          bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;">' +
+            '<div style="font-size:14px;font-weight:600;margin-bottom:10px;">🎵 抖音视频解析结果</div>' +
+            '<div style="font-size:12px;color:#64748b;line-height:1.8;">' +
+            '视频ID：' + vid + '<br>' +
+            '去水印：' + (ddlp.watermark ? '✅ 是' : '❌ 否') + '<br>' +
+            '格式：' + ddlp.outputFormat.toUpperCase() + '<br><br>' +
+            '<span style="color:#f59e0b;">⚠️ 纯前端受CORS限制无法直接下载，请复制链接到解析网站，或配置后端代理服务。</span>' +
+            '</div></div>';
+          node._meta = { real: false, simulated: true, failed: false, videoId: vid };
+        }
       } else if (/fileUpload|documentConvert|imageConvert|modelConvert|imageGrid/i.test(node.type)) {
         await sleep(300);
         output = '[' + node.type + '] 处理完成';
