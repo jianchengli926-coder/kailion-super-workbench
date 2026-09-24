@@ -22,9 +22,11 @@
       var host = window.location.hostname || '';
       var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(host);
       if (isLocal) {
+        // 本地/局域网访问：直连本地Ollama，速度快
         return 'http://localhost:11434/v1';
       }
-      return 'https://ollama.kailioncrafts.com/v1';
+      // 公网访问：走后端代理 /api/ollama，安全不暴露Ollama端口
+      return '/api/ollama/v1';
     } catch (e) {
       return 'http://localhost:11434/v1';
     }

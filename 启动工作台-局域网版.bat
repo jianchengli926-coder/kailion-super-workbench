@@ -1,11 +1,11 @@
 @echo off
 chcp 65001 >nul
-title 锴利超级AI工作台 - 局域网服务器
+title 锴利超级AI工作台 - 后端代理服务器
 cd /d "%~dp0"
 
 echo.
 echo ========================================
-echo    锴利超级AI工作台 - 局域网服务器
+echo    锴利超级AI工作台 - 后端代理服务器
 echo ========================================
 echo.
 
@@ -16,11 +16,11 @@ echo 📂 工作目录: %cd%
 echo 🌐 本机访问: http://localhost:8766
 echo 📡 局域网访问: http://%LOCAL_IP%:8766
 echo.
-echo 💡 同事访问请用局域网地址
+echo 💡 Ollama通过后端代理访问，安全不暴露端口
 echo 💡 按 Ctrl+C 停止服务器
 echo.
 echo 正在启动服务器...
 echo ----------------------------------------
 
-python -m http.server 8766 --bind 0.0.0.0
+node server.js 8766
 pause
