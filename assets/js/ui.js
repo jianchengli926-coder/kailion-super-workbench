@@ -1308,6 +1308,7 @@
     document.getElementById('pf-name').value = pre.name || '';
     document.getElementById('pf-baseurl').value = pre.baseurl || '';
     document.getElementById('pf-category').value = pre.category || 'llm';
+    document.getElementById('pf-key').value = '';
     formModels = (pre.models || []).map(m => ({ id: m.id, label: m.label }));
     renderFormModels();
     const isWawa = /wawapi/i.test(pre.name);
