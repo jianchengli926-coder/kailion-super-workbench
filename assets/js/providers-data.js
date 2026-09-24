@@ -311,7 +311,7 @@
       id: 'builtin_zhipu_relay',
       name: '智谱中转站', nameEn: 'Zhipu Relay',
       baseurl: 'https://open.bigmodel.cn/api/paas/v4',
-      key: '5cf2abf18495457db6a628151b95a8f2.Pq7lwTVLNxGttHyo',
+      key: '463387098a9b4b4381513ba66cb6f15f.OK1hWS0wFnU3EGTR',
       category: 'universal', protocol: 'openai', isDefault: false,
       models: [
         { id: 'glm-4.7-flash', label: 'GLM-4.7 Flash（深度思考·免费）' },
