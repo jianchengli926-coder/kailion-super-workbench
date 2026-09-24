@@ -2121,7 +2121,7 @@
     btn.id = 'btn-recent';
     btn.className = 'btn btn-sm';
     btn.title = T('recent.title', '最近工作流', 'Recent workflows');
-    btn.textContent = '\u{1F550} ' + T('recent.title', '最近', 'Recent');
+    btn.textContent = T('recent.title', '最近', 'Recent');
     const menu = document.createElement('div');
     menu.id = 'recent-menu';
     menu.className = 'export-menu hidden';
