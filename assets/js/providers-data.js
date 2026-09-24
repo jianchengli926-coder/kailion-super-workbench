@@ -106,6 +106,10 @@
       desc: '智谱 AI 官方接口',
       descEn: 'Zhipu AI official API',
       models: [
+        { id: 'glm-4.7-flash', label: 'GLM-4.7 Flash（深度思考·免费）' },
+        { id: 'glm-4.6v-flash', label: 'GLM-4.6V Flash（视觉理解·免费）' },
+        { id: 'glm-4-flash', label: 'GLM-4 Flash（文本生成·免费）' },
+        { id: 'cogview-3-flash', label: 'CogView-3 Flash（图像生成·免费）' },
         { id: 'glm-5.3-flash', label: 'GLM-5.3 Flash（最新免费）' }, { id: 'glm-5.3', label: 'GLM-5.3' },
         { id: 'glm-5', label: 'GLM-5' }, { id: 'glm-4.6', label: 'GLM-4.6' },
         { id: 'glm-4.5', label: 'GLM-4.5' }
@@ -310,6 +314,10 @@
       key: '463387098a9b4b4381513ba66cb6f15f.OK1hWS0wFnU3EGTR',
       category: 'universal', protocol: 'openai', isDefault: false,
       models: [
+        { id: 'glm-4.7-flash', label: 'GLM-4.7 Flash（深度思考·免费）' },
+        { id: 'glm-4.6v-flash', label: 'GLM-4.6V Flash（视觉理解·免费）' },
+        { id: 'glm-4-flash', label: 'GLM-4 Flash（文本生成·免费）' },
+        { id: 'cogview-3-flash', label: 'CogView-3 Flash（图像生成·免费）' },
         { id: 'glm-5.3-flash', label: 'GLM-5.3 Flash（最新免费）' },
         { id: 'glm-5.3', label: 'GLM-5.3' },
         { id: 'glm-5', label: 'GLM-5' },
