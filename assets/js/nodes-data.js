@@ -90,7 +90,11 @@ window.NODE_DATA = [
       ['信息检索', 'infoRetrievalNode', '多源信息检索 + LLM 智能处理', 0,
        'Info Retrieval', 'Multi-source information retrieval + LLM intelligent processing'],
       ['HTTP请求', 'httpRequestNode', '调用任意 REST API，自定义方法/头/请求体', 0,
-       'HTTP Request', 'Call any REST API with custom method/headers/body']
+       'HTTP Request', 'Call any REST API with custom method/headers/body'],
+      ['网页搜索', 'webSearchNode', '多搜索引擎联网搜索，返回标题/摘要/链接，支持关键词与时间范围', 0,
+       'Web Search', 'Multi-engine web search with titles/snippets/links, keyword and time range support'],
+      ['OCR识别', 'ocrNode', '图片文字识别，支持中英文/手写/表格，输出结构化文本与坐标', 0,
+       'OCR', 'Image text recognition with Chinese/English/handwriting/table support']
     ]
   },
   {
@@ -105,7 +109,9 @@ window.NODE_DATA = [
       ['宫格分割', 'imageGridSplitNode', '把一张图按行列分割成多张图', 1,
        'Grid Split', 'Split one image into a grid of multiple images by rows and columns'],
       ['水印', 'watermarkNode', '给图片添加文字或图片水印，支持位置/字号/透明度/旋转', 1,
-       'Watermark', 'Add text or image watermark to images with position/font/opacity/rotation']
+       'Watermark', 'Add text or image watermark to images with position/font/opacity/rotation'],
+      ['去背景', 'removeBgNode', 'AI智能抠图去背景，支持人像/商品/通用场景，输出透明PNG', 1,
+       'Remove BG', 'AI background removal for portrait/product/generic scenes, transparent PNG output']
     ]
   },
   {

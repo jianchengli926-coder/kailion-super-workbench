@@ -1419,6 +1419,107 @@
           + '<pre style="max-height:300px;overflow:auto;background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;font-size:12px;line-height:1.5;white-space:pre-wrap;word-break:break-all;">' + esc(preview) + '</pre>';
         log('HTTP ' + method + ' ' + url + ' → ' + resp.status + '（' + hrElapsed + 'ms）', 'ok');
         node._meta = { real: true, simulated: false, failed: false, model: method, provider: 'REST' };
+      } else if (node.type === 'webSearchNode') {
+        // ---- v2.3.3：网页搜索节点 ----
+        const sp = node.params || {};
+        const query = collectInputs(node.id) || sp.query || '';
+        if (!query) throw new Error('网页搜索节点未填写搜索关键词');
+        const count = parseInt(sp.count) || 10;
+        const engine = sp.engine || 'auto';
+        const timeRange = sp.timeRange || 'any';
+        // 尝试调用搜索API（需配置供应商），否则降级模拟
+        const searchProv = sp.providerId ? resolveProvider(node, 'search') : null;
+        if (searchProv && searchProv.baseurl && (searchProv.key || /localhost/.test(searchProv.baseurl))) {
+          try {
+            const searchUrl = searchProv.baseurl.replace(/\/$/, '') + '/search';
+            const sresp = await fetch(searchUrl + '?q=' + encodeURIComponent(query) + '&count=' + count + '&engine=' + engine + '&timeRange=' + timeRange, {
+              headers: { 'Authorization': 'Bearer ' + (searchProv.key || '') }
+            });
+            const sdata = await sresp.json();
+            const results = sdata.results || sdata.data || [];
+            output = results.map((r, i) => `[${i+1}] ${r.title || r.name}\n${r.snippet || r.content || ''}\n${r.url || r.link || ''}`).join('\n\n');
+            resultTitle = '🔍 搜索结果（' + results.length + '条）';
+            bodyHtml = '<div style="max-height:400px;overflow:auto;">' + results.map((r, i) => 
+              '<div style="padding:10px;border-bottom:1px solid #e2e8f0;">' +
+              '<div style="font-weight:600;color:#2563eb;">' + esc(r.title || r.name || '结果' + (i+1)) + '</div>' +
+              '<div style="font-size:12px;color:#64748b;margin:4px 0;">' + esc(r.url || r.link || '') + '</div>' +
+              '<div style="font-size:13px;color:#334155;">' + esc((r.snippet || r.content || '').substring(0, 200)) + '</div></div>'
+            ).join('') + '</div>';
+            node._meta = { real: true, simulated: false, failed: false, provider: searchProv.name };
+          } catch (se) {
+            output = '【搜索降级】搜索API调用失败：' + se.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(500);
+          output = '【模拟搜索】关键词：' + query + '\n搜索引擎：' + engine + '\n时间范围：' + timeRange + '\n\n在「设置 → 供应商管理」中配置搜索API供应商后，将返回真实搜索结果。';
+          resultTitle = '🔍 网页搜索（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
+      } else if (node.type === 'ocrNode') {
+        // ---- v2.3.3：OCR文字识别节点 ----
+        const op = node.params || {};
+        const upstreamImg = collectInputs(node.id);
+        if (!upstreamImg) throw new Error('OCR节点需要上游图片输入');
+        const ocrProv = op.providerId ? resolveProvider(node, 'ocr') : null;
+        if (ocrProv && ocrProv.baseurl && (ocrProv.key || /localhost/.test(ocrProv.baseurl))) {
+          try {
+            const ocrUrl = ocrProv.baseurl.replace(/\/$/, '') + '/ocr';
+            const oresp = await fetch(ocrUrl, {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (ocrProv.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: upstreamImg, language: op.language, mode: op.mode, outputFormat: op.outputFormat })
+            });
+            const odata = await oresp.json();
+            output = odata.text || odata.result || JSON.stringify(odata);
+            resultTitle = '📝 OCR识别结果';
+            bodyHtml = '<pre style="max-height:300px;overflow:auto;background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;white-space:pre-wrap;">' + esc(output.substring(0, 3000)) + '</pre>';
+            node._meta = { real: true, simulated: false, failed: false, provider: ocrProv.name };
+          } catch (oe) {
+            output = '【OCR降级】识别失败：' + oe.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(600);
+          output = '【模拟OCR】语言：' + op.language + '，模式：' + op.mode + '\n识别到约 156 个文字区域。\n\n在「设置 → 供应商管理」中配置OCR供应商后，将返回真实识别结果。';
+          resultTitle = '📝 OCR识别（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
+      } else if (node.type === 'removeBgNode') {
+        // ---- v2.3.3：去背景节点 ----
+        const rp = node.params || {};
+        const bgImg = collectInputs(node.id);
+        if (!bgImg) throw new Error('去背景节点需要上游图片输入');
+        const bgProv = rp.providerId ? resolveProvider(node, 'image') : null;
+        if (bgProv && bgProv.baseurl && (bgProv.key || /localhost/.test(bgProv.baseurl))) {
+          try {
+            const bgUrl = bgProv.baseurl.replace(/\/$/, '') + '/removebg';
+            const bresp = await fetch(bgUrl, {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (bgProv.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: bgImg, scene: rp.scene, format: rp.outputFormat, quality: rp.quality })
+            });
+            const bdata = await bresp.json();
+            output = bdata.url || bdata.image || '去背景完成';
+            resultTitle = '✂️ 去背景结果';
+            bodyHtml = '<img src="' + esc(output) + '" style="max-width:100%;border-radius:8px;border:1px dashed #cbd5e1;" />';
+            node._meta = { real: true, simulated: false, failed: false, provider: bgProv.name };
+          } catch (be) {
+            output = '【去背景降级】处理失败：' + be.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(700);
+          output = '【模拟去背景】场景：' + rp.scene + '，格式：' + rp.outputFormat + '\n已智能识别主体区域，移除背景，输出透明PNG。\n\n在「设置 → 供应商管理」中配置图片处理供应商后，将返回真实处理结果。';
+          resultTitle = '✂️ 去背景（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
       } else if (/fileUpload|documentConvert|imageConvert|modelConvert|imageGrid/i.test(node.type)) {
         await sleep(300);
         output = '[' + node.type + '] 处理完成';

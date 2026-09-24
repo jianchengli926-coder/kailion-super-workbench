@@ -190,6 +190,45 @@
       { key: 'headers', label: 'Headers（JSON）', type: 'textarea', value: '{\n  "Content-Type": "application/json"\n}', placeholder: '{"Content-Type":"application/json"}' },
       { key: 'body', label: 'Body（JSON，GET 留空）', type: 'textarea', placeholder: '{"key":"value"}' }
     ],
+    // v2.3.3：网页搜索节点
+    webSearchNode: [
+      { key: 'query', label: '搜索关键词', type: 'text', placeholder: '输入搜索关键词，支持引用上游节点输出' },
+      { key: 'engine', label: '搜索引擎', type: 'select', options: [
+        { value: 'auto', label: '自动选择' }, { value: 'google', label: 'Google' }, { value: 'bing', label: 'Bing' }, { value: 'baidu', label: '百度' }, { value: 'duckduckgo', label: 'DuckDuckGo' }
+      ], value: 'auto' },
+      { key: 'count', label: '返回结果数', type: 'select', options: [
+        { value: '5', label: '5 条' }, { value: '10', label: '10 条' }, { value: '20', label: '20 条' }
+      ], value: '10' },
+      { key: 'timeRange', label: '时间范围', type: 'select', options: [
+        { value: 'any', label: '全部时间' }, { value: 'day', label: '最近一天' }, { value: 'week', label: '最近一周' }, { value: 'month', label: '最近一月' }, { value: 'year', label: '最近一年' }
+      ], value: 'any' }
+    ],
+    // v2.3.3：OCR文字识别节点
+    ocrNode: [
+      { key: 'language', label: '识别语言', type: 'select', options: [
+        { value: 'auto', label: '自动检测' }, { value: 'ch', label: '中文' }, { value: 'en', label: '英文' }, { value: 'ch_en', label: '中英文混合' }, { value: 'japan', label: '日文' }, { value: 'korean', label: '韩文' }
+      ], value: 'ch_en' },
+      { key: 'mode', label: '识别模式', type: 'select', options: [
+        { value: 'general', label: '通用文字' }, { value: 'handwriting', label: '手写文字' }, { value: 'table', label: '表格识别' }, { value: 'idcard', label: '身份证' }, { value: 'invoice', label: '发票' }, { value: 'license', label: '营业执照' }
+      ], value: 'general' },
+      { key: 'outputFormat', label: '输出格式', type: 'select', options: [
+        { value: 'text', label: '纯文本' }, { value: 'json', label: '结构化JSON（含坐标）' }, { value: 'markdown', label: 'Markdown' }
+      ], value: 'text' },
+      { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'ocr', hint: '在设置中配置OCR供应商' }
+    ],
+    // v2.3.3：去背景节点
+    removeBgNode: [
+      { key: 'scene', label: '场景类型', type: 'select', options: [
+        { value: 'auto', label: '自动识别' }, { value: 'person', label: '人像' }, { value: 'product', label: '商品' }, { value: 'car', label: '汽车' }, { value: 'animal', label: '动物' }, { value: 'generic', label: '通用' }
+      ], value: 'auto' },
+      { key: 'outputFormat', label: '输出格式', type: 'select', options: [
+        { value: 'png', label: 'PNG（透明背景）' }, { value: 'webp', label: 'WebP（透明背景）' }, { value: 'jpg_white', label: 'JPG（白色背景）' }
+      ], value: 'png' },
+      { key: 'quality', label: '输出质量', type: 'select', options: [
+        { value: 'standard', label: '标准' }, { value: 'high', label: '高清' }, { value: 'ultra', label: '超清' }
+      ], value: 'high' },
+      { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'image', hint: '在设置中配置图片处理供应商' }
+    ],
 
     /* 协同与优化 */
     expertDiscussionNode: [
