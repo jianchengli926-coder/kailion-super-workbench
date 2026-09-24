@@ -2346,7 +2346,8 @@
             node._meta = { real: false, simulated: false, failed: true, pending: false };
           } else {
             const outStr = String(node._output || '');
-            const degraded = /模拟|降级|未配置|占位|simulated/i.test(outStr);
+            // 只匹配明确的模拟输出前缀，避免真实AI内容中包含"模拟"等词被误判
+            const degraded = /^(【模拟输出|（模拟|\[模拟|模拟输出·|【降级|（降级|未配置供应商|【占位)/.test(outStr.trim());
             node._meta = degraded
               ? { real: false, simulated: true, failed: false, pending: false }
               : { real: true, simulated: false, failed: false, pending: false };
