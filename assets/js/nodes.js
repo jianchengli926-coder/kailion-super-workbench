@@ -492,7 +492,6 @@
       { key: 'fallback', label: '失败自动降级', type: 'checkbox', value: true },
       { key: 'maxRetries', label: '最大重试次数', type: 'number', min: 0, max: 5, value: 2 }
     ],
-
     /* 协同与优化 */
     expertDiscussionNode: [
       { key: 'experts', label: '专家数量', type: 'number', min: 2, max: 6, value: 3 },
