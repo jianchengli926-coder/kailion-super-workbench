@@ -345,6 +345,16 @@
           nodeEl.style.display = '';
         }
       }, opts);
+      // v2.3.4：多轮对话模式 - 保存对话历史
+      if (p.dialogMode === 'multi') {
+        if (!node._chatHistory) node._chatHistory = [];
+        node._chatHistory.push({ role: 'user', content: userPrompt });
+        node._chatHistory.push({ role: 'assistant', content: full });
+        // 限制历史长度，避免token溢出
+        if (node._chatHistory.length > 20) {
+          node._chatHistory = node._chatHistory.slice(-20);
+        }
+      }
       return full || '（模型返回为空）';
     } catch (e) {
       throw new Error('LLM 调用失败：' + (e && e.message ? e.message : e));
@@ -1457,6 +1467,44 @@
           resultTitle = '🔍 网页搜索（模拟）';
           bodyHtml = buildTextResult(output);
           node._meta = { real: false, simulated: true, failed: false };
+        }
+      } else if (node.type === 'mcpNode') {
+        // ---- v2.3.4：MCP 工具调用节点 ----
+        const mp = node.params || {};
+        const serverUrl = (mp.serverUrl || '').trim();
+        const toolName = (mp.toolName || '').trim();
+        if (!serverUrl) throw new Error('MCP节点未填写服务器地址');
+        if (!toolName) throw new Error('MCP节点未填写工具名');
+        let args = {};
+        try { if (mp.args && mp.args.trim()) args = JSON.parse(mp.args); }
+        catch (ae) { throw new Error('MCP参数JSON解析失败：' + ae.message); }
+        // 合并上游输入到args
+        const upstreamInput = collectInputs(node.id);
+        if (upstreamInput && !args.input) args.input = upstreamInput;
+        // 尝试调用MCP服务器（Streamable HTTP协议）
+        try {
+          const mcpUrl = serverUrl.replace(/\/$/, '');
+          const mresp = await fetch(mcpUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream' },
+            body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method: 'tools/call', params: { name: toolName, arguments: args } })
+          });
+          const mtext = await mresp.text();
+          let mresult = mtext;
+          try {
+            const parsed = JSON.parse(mtext);
+            mresult = parsed.result?.content?.map(c => c.text || '').join('\n') || JSON.stringify(parsed, null, 2);
+          } catch (pe) { /* 非JSON响应，直接用文本 */ }
+          output = mresult;
+          resultTitle = '🔌 MCP 工具调用结果';
+          bodyHtml = '<pre style="max-height:300px;overflow:auto;background:#f8fafc;padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;">' + esc(String(mresult).substring(0, 3000)) + '</pre>';
+          node._meta = { real: true, simulated: false, failed: false, tool: toolName, server: serverUrl };
+        } catch (me) {
+          await sleep(400);
+          output = '【MCP降级】工具调用失败：' + me.message + '\n\n服务器: ' + serverUrl + '\n工具: ' + toolName + '\n参数: ' + JSON.stringify(args);
+          resultTitle = '🔌 MCP 工具调用（降级）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: true, tool: toolName };
         }
       } else if (node.type === 'ocrNode') {
         // ---- v2.3.3：OCR文字识别节点 ----
