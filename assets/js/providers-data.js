@@ -106,8 +106,9 @@
       desc: '智谱 AI 官方接口',
       descEn: 'Zhipu AI official API',
       models: [
-        { id: 'glm-4', label: 'GLM-4' }, { id: 'glm-4-flash', label: 'GLM-4 Flash' },
-        { id: 'glm-3-turbo', label: 'GLM-3 Turbo' }
+        { id: 'glm-5.3-flash', label: 'GLM-5.3 Flash（最新免费）' }, { id: 'glm-5.3', label: 'GLM-5.3' },
+        { id: 'glm-5', label: 'GLM-5' }, { id: 'glm-4.6', label: 'GLM-4.6' },
+        { id: 'glm-4.5', label: 'GLM-4.5' }
       ] },
     { name: 'wawapi 中转站', nameEn: 'wawapi Relay', baseurl: 'https://wawapi.top/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🔀',
       desc: '用户专属中转站，支持 GPT / DeepSeek / Claude / 生图',
@@ -306,13 +307,14 @@
       id: 'builtin_zhipu_relay',
       name: '智谱中转站', nameEn: 'Zhipu Relay',
       baseurl: 'https://open.bigmodel.cn/api/paas/v4',
-      key: '',
+      key: 'ce5df9d38c5342c5993fef25bd7403b8.EwA0H7uNGYBUSLm5',
       category: 'universal', protocol: 'openai', isDefault: false,
       models: [
-        { id: 'glm-4', label: 'GLM-4' },
-        { id: 'glm-4-flash', label: 'GLM-4 Flash' },
-        { id: 'glm-3-turbo', label: 'GLM-3 Turbo' },
-        { id: 'glm-4v', label: 'GLM-4V（视觉）' }
+        { id: 'glm-5.3-flash', label: 'GLM-5.3 Flash（最新免费）' },
+        { id: 'glm-5.3', label: 'GLM-5.3' },
+        { id: 'glm-5', label: 'GLM-5' },
+        { id: 'glm-4.6', label: 'GLM-4.6' },
+        { id: 'glm-4.5', label: 'GLM-4.5' }
       ],
       desc: '预置智谱AI中转站，可一键切换在线模型'
     },
