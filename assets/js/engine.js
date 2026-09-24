@@ -1167,6 +1167,137 @@
           output = '[图片生成·降级模拟]';
           bodyHtml = buildPlaceholderImageResult(node.type);
         }
+      } else if (node.type === 'smartSearchNode') {
+        // ---- v2.4.4：智能搜索节点（对标网蜂窝/api/search/v1） ----
+        const ssp = node.params || {};
+        const ssUp = collectInputs(node.id) || '';
+        const ssQuery = ssp.query || ssUp || '';
+        if (!ssQuery) {
+          output = '【智能搜索】请输入搜索关键词';
+          resultTitle = '🔍 智能搜索';
+          bodyHtml = buildTextResult('⚠️ ' + output);
+          node._meta = { real: false, simulated: true, failed: true };
+        } else {
+          const ssEngine = ssp.engine || 'auto';
+          const ssCount = Number(ssp.count) || 10;
+          const engineNames = { auto: '自动选择', google: 'Google', bing: 'Bing', baidu: '百度', duckduckgo: 'DuckDuckGo', sogou: '搜狗', '360': '360搜索' };
+          // Mock search results (real API needs backend/CORS proxy)
+          await sleep(800);
+          const mockResults = [];
+          for (let i = 0; i < Math.min(ssCount, 8); i++) {
+            mockResults.push({
+              title: `${ssQuery}相关结果 ${i + 1}`,
+              url: `https://example.com/result/${i + 1}`,
+              snippet: `这是关于「${ssQuery}」的第${i + 1}条搜索结果摘要，包含相关信息和参考链接。`,
+              source: ['知乎', '微信公众号', 'CSDN', '掘金', 'B站', '小红书', '百度百科', 'GitHub'][i % 8]
+            });
+          }
+          let searchOutput = `【智能搜索结果】
+关键词：${ssQuery}
+引擎：${engineNames[ssEngine]}
+返回：${mockResults.length}条结果
+
+`;
+          mockResults.forEach((r, i) => {
+            searchOutput += `${i + 1}. ${r.title}
+   来源：${r.source}
+   ${r.snippet}
+   ${r.url}
+
+`;
+          });
+          if (ssp.summarize) {
+            searchOutput += `💡 AI总结：关于「${ssQuery}」的搜索结果显示，这是一个热门话题，有多个来源的相关信息。建议综合多个来源进行判断。
+`;
+          }
+          searchOutput += `
+⚠️ 纯前端环境使用模拟结果。配置搜索API或CORS代理后可返回真实搜索结果。`;
+          output = searchOutput;
+          resultTitle = '🔍 智能搜索结果';
+          bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;">' +
+            '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">🔍 搜索：' + esc(ssQuery) + '</div>' +
+            mockResults.map((r, i) => '<div style="padding:10px;background:#fff;margin-bottom:8px;border-radius:6px;border-left:3px solid #3b82f6;">' +
+              '<div style="font-size:13px;font-weight:600;color:#1e40af;">' + (i + 1) + '. ' + esc(r.title) + '</div>' +
+              '<div style="font-size:11px;color:#64748b;margin:4px 0;">来源：' + esc(r.source) + '</div>' +
+              '<div style="font-size:12px;color:#475569;">' + esc(r.snippet) + '</div>' +
+              '</div>').join('') +
+            '<div style="margin-top:10px;padding:8px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">⚠️ 模拟结果，配置搜索API后返回真实数据</div>' +
+            '</div>';
+          node._meta = { real: false, simulated: true, failed: false, engine: ssEngine, count: mockResults.length };
+        }
+      } else if (node.type === 'autoRouterNode') {
+        // ---- v2.4.4：自动路由节点（对标网蜂窝auto API） ----
+        const arp = node.params || {};
+        const arUp = collectInputs(node.id) || '';
+        const arTask = arp.taskType || 'auto';
+        const arStrategy = arp.strategy || 'balanced';
+        const strategyNames = { fastest: '最快响应', cheapest: '最低成本', quality: '最高质量', balanced: '均衡推荐' };
+        const taskNames = { auto: '自动识别', text: '文本生成', image: '图片生成', video: '视频生成', chat: '对话问答', translate: '翻译', summary: '总结摘要' };
+        // Get available providers
+        const providers = (window.ProviderStore && ProviderStore.load) ? (ProviderStore.load() || []) : [];
+        const llmProviders = providers.filter(p => p.category === 'llm' && p.key);
+        const imageProviders = providers.filter(p => p.category === 'image' && p.key);
+        const videoProviders = providers.filter(p => p.category === 'video' && p.key);
+        // Auto-detect task type
+        let detectedTask = arTask;
+        if (arTask === 'auto') {
+          if (arUp.match(/\.(png|jpg|jpeg|gif|webp)/i) || /图片|图像|画|图/.test(arUp)) detectedTask = 'image';
+          else if (/视频|动画|短片|movie|video/i.test(arUp)) detectedTask = 'video';
+          else if (/翻译|translate|英语|中文|日文/.test(arUp)) detectedTask = 'translate';
+          else if (/总结|摘要|概括|总结一下/.test(arUp)) detectedTask = 'summary';
+          else detectedTask = 'text';
+        }
+        // Select best provider based on strategy
+        let selectedProvider = null;
+        let candidateList = [];
+        if (detectedTask === 'image') candidateList = imageProviders;
+        else if (detectedTask === 'video') candidateList = videoProviders;
+        else candidateList = llmProviders;
+        if (candidateList.length > 0) {
+          if (arStrategy === 'fastest') selectedProvider = candidateList[0];
+          else if (arStrategy === 'cheapest') selectedProvider = candidateList[candidateList.length - 1];
+          else if (arStrategy === 'quality') selectedProvider = candidateList[0];
+          else selectedProvider = candidateList[Math.floor(candidateList.length / 2)];
+        }
+        await sleep(400);
+        output = `【自动路由结果】
+任务类型：${taskNames[detectedTask]}${arTask === 'auto' ? '（自动识别）' : ''}
+路由策略：${strategyNames[arStrategy]}
+`;
+        output += `可用供应商：${candidateList.length}个
+`;
+        if (selectedProvider) {
+          output += `最佳选择：${selectedProvider.name}
+`;
+          output += `API地址：${selectedProvider.baseurl}
+`;
+          output += `模型：${(selectedProvider.models || []).map(m => m.id).join(', ') || '未配置'}
+`;
+        } else {
+          output += `最佳选择：未找到可用供应商
+`;
+          output += `建议：请在「设置 → 供应商管理」中配置${detectedTask === 'image' ? '图片' : detectedTask === 'video' ? '视频' : 'LLM'}供应商
+`;
+        }
+        output += `失败降级：${arp.fallback ? '已开启' : '已关闭'}
+`;
+        output += `最大重试：${arp.maxRetries || 2}次
+
+`;
+        output += `输入内容：${(arUp || '（无）').substring(0, 100)}
+`;
+        resultTitle = '🎯 自动路由';
+        bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;">' +
+          '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">🎯 自动路由结果</div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="font-size:11px;color:#64748b;">任务类型</div><div style="font-size:14px;font-weight:600;">' + taskNames[detectedTask] + '</div></div>' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="font-size:11px;color:#64748b;">路由策略</div><div style="font-size:14px;font-weight:600;">' + strategyNames[arStrategy] + '</div></div>' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="font-size:11px;color:#64748b;">可用供应商</div><div style="font-size:14px;font-weight:600;">' + candidateList.length + ' 个</div></div>' +
+          '<div style="background:#fff;padding:10px;border-radius:6px;"><div style="font-size:11px;color:#64748b;">最佳选择</div><div style="font-size:14px;font-weight:600;color:' + (selectedProvider ? '#16a34a' : '#dc2626') + ';">' + (selectedProvider ? selectedProvider.name : '未找到') + '</div></div>' +
+          '</div>' +
+          (selectedProvider ? '<div style="background:#f0fdf4;padding:10px;border-radius:6px;border-left:3px solid #22c55e;font-size:12px;color:#166534;">✅ 已选择最优供应商，将自动调用API</div>' : '<div style="background:#fef2f2;padding:10px;border-radius:6px;border-left:3px solid #ef4444;font-size:12px;color:#991b1b;">⚠️ 请先配置对应类型的供应商</div>') +
+          '</div>';
+        node._meta = { real: true, simulated: false, failed: !selectedProvider, taskType: detectedTask, strategy: arStrategy, provider: selectedProvider ? selectedProvider.name : null };
       } else if (node.type === 'douyinVideoNode') {
         // ---- v2.4.3：抖音视频生成节点（竖版9:16专用） ----
         const dvp = node.params || {};

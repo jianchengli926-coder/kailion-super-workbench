@@ -128,6 +128,34 @@
         { id: 'agnes-image', name: 'Agnes 图片生成', type: 'image' },
         { id: 'agnes-video', name: 'Agnes 视频生成', type: 'video' }
       ] },
+    { name: '可灵 Kling', nameEn: 'Kling AI', baseurl: 'https://api.klingai.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎬', protocol: 'custom',
+      models: [
+        { id: 'kling-v1', name: '可灵 V1', type: 'video' },
+        { id: 'kling-v1.5', name: '可灵 V1.5', type: 'video' },
+        { id: 'kling-v1.6', name: '可灵 V1.6', type: 'video' }
+      ] },
+    { name: '即梦 Seedance', nameEn: 'Seedance', baseurl: 'https://api.jimeng.jianying.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '💫', protocol: 'custom',
+      models: [
+        { id: 'seedance-1.0', name: 'Seedance 1.0', type: 'video' },
+        { id: 'seedance-1.0-pro', name: 'Seedance 1.0 Pro', type: 'video' }
+      ] },
+    { name: 'VEO', nameEn: 'Google VEO', baseurl: 'https://api.veo.google.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎥', protocol: 'openai',
+      models: [
+        { id: 'veo-2', name: 'VEO 2', type: 'video' },
+        { id: 'veo-3', name: 'VEO 3', type: 'video' }
+      ] },
+    { name: '冰火 Binghuo', nameEn: 'Binghuo Video', baseurl: 'https://api.binghuo.video/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🔥', protocol: 'custom',
+      models: [
+        { id: 'binghuo-v1', name: '冰火 V1', type: 'video' }
+      ] },
+    { name: '12AI', nameEn: '12AI Video', baseurl: 'https://api.12ai.video/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎞️', protocol: 'custom',
+      models: [
+        { id: '12ai-v1', name: '12AI V1', type: 'video' }
+      ] },
+    { name: 'ToAPIs', nameEn: 'ToAPIs Video', baseurl: 'https://api.toapis.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🌐', protocol: 'openai',
+      models: [
+        { id: 'toapis-video', name: 'ToAPIs 视频', type: 'video' }
+      ] },
     { name: 'Meshy', nameEn: 'Meshy', baseurl: 'https://api.meshy.ai/v1', category: '3d', categoryEn: CAT_EN['3d'], icon: '🎲',
       desc: 'Meshy AI 3D 资产生成，支持纹理重绘与格式转换',
       descEn: 'Meshy AI 3D asset generation, texture repaint and format conversion',

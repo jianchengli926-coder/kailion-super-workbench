@@ -449,6 +449,49 @@
       { key: 'includeBgm', label: 'BGM风格推荐', type: 'checkbox', value: true },
       { key: 'providerId', label: '视频生成供应商', type: 'select', dynamic: 'provider', providerCategory: 'video' }
     ],
+    // v2.4.4：智能搜索节点（对标网蜂窝/api/search/v1）
+    smartSearchNode: [
+      { key: 'query', label: '搜索关键词', type: 'textarea', placeholder: '输入搜索查询…' },
+      { key: 'engine', label: '搜索引擎', type: 'select', options: [
+        { value: 'auto', label: '自动选择最佳' },
+        { value: 'google', label: 'Google' },
+        { value: 'bing', label: 'Bing' },
+        { value: 'baidu', label: '百度' },
+        { value: 'duckduckgo', label: 'DuckDuckGo' },
+        { value: 'sogou', label: '搜狗' },
+        { value: '360', label: '360搜索' }
+      ], value: 'auto' },
+      { key: 'count', label: '返回结果数', type: 'number', min: 1, max: 20, value: 10 },
+      { key: 'timeRange', label: '时间范围', type: 'select', options: [
+        { value: 'any', label: '不限时间' },
+        { value: 'day', label: '最近一天' },
+        { value: 'week', label: '最近一周' },
+        { value: 'month', label: '最近一月' },
+        { value: 'year', label: '最近一年' }
+      ], value: 'any' },
+      { key: 'summarize', label: 'AI总结结果', type: 'checkbox', value: true },
+      { key: 'providerId', label: 'AI总结供应商（可选）', type: 'select', dynamic: 'provider', providerCategory: 'llm' }
+    ],
+    // v2.4.4：自动路由节点（对标网蜂窝auto API）
+    autoRouterNode: [
+      { key: 'taskType', label: '任务类型', type: 'select', options: [
+        { value: 'auto', label: '自动识别' },
+        { value: 'text', label: '文本生成' },
+        { value: 'image', label: '图片生成' },
+        { value: 'video', label: '视频生成' },
+        { value: 'chat', label: '对话问答' },
+        { value: 'translate', label: '翻译' },
+        { value: 'summary', label: '总结摘要' }
+      ], value: 'auto' },
+      { key: 'strategy', label: '路由策略', type: 'select', options: [
+        { value: 'fastest', label: '最快响应' },
+        { value: 'cheapest', label: '最低成本' },
+        { value: 'quality', label: '最高质量' },
+        { value: 'balanced', label: '均衡推荐' }
+      ], value: 'balanced' },
+      { key: 'fallback', label: '失败自动降级', type: 'checkbox', value: true },
+      { key: 'maxRetries', label: '最大重试次数', type: 'number', min: 0, max: 5, value: 2 }
+    ],
 
     /* 协同与优化 */
     expertDiscussionNode: [
