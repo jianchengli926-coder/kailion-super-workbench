@@ -89,8 +89,10 @@
       desc: '本地运行，无需联网，隐私安全（API Key 可留空）',
       descEn: 'Runs locally, no internet needed, private and secure (API Key can be left empty)',
       models: [
+        { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）' },
+        { id: 'qwen2.5vl:7b', label: 'Qwen 2.5 VL 7B（视觉）' },
+        { id: 'deepseek-r1:7b', label: 'DeepSeek R1 7B（推理）' },
         { id: 'llama3.1', label: 'Llama 3.1' },
-        { id: 'qwen2.5', label: 'Qwen 2.5' },
         { id: 'mistral', label: 'Mistral' },
         { id: 'gemma2', label: 'Gemma 2' },
         { id: 'phi3', label: 'Phi 3' },
