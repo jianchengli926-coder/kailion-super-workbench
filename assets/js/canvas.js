@@ -478,13 +478,21 @@
   function addNode(type, x, y, params) {
     const meta = NodeDef.getMeta(type);
     const id = 'n' + (state.seq++);
+    // v2.3.2：应用 NODE_DEFS 中定义的默认参数
+    const defaultParams = {};
+    try {
+      const defs = (typeof NODE_DEFS !== 'undefined' && NODE_DEFS[type]) || (window.NODE_DEFS && window.NODE_DEFS[type]);
+      if (Array.isArray(defs)) {
+        defs.forEach(d => { if (d.value !== undefined) defaultParams[d.key] = d.value; });
+      }
+    } catch (e) { /* 默认参数读取失败，忽略 */ }
     const node = {
       id, type,
       name: meta.name,
       cat: meta.cat,
       x: x != null ? x : 200 + Math.random() * 200,
       y: y != null ? y : 150 + Math.random() * 150,
-      params: params ? { ...params } : {}
+      params: { ...defaultParams, ...(params || {}) }
     };
     pushHistory(); // 撤销/重做：记录添加前状态
     state.nodes[id] = node;

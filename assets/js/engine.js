@@ -262,7 +262,26 @@
       systemPrompt += '\n\n【思考模式】请先进行深度思考和推理分析，然后给出最终答案。思考过程要严谨、有逻辑。';
     }
     
-    // v2.3.1：知识库引用 - 从本地知识库检索相关内容注入提示词
+    // v2.3.2：MCP & 技能 - 注入可用工具/技能描述
+    if (p.enableMCP) {
+      try {
+        const skillsRaw = localStorage.getItem('kailion_skills');
+        if (skillsRaw) {
+          const skills = JSON.parse(skillsRaw);
+          const skillList = Array.isArray(skills) ? skills : (skills.items || []);
+          if (skillList.length > 0) {
+            const skillDesc = skillList.slice(0, 10).map((s, i) => `${i+1}. ${s.name || s.title}: ${(s.description || s.desc || '').substring(0, 80)}`).join('\n');
+            systemPrompt += '\n\n【可用技能/工具】\n' + skillDesc + '\n\n如需使用某个技能，请在回答中明确指出要调用的技能名称和参数。';
+          }
+        }
+        // MCP服务器配置
+        if (p.mcpServerUrl) {
+          systemPrompt += '\n\n【MCP服务器】已连接MCP服务器: ' + p.mcpServerUrl + '，可调用外部工具扩展能力。';
+        }
+      } catch (e) { /* 技能读取失败，忽略 */ }
+    }
+    
+    // v2.3.2：知识库引用 - 加权相关度检索（标题/标签/内容加权 + 相关度排序）
     let userPrompt = user;
     if (p.enableKnowledge || p.enableRAG) {
       try {
@@ -271,15 +290,27 @@
           const kb = JSON.parse(kbRaw);
           const items = Array.isArray(kb) ? kb : (kb.items || []);
           if (items.length > 0) {
-            // 简单关键词匹配检索
-            const keywords = user.toLowerCase().split(/\s+/).filter(w => w.length > 1);
-            const relevant = items.filter(item => {
-              const text = (item.title + ' ' + item.content + ' ' + (item.tags || [])).toLowerCase();
-              return keywords.some(k => text.includes(k));
-            }).slice(0, 3);
-            if (relevant.length > 0) {
-              const refs = relevant.map((r, i) => `[参考${i+1}] ${r.title}: ${(r.content || '').substring(0, 200)}`).join('\n');
-              userPrompt += '\n\n【知识库参考资料】\n' + refs + '\n\n请结合以上参考资料回答问题。';
+            // 中文分词：按标点和空格切分，过滤停用词
+            const stopWords = ['的','了','是','在','我','有','和','就','不','人','都','一','一个','上','也','很','到','说','要','去','你','会','着','没有','看','好','自己','这','那','他','她','它','们','这个','那个','什么','怎么','为什么','可以','因为','所以','但是','如果','虽然','而且','或者','以及','等等'];
+            const rawWords = user.toLowerCase().split(/[\s,，。.！!？?、；;：:""''（）()\[\]【】]+/).filter(w => w.length > 1);
+            const keywords = rawWords.filter(w => !stopWords.includes(w));
+            // 加权相关度计算：标题命中3分，标签命中2分，内容命中1分
+            const scored = items.map(item => {
+              const title = (item.title || '').toLowerCase();
+              const content = (item.content || '').toLowerCase();
+              const tags = (item.tags || []).join(' ').toLowerCase();
+              let score = 0;
+              let hits = [];
+              keywords.forEach(k => {
+                if (title.includes(k)) { score += 3; hits.push(k+'(标题)'); }
+                if (tags.includes(k)) { score += 2; hits.push(k+'(标签)'); }
+                if (content.includes(k)) { score += 1; hits.push(k+'(内容)'); }
+              });
+              return { item, score, hits };
+            }).filter(r => r.score > 0).sort((a, b) => b.score - a.score).slice(0, 3);
+            if (scored.length > 0) {
+              const refs = scored.map((r, i) => `[参考${i+1}] ${r.item.title}（相关度${r.score}分）: ${(r.item.content || '').substring(0, 200)}`).join('\n');
+              userPrompt += '\n\n【知识库参考资料】\n' + refs + '\n\n请结合以上参考资料回答问题，引用时标注来源。';
             }
           }
         }
@@ -355,12 +386,39 @@
     const v0 = Date.now();
     const prov = resolveProvider(node, 'video');
     const p = (node && node.params) || {};
-    const prompt = collectInputs(node.id) || p.prompt || 'a cinematic high-quality video';
+    const prompt = collectInputs(node.id) || p.prompt || p.builtInPrompt || 'a cinematic high-quality video';
     const model = p.model || (prov && prov.models && prov.models[0] && prov.models[0].id) || 'seedance-1.0-pro';
     const duration = p.duration != null ? p.duration : 5;
     const resolution = p.resolution || '720p';
     const fps = p.fps != null ? p.fps : 24;
     const aspectRatio = p.aspect_ratio || p.ratio || '16:9';
+    const mode = p.mode || 't2v';
+    
+    // v2.3.2：图生视频/视频编辑模式 - 收集上游图片或视频输入
+    let inputImage = null, inputVideo = null;
+    if ((mode === 'i2v' || mode === 'edit') && window.Canvas) {
+      try {
+        const upIds = Canvas.getUpstream(node.id);
+        for (const upId of upIds) {
+          const upNode = Canvas.getNode(upId);
+          const out = upNode && upNode._output;
+          if (out && typeof out === 'string') {
+            if (out.match(/\.(png|jpg|jpeg|gif|webp)(\?|$)/i) || out.startsWith('data:image/') || out.startsWith('http') && out.match(/image/i)) {
+              inputImage = inputImage || out;
+            } else if (out.match(/\.(mp4|mov|avi|webm)(\?|$)/i) || out.startsWith('data:video/')) {
+              inputVideo = inputVideo || out;
+            }
+          } else if (out && Array.isArray(out)) {
+            for (const item of out) {
+              if (typeof item === 'string' && item.match(/\.(png|jpg|jpeg|gif|webp)(\?|$)/i)) {
+                inputImage = inputImage || item;
+                break;
+              }
+            }
+          }
+        }
+      } catch (e) { /* 收集上游输入失败，忽略 */ }
+    }
 
     const isLocalVideo = /localhost|127\.0\.0\.1/i.test(prov ? prov.baseurl : '');
     if (!prov || !prov.baseurl || (!prov.key && !isLocalVideo) || !window.API || !API.videoGeneration) {
@@ -375,7 +433,10 @@
         duration: duration,
         resolution: resolution,
         fps: fps,
-        aspect_ratio: aspectRatio
+        aspect_ratio: aspectRatio,
+        mode: mode,
+        image: inputImage,
+        video: inputVideo
       }, opts);
       const arr = (urls || []).filter(Boolean);
       if (!arr.length) throw new Error('API 未返回视频数据');

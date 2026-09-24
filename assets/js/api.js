@@ -647,6 +647,7 @@
       throw new Error(tr('api.err.videoProviderMissing', '视频供应商缺少 API Key。（本地服务可留空）'));
     }
     const url = buildUrl(provider.baseurl, '/videos/generations');
+    const mode = params.mode || 't2v';
     const body = {
       model: params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'seedance-1.0-pro',
       prompt: params.prompt || 'a cinematic high-quality video',
@@ -655,6 +656,16 @@
       fps: params.fps || 24,
       aspect_ratio: params.aspect_ratio || '16:9'
     };
+    // v2.3.2：图生视频模式 - 传入首帧图片
+    if (mode === 'i2v' && params.image) {
+      body.image = params.image;
+      body.first_frame = params.image;
+    }
+    // v2.3.2：视频编辑模式 - 传入原视频和编辑指令
+    if (mode === 'edit' && params.video) {
+      body.video = params.video;
+      body.instruction = params.prompt;
+    }
 
     // ===== APILogger 埋点 =====
     const _alT0 = Date.now();
