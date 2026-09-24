@@ -102,7 +102,11 @@ window.NODE_DATA = [
       ['网页搜索', 'webSearchNode', '多搜索引擎联网搜索，返回标题/摘要/链接，支持关键词与时间范围', 0,
        'Web Search', 'Multi-engine web search with titles/snippets/links, keyword and time range support'],
       ['OCR识别', 'ocrNode', '图片文字识别，支持中英文/手写/表格，输出结构化文本与坐标', 0,
-       'OCR', 'Image text recognition with Chinese/English/handwriting/table support']
+       'OCR', 'Image text recognition with Chinese/English/handwriting/table support'],
+      ['图生视频', 'imageToVideoNode', '图片转视频，支持运动描述/时长/比例/运动强度，配置供应商返回真实视频', 1,
+       'Image to Video', 'Convert image to video with motion description/duration/ratio'],
+      ['文字区域检测', 'textRegionDetectNode', '检测图片中文字区域位置/字号/颜色/加粗，支持可视化标注', 1,
+       'Text Region Detect', 'Detect text regions with position/font/color/visualization'],
     ]
   },
   {

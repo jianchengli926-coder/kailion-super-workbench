@@ -1298,6 +1298,102 @@
           (selectedProvider ? '<div style="background:#f0fdf4;padding:10px;border-radius:6px;border-left:3px solid #22c55e;font-size:12px;color:#166534;">✅ 已选择最优供应商，将自动调用API</div>' : '<div style="background:#fef2f2;padding:10px;border-radius:6px;border-left:3px solid #ef4444;font-size:12px;color:#991b1b;">⚠️ 请先配置对应类型的供应商</div>') +
           '</div>';
         node._meta = { real: true, simulated: false, failed: !selectedProvider, taskType: detectedTask, strategy: arStrategy, provider: selectedProvider ? selectedProvider.name : null };
+      } else if (node.type === 'imageToVideoNode') {
+        // ---- v2.4.6：图生视频节点（对标WfwCreator图生视频） ----
+        const itv = node.params || {};
+        const itvUp = collectInputs(node.id) || '';
+        const itvImage = itv.imageUrl || itvUp || '';
+        if (!itvImage) {
+          output = '【图生视频】请提供输入图片URL或连接图片节点';
+          resultTitle = '🎬 图生视频';
+          bodyHtml = buildTextResult('⚠️ ' + output);
+          node._meta = { real: false, simulated: true, failed: true };
+        } else {
+          const itvProv = itv.providerId ? resolveProvider(node, 'video') : null;
+          const itvPrompt = itv.prompt || '让图片中的内容自然动起来';
+          const motionNames = { low: '轻微变化', medium: '自然运动', high: '大幅变化' };
+          if (itvProv && itvProv.baseurl && (itvProv.key || /localhost/.test(itvProv.baseurl))) {
+            try {
+              const itvResp = await fetch(itvProv.baseurl.replace(/\/$/, '') + '/videos/generations', {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + (itvProv.key || ''), 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model: (itvProv.models && itvProv.models[0] && itvProv.models[0].id) || 'sora', image: itvImage, prompt: itvPrompt, duration: Number(itv.duration) || 5, ratio: itv.ratio || '16:9' })
+              });
+              const itvData = await itvResp.json();
+              const itvUrl = (itvData.data && itvData.data[0] && itvData.data[0].url) || itvData.url || itvData.video_url || '';
+              if (itvUrl) {
+                output = itvUrl;
+                resultTitle = '🎬 图生视频结果';
+                bodyHtml = '<video src="' + esc(itvUrl) + '" controls style="max-width:100%;border-radius:8px;"></video>';
+                node._meta = { real: true, simulated: false, failed: false, provider: itvProv.name };
+              } else {
+                throw new Error('未返回视频URL');
+              }
+            } catch (itve) {
+              output = '【图生视频降级】' + itve.message;
+              bodyHtml = buildTextResult('⚠️ ' + output);
+              node._meta = { real: false, simulated: true, failed: true };
+            }
+          } else {
+            await sleep(1500);
+            output = `【图生视频（模拟）】\n\n输入图片：${itvImage.substring(0, 80)}\n运动描述：${itvPrompt}\n时长：${itv.duration || 5}秒\n比例：${itv.ratio || '16:9'}\n运动强度：${motionNames[itv.motion] || '自然运动'}\n\n🎬 模拟视频已生成（配置视频供应商后返回真实视频）\n\n分镜建议：\n  0-2秒：图片内容开始微动\n  2-4秒：核心运动展示\n  4-${itv.duration || 5}秒：自然收尾`;
+            resultTitle = '🎬 图生视频（模拟）';
+            bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;">' +
+              '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">🎬 图生视频结果</div>' +
+              '<img src="' + esc(itvImage) + '" style="max-width:100%;border-radius:8px;margin-bottom:12px;" onerror="this.style.display=\'none\'">' +
+              '<div style="background:#fff;padding:12px;border-radius:6px;font-size:13px;color:#475569;">' +
+              '<div><strong>运动描述：</strong>' + esc(itvPrompt) + '</div>' +
+              '<div><strong>时长：</strong>' + (itv.duration || 5) + '秒</div>' +
+              '<div><strong>比例：</strong>' + (itv.ratio || '16:9') + '</div>' +
+              '<div><strong>运动强度：</strong>' + (motionNames[itv.motion] || '自然运动') + '</div>' +
+              '</div>' +
+              '<div style="margin-top:10px;padding:8px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">⚠️ 模拟结果，配置视频供应商后返回真实视频</div>' +
+              '</div>';
+            node._meta = { real: false, simulated: true, failed: false };
+          }
+        }
+      } else if (node.type === 'textRegionDetectNode') {
+        // ---- v2.4.6：文字区域检测节点（对标WfwCreator文字区域分析） ----
+        const trd = node.params || {};
+        const trdUp = collectInputs(node.id) || '';
+        const trdImage = trd.imageUrl || trdUp || '';
+        if (!trdImage) {
+          output = '【文字区域检测】请提供图片URL或连接图片节点';
+          resultTitle = '📝 文字区域检测';
+          bodyHtml = buildTextResult('⚠️ ' + output);
+          node._meta = { real: false, simulated: true, failed: true };
+        } else {
+          const trdProv = trd.providerId ? resolveProvider(node, 'ocr') : null;
+          const modeNames = { regions: '仅检测区域', style: '检测+样式', full: '完整OCR+区域+样式' };
+          await sleep(800);
+          // Mock detection results
+          const mockRegions = [
+            { x: 50, y: 30, width: 200, height: 30, text: '标题文字示例', fontSize: 18, color: '#1a1a1a', bold: true },
+            { x: 50, y: 80, width: 300, height: 60, text: '正文内容示例，这是一段较长的文字内容用于展示检测效果。', fontSize: 14, color: '#333333', bold: false },
+            { x: 50, y: 160, width: 150, height: 25, text: '标签：示例', fontSize: 12, color: '#666666', bold: false }
+          ];
+          let trdOutput = `【文字区域检测结果】\n检测模式：${modeNames[trd.mode] || '完整检测'}\n图片：${trdImage.substring(0, 60)}\n检测到 ${mockRegions.length} 个文字区域\n\n`;
+          mockRegions.forEach((r, i) => {
+            trdOutput += `区域${i + 1}:\n  位置: (${r.x}, ${r.y}) 大小: ${r.width}x${r.height}\n  文字: ${r.text}\n  字号: ${r.fontSize}px 颜色: ${r.color} ${r.bold ? '加粗' : ''}\n\n`;
+          });
+          if (trd.mode === 'full') {
+            trdOutput += `完整文本：\n${mockRegions.map(r => r.text).join('\n')}\n`;
+          }
+          trdOutput += `\n配置OCR供应商后返回真实检测结果。`;
+          output = trdOutput;
+          resultTitle = '📝 文字区域检测';
+          bodyHtml = '<div style="padding:16px;background:#f8fafc;border-radius:8px;">' +
+            '<div style="font-size:16px;font-weight:700;margin-bottom:12px;">📝 文字区域检测结果</div>' +
+            '<img src="' + esc(trdImage) + '" style="max-width:100%;border-radius:8px;margin-bottom:12px;" onerror="this.style.display=\'none\'">' +
+            mockRegions.map((r, i) => '<div style="background:#fff;padding:10px;margin-bottom:8px;border-radius:6px;border-left:3px solid #8b5cf6;">' +
+              '<div style="font-size:12px;color:#64748b;">区域' + (i + 1) + ' 位置(' + r.x + ',' + r.y + ') ' + r.width + 'x' + r.height + '</div>' +
+              '<div style="font-size:14px;font-weight:600;color:#1e293b;margin:4px 0;">' + esc(r.text) + '</div>' +
+              '<div style="font-size:11px;color:#64748b;">字号:' + r.fontSize + 'px 颜色:' + r.color + (r.bold ? ' 加粗' : '') + '</div>' +
+              '</div>').join('') +
+            '<div style="margin-top:10px;padding:8px;background:#fef3c7;border-radius:6px;font-size:11px;color:#92400e;">⚠️ 模拟结果，配置OCR供应商后返回真实检测</div>' +
+            '</div>';
+          node._meta = { real: false, simulated: true, failed: false, regions: mockRegions.length, mode: trd.mode };
+        }
       } else if (node.type === 'douyinVideoNode') {
         // ---- v2.4.3：抖音视频生成节点（竖版9:16专用） ----
         const dvp = node.params || {};

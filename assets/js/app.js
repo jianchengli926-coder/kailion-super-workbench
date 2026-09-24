@@ -671,3 +671,25 @@
     boot();
   }
 })();
+// v2.4.6：代理配置保存
+function saveProxyConfig() {
+  const config = {
+    type: document.getElementById('proxyType')?.value || 'none',
+    host: document.getElementById('proxyHost')?.value || '',
+    port: document.getElementById('proxyPort')?.value || '',
+    cloudNewtonKey: document.getElementById('cloudNewtonKey')?.value || ''
+  };
+  localStorage.setItem('kailion_proxy_config', JSON.stringify(config));
+  alert('代理配置已保存！' + (config.type !== 'none' ? '\n代理：' + config.type + '://' + config.host + ':' + config.port : ''));
+}
+
+// v2.4.6：加载代理配置
+function loadProxyConfig() {
+  try {
+    const config = JSON.parse(localStorage.getItem('kailion_proxy_config') || '{}');
+    if (document.getElementById('proxyType')) document.getElementById('proxyType').value = config.type || 'none';
+    if (document.getElementById('proxyHost')) document.getElementById('proxyHost').value = config.host || '';
+    if (document.getElementById('proxyPort')) document.getElementById('proxyPort').value = config.port || '';
+    if (document.getElementById('cloudNewtonKey')) document.getElementById('cloudNewtonKey').value = config.cloudNewtonKey || '';
+  } catch(e) {}
+}

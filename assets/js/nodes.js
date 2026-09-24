@@ -216,6 +216,32 @@
       ], value: 'text' },
       { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'ocr', hint: '在设置中配置OCR供应商' }
     ],
+    // v2.4.6：图生视频节点（对标WfwCreator图生视频）
+    imageToVideoNode: [
+      { key: 'imageUrl', label: '输入图片URL', type: 'text', placeholder: '粘贴图片URL，或连接图片节点输入' },
+      { key: 'prompt', label: '运动描述（可选）', type: 'textarea', placeholder: '描述图片中的运动/变化，如：镜头缓慢推进，人物微笑…' },
+      { key: 'providerId', label: '视频供应商', type: 'select', dynamic: 'provider', providerCategory: 'video' },
+      { key: 'duration', label: '时长（秒）', type: 'select', options: [
+        { value: '5', label: '5秒' }, { value: '8', label: '8秒' }, { value: '10', label: '10秒' }
+      ], value: '5' },
+      { key: 'ratio', label: '比例', type: 'select', options: [
+        { value: '16:9', label: '16:9 横屏' }, { value: '9:16', label: '9:16 竖屏' }, { value: '1:1', label: '1:1 方形' }
+      ], value: '16:9' },
+      { key: 'motion', label: '运动强度', type: 'select', options: [
+        { value: 'low', label: '低（轻微变化）' }, { value: 'medium', label: '中（自然运动）' }, { value: 'high', label: '高（大幅变化）' }
+      ], value: 'medium' }
+    ],
+    // v2.4.6：文字区域检测节点（对标WfwCreator文字区域分析）
+    textRegionDetectNode: [
+      { key: 'imageUrl', label: '图片URL', type: 'text', placeholder: '粘贴图片URL，或连接图片节点输入' },
+      { key: 'mode', label: '检测模式', type: 'select', options: [
+        { value: 'regions', label: '仅检测文字区域' },
+        { value: 'style', label: '检测+样式分析' },
+        { value: 'full', label: '完整OCR+区域+样式' }
+      ], value: 'full' },
+      { key: 'providerId', label: 'OCR供应商', type: 'select', dynamic: 'provider', providerCategory: 'ocr' },
+      { key: 'visualize', label: '可视化标注', type: 'checkbox', value: true }
+    ],
     // v2.3.3：去背景节点
     removeBgNode: [
       { key: 'scene', label: '场景类型', type: 'select', options: [
