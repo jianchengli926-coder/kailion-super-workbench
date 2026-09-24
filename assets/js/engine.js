@@ -255,10 +255,45 @@
     }
     const p = node.params || {};
     const model = p.model || (prov.models && prov.models[0] && prov.models[0].id) || 'gpt-4o-mini';
+    
+    // v2.3.1：思考模式 - 在系统提示中注入深度思考指令
+    let systemPrompt = sys;
+    if (p.enableThinking) {
+      systemPrompt += '\n\n【思考模式】请先进行深度思考和推理分析，然后给出最终答案。思考过程要严谨、有逻辑。';
+    }
+    
+    // v2.3.1：知识库引用 - 从本地知识库检索相关内容注入提示词
+    let userPrompt = user;
+    if (p.enableKnowledge || p.enableRAG) {
+      try {
+        const kbRaw = localStorage.getItem('kailion_knowledge_base');
+        if (kbRaw) {
+          const kb = JSON.parse(kbRaw);
+          const items = Array.isArray(kb) ? kb : (kb.items || []);
+          if (items.length > 0) {
+            // 简单关键词匹配检索
+            const keywords = user.toLowerCase().split(/\s+/).filter(w => w.length > 1);
+            const relevant = items.filter(item => {
+              const text = (item.title + ' ' + item.content + ' ' + (item.tags || [])).toLowerCase();
+              return keywords.some(k => text.includes(k));
+            }).slice(0, 3);
+            if (relevant.length > 0) {
+              const refs = relevant.map((r, i) => `[参考${i+1}] ${r.title}: ${(r.content || '').substring(0, 200)}`).join('\n');
+              userPrompt += '\n\n【知识库参考资料】\n' + refs + '\n\n请结合以上参考资料回答问题。';
+            }
+          }
+        }
+      } catch (e) { /* 知识库读取失败，忽略 */ }
+    }
+    
+    // v2.3.1：对话模式 - 多轮对话历史
     const messages = [
-      { role: 'system', content: sys },
-      { role: 'user', content: user }
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
     ];
+    if (p.dialogMode === 'multi' && node._chatHistory) {
+      messages.unshift(...node._chatHistory);
+    }
     const temperature = p.temperature != null ? p.temperature : 0.7;
     const maxTokens = p.maxTokens != null ? p.maxTokens : 2048;
     let full = '';
