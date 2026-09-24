@@ -198,6 +198,8 @@
     return /image|GeneratorPro|gptImage|creativeInspiration|dalle|flux|zImage|agnesImage|doubaoGenerator/i.test(type);
   }
   function isVideoNode(type) {
+    // grokChatNode是对话节点，不是视频生成节点，需排除
+    if (type === 'grokChatNode') return false;
     return /video|seedance|omni|minimax|grok|veo|kling|agnesVideo/i.test(type);
   }
   function is3DNode(type) {
