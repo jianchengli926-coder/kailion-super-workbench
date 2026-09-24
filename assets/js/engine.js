@@ -247,7 +247,8 @@
     const sys = (node.params && node.params.system) || '你是锴利超级AI工作台的写作助手。';
     const user = collectInputs(node.id) || (node.params && node.params.text) || '请根据工作流上下文生成内容。';
     const prov = resolveProvider(node, 'llm');
-    if (!prov || !prov.baseurl || !prov.key || !window.API) {
+    const isLocal = /localhost|127\.0\.0\.1/i.test(prov ? prov.baseurl : '');
+    if (!prov || !prov.baseurl || (!prov.key && !isLocal) || !window.API) {
       // 降级模拟：未配置供应商 / API 未加载
       await sleep(600);
       return `【模拟输出·未配置供应商】\n已接收上游输入 ${(user||'').length} 字。\n在「设置 → 供应商管理」配置 OpenAI 兼容接口后，此处将返回真实大模型结果。\n\n系统设定：${sys.slice(0, 80)}`;
@@ -287,7 +288,8 @@
   /* ====================== 图片生成 API ====================== */
   async function callImageAPI(node, opts) {
     const prov = resolveProvider(node, 'image');
-    if (!prov || !prov.baseurl || !prov.key || !window.API) {
+    const isLocal = /localhost|127\.0\.0\.1/i.test(prov ? prov.baseurl : '');
+    if (!prov || !prov.baseurl || (!prov.key && !isLocal) || !window.API) {
       throw new Error('未配置图片生成供应商');
     }
     const p = node.params || {};
@@ -325,7 +327,8 @@
     const fps = p.fps != null ? p.fps : 24;
     const aspectRatio = p.aspect_ratio || p.ratio || '16:9';
 
-    if (!prov || !prov.baseurl || !prov.key || !window.API || !API.videoGeneration) {
+    const isLocalVideo = /localhost|127\.0\.0\.1/i.test(prov ? prov.baseurl : '');
+    if (!prov || !prov.baseurl || (!prov.key && !isLocalVideo) || !window.API || !API.videoGeneration) {
       const msg = '视频生成API未配置（缺少供应商或接口），已降级为模拟输出';
       if (window.UI) UI.toast(msg);
       return { status: 'simulated', message: msg, model: model, elapsed: Date.now() - v0, params: { duration, resolution, fps, aspect_ratio: aspectRatio } };
@@ -377,7 +380,8 @@
     const quality = p.quality || 'standard';
     const mode = p.mode || 'single';
 
-    if (!prov || !prov.baseurl || !prov.key || !window.API || !API.model3DGeneration) {
+    const isLocal3d = /localhost|127\.0\.0\.1/i.test(prov ? prov.baseurl : '');
+    if (!prov || !prov.baseurl || (!prov.key && !isLocal3d) || !window.API || !API.model3DGeneration) {
       const msg = '3D生成API未配置（缺少供应商或接口），已降级为模拟输出';
       if (window.UI) UI.toast(msg);
       return { status: 'simulated', message: msg, model: model, elapsed: Date.now() - v0, params: { format, faceCount, quality, mode } };
