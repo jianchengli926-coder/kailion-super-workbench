@@ -229,6 +229,83 @@
       ], value: 'high' },
       { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'image', hint: '在设置中配置图片处理供应商' }
     ],
+    // v2.4.0：锴利专线 - 产品图精修
+    klProductShotNode: [
+      { key: 'productType', label: '产品类型', type: 'select', options: [
+        { value: 'knife', label: '刀具' }, { value: 'scissors', label: '剪刀' }, { value: 'kitchenware', label: '厨具' }, { value: 'hardware', label: '五金' }, { value: 'auto', label: '自动识别' }
+      ], value: 'auto' },
+      { key: 'style', label: '精修风格', type: 'select', options: [
+        { value: 'ecommerce', label: '电商白底' }, { value: 'lifestyle', label: '生活场景' }, { value: 'premium', label: '高端质感' }, { value: 'minimal', label: '极简风' }
+      ], value: 'ecommerce' },
+      { key: 'removeBg', label: '自动去背景', type: 'checkbox', value: true },
+      { key: 'enhanceMetal', label: '金属质感增强', type: 'checkbox', value: true },
+      { key: 'outputSize', label: '输出尺寸', type: 'select', options: [
+        { value: '1000x1000', label: '1000×1000' }, { value: '1500x1500', label: '1500×1500' }, { value: '2000x2000', label: '2000×2000' }
+      ], value: '1500x1500' }
+    ],
+    // v2.4.0：锴利专线 - 规格参数表
+    klSpecSheetNode: [
+      { key: 'productType', label: '产品类型', type: 'select', options: [
+        { value: 'knife', label: '刀具' }, { value: 'scissors', label: '剪刀' }, { value: 'kitchenware', label: '厨具' }, { value: 'hardware', label: '五金' }
+      ], value: 'knife' },
+      { key: 'language', label: '输出语言', type: 'select', options: [
+        { value: 'zh_en', label: '中英双语' }, { value: 'zh', label: '中文' }, { value: 'en', label: '英文' }
+      ], value: 'zh_en' },
+      { key: 'includeMaterial', label: '包含材质参数', type: 'checkbox', value: true },
+      { key: 'includeDimension', label: '包含尺寸参数', type: 'checkbox', value: true },
+      { key: 'saveToKB', label: '保存到知识库', type: 'checkbox', value: true }
+    ],
+    // v2.4.0：锴利专线 - 询盘邮件生成
+    klInquiryReplyNode: [
+      { key: 'buyerType', label: '买家类型', type: 'select', options: [
+        { value: 'auto', label: '自动识别' }, { value: 'distributor', label: '经销商' }, { value: 'retailer', label: '零售商' }, { value: 'brand', label: '品牌商' }, { value: 'amazon', label: '亚马逊卖家' }
+      ], value: 'auto' },
+      { key: 'tone', label: '语气风格', type: 'select', options: [
+        { value: 'professional', label: '专业正式' }, { value: 'friendly', label: '友好亲切' }, { value: 'urgent', label: '紧迫促销' }
+      ], value: 'professional' },
+      { key: 'language', label: '回复语言', type: 'select', options: [
+        { value: 'en', label: '英文' }, { value: 'zh', label: '中文' }, { value: 'auto', label: '自动匹配' }
+      ], value: 'en' },
+      { key: 'includeQuote', label: '包含报价模板', type: 'checkbox', value: true },
+      { key: 'includeCert', label: '提及认证资质', type: 'checkbox', value: true }
+    ],
+    // v2.4.0：锴利专线 - 出口合规包
+    klCertPackNode: [
+      { key: 'targetMarket', label: '目标市场', type: 'select', options: [
+        { value: 'us', label: '美国' }, { value: 'eu', label: '欧盟' }, { value: 'uk', label: '英国' }, { value: 'jp', label: '日本' }, { value: 'global', label: '全球' }
+      ], value: 'us' },
+      { key: 'productType', label: '产品类型', type: 'select', options: [
+        { value: 'knife', label: '刀具' }, { value: 'scissors', label: '剪刀' }, { value: 'kitchenware', label: '厨具' }, { value: 'hardware', label: '五金' }
+      ], value: 'knife' },
+      { key: 'standards', label: '合规标准', type: 'checkbox', value: true },
+      { key: 'warnings', label: '生成警示语', type: 'checkbox', value: true },
+      { key: 'outputFormat', label: '输出格式', type: 'select', options: [
+        { value: 'checklist', label: '清单格式' }, { value: 'report', label: '报告格式' }, { value: 'label', label: '标签格式' }
+      ], value: 'checklist' }
+    ],
+    // v2.4.0：锴利专线 - 独立站文案
+    klSiteCopyNode: [
+      { key: 'pageType', label: '页面类型', type: 'select', options: [
+        { value: 'product', label: '产品详情页' }, { value: 'category', label: '分类页' }, { value: 'home', label: '首页' }, { value: 'about', label: '关于我们' }, { value: 'blog', label: '博客文章' }
+      ], value: 'product' },
+      { key: 'language', label: '语言', type: 'select', options: [
+        { value: 'en', label: '英文' }, { value: 'zh', label: '中文' }, { value: 'zh_en', label: '中英双语' }
+      ], value: 'en' },
+      { key: 'seoKeywords', label: 'SEO关键词', type: 'text', placeholder: '输入核心关键词，逗号分隔' },
+      { key: 'includeSchema', label: '包含结构化数据', type: 'checkbox', value: true },
+      { key: 'wordCount', label: '目标字数', type: 'select', options: [
+        { value: '300', label: '300字' }, { value: '500', label: '500字' }, { value: '800', label: '800字' }, { value: '1200', label: '1200字' }
+      ], value: '500' }
+    ],
+    // v2.4.0：锴利专线 - 供应商评分
+    klSupplierScoreNode: [
+      { key: 'scoreDimensions', label: '评分维度', type: 'checkbox', value: true },
+      { key: 'priceWeight', label: '价格权重', type: 'number', min: 0, max: 100, value: 30 },
+      { key: 'qualityWeight', label: '质量权重', type: 'number', min: 0, max: 100, value: 30 },
+      { key: 'deliveryWeight', label: '交期权重', type: 'number', min: 0, max: 100, value: 20 },
+      { key: 'serviceWeight', label: '服务权重', type: 'number', min: 0, max: 100, value: 20 },
+      { key: 'includeAdvice', label: '包含议价建议', type: 'checkbox', value: true }
+    ],
 
     /* 协同与优化 */
     expertDiscussionNode: [
