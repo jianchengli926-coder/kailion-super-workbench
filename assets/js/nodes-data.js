@@ -78,7 +78,9 @@ window.NODE_DATA = [
     cat: '连接器', catEn: 'Connectors', icon: '🔗', color: '#10b981',
     nodes: [
       ['LLM', 'llmContentNode', '通用大语言模型内容生成，支持深度思考与多轮对话', 1,
-       'LLM', 'General LLM content generation with deep thinking and multi-turn dialogue support'],
+       'LLM Chat', 'General LLM content generation with deep thinking and multi-turn'],
+      ['Grok对话', 'grokChatNode', 'xAI Grok模型对话，支持Grok 2/Mini/Vision，流式输出与系统提示词', 1,
+       'Grok Chat', 'xAI Grok model chat: Grok 2/Mini/Vision with streaming and system prompt'],
       ['内容审查', 'contentReviewNode', '多模态内容合规审查与风险评估，发布前的前置拦截', 1,
        'Content Review', 'Multimodal content compliance review and risk assessment; pre-publish interception'],
       ['MCP', 'mcpNode', '调用 MCP 服务器的外部工具，把外部能力接进工作流', 0,
@@ -89,6 +91,8 @@ window.NODE_DATA = [
        'GEO', 'Generative Engine Optimization: make content easier for ChatGPT / Perplexity / Gemini to retrieve and cite'],
       ['信息检索', 'infoRetrievalNode', '多源信息检索 + LLM 智能处理', 0,
        'Info Retrieval', 'Multi-source information retrieval + LLM intelligent processing'],
+      ['飞书消息', 'feishuMessageNode', '发送飞书群机器人消息，支持文本/富文本/卡片/Markdown，可签名校验', 1,
+       'Feishu Message', 'Send Feishu bot messages: text/rich-text/card/Markdown with signature verification'],
       ['HTTP请求', 'httpRequestNode', '调用任意 REST API，自定义方法/头/请求体', 0,
        'HTTP Request', 'Call any REST API with custom method/headers/body'],
       ['网页搜索', 'webSearchNode', '多搜索引擎联网搜索，返回标题/摘要/链接，支持关键词与时间范围', 0,
@@ -111,7 +115,9 @@ window.NODE_DATA = [
       ['水印', 'watermarkNode', '给图片添加文字或图片水印，支持位置/字号/透明度/旋转', 1,
        'Watermark', 'Add text or image watermark to images with position/font/opacity/rotation'],
       ['去背景', 'removeBgNode', 'AI智能抠图去背景，支持人像/商品/通用场景，输出透明PNG', 1,
-       'Remove BG', 'AI background removal for portrait/product/generic scenes, transparent PNG output']
+       'Remove BG', 'AI background removal for portrait/product/generic scenes, transparent PNG output'],
+      ['文字移除', 'removeTextNode', 'AI移除图片中的文字并智能修复背景，支持自动检测/指定区域/AI重绘', 1,
+       'Remove Text', 'AI text removal with smart inpainting: auto-detect/region/AI-redraw modes']
     ]
   },
   {

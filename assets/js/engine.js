@@ -1568,6 +1568,137 @@
           bodyHtml = buildTextResult(output);
           node._meta = { real: false, simulated: true, failed: false };
         }
+      } else if (node.type === 'feishuMessageNode') {
+        // ---- v2.4.1：飞书消息节点（对标网蜂窝飞书集成） ----
+        const fp = node.params || {};
+        const webhook = fp.webhookUrl || '';
+        if (!webhook) {
+          output = '【飞书消息】请先配置飞书机器人Webhook地址\n\n在飞书群设置 → 群机器人 → 添加自定义机器人，获取Webhook地址后填入节点参数。';
+          resultTitle = '📨 飞书消息（未配置）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: true };
+        } else {
+          const upContent = collectInputs(node.id) || '';
+          const msgContent = fp.content || upContent || '锴利超级AI工作台消息';
+          const msgType = fp.msgType || 'text';
+          let payload = {};
+          if (msgType === 'text') {
+            payload = { msg_type: 'text', content: { text: msgContent + (fp.atAll ? '\n<at user_id="all">所有人</at>' : '') } };
+          } else if (msgType === 'rich') {
+            payload = { msg_type: 'post', content: { post: { zh_cn: { title: fp.title || '消息', content: [[{ tag: 'text', text: msgContent }]] } } } };
+          } else if (msgType === 'card') {
+            payload = { msg_type: 'interactive', card: { header: { title: { tag: 'plain_text', content: fp.title || '消息' } }, elements: [{ tag: 'div', text: { tag: 'lark_md', content: msgContent } }] } };
+          } else {
+            payload = { msg_type: 'text', content: { text: msgContent } };
+          }
+          if (fp.secret) {
+            try {
+              const timestamp = Math.floor(Date.now() / 1000);
+              const stringToSign = timestamp + '\n' + fp.secret;
+              const encoder = new TextEncoder();
+              const keyData = encoder.encode(stringToSign);
+              const signBase64 = btoa(String.fromCharCode.apply(null, keyData));
+              payload.timestamp = String(timestamp);
+              payload.sign = signBase64;
+            } catch (se) { /* 签名失败则不签名 */ }
+          }
+          try {
+            const fresp = await fetch(webhook, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload)
+            });
+            const fdata = await fresp.json();
+            if (fdata.code === 0 || fdata.StatusCode === 0) {
+              output = '【飞书消息发送成功】\n类型：' + msgType + '\n内容：' + msgContent.substring(0, 100) + (msgContent.length > 100 ? '…' : '');
+              resultTitle = '📨 飞书消息发送成功';
+              bodyHtml = '<div style="padding:12px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;"><div style="font-size:14px;font-weight:600;color:#166534;">✅ 消息已发送到飞书群</div><div style="font-size:12px;color:#15803d;margin-top:4px;">类型：' + esc(msgType) + '</div></div>';
+              node._meta = { real: true, simulated: false, failed: false };
+            } else {
+              throw new Error(fdata.msg || fdata.StatusMessage || '发送失败');
+            }
+          } catch (fe) {
+            output = '【飞书消息发送失败】' + fe.message + '\n\n请检查：\n1. Webhook地址是否正确\n2. 机器人是否已添加到群\n3. 签名Secret是否正确（如开启）';
+            resultTitle = '📨 飞书消息发送失败';
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: true, simulated: false, failed: true };
+          }
+        }
+      } else if (node.type === 'removeTextNode') {
+        // ---- v2.4.1：图片文字移除节点（对标网蜂窝remove_text_from_image） ----
+        const rtp = node.params || {};
+        const rtImg = collectInputs(node.id);
+        if (!rtImg) throw new Error('文字移除节点需要上游图片输入');
+        const rtProv = rtp.providerId ? resolveProvider(node, 'image') : null;
+        if (rtProv && rtProv.baseurl && (rtProv.key || /localhost/.test(rtProv.baseurl))) {
+          try {
+            const rtUrl = rtProv.baseurl.replace(/\/$/, '') + '/remove-text';
+            const rtresp = await fetch(rtUrl, {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (rtProv.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify({ image: rtImg, mode: rtp.mode, region: rtp.region, format: rtp.outputFormat, quality: rtp.quality })
+            });
+            const rtdata = await rtresp.json();
+            output = rtdata.url || rtdata.image || '文字移除完成';
+            resultTitle = '🖼️ 文字移除结果';
+            bodyHtml = '<img src="' + esc(output) + '" style="max-width:100%;border-radius:8px;border:1px dashed #cbd5e1;" />';
+            node._meta = { real: true, simulated: false, failed: false, provider: rtProv.name };
+          } catch (rte) {
+            output = '【文字移除降级】处理失败：' + rte.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(700);
+          output = '【模拟文字移除】模式：' + rtp.mode + '，格式：' + rtp.outputFormat + '\n已智能检测图片中的文字区域并移除，AI修复背景完成。\n\n在「设置 → 供应商管理」中配置支持inpaint的图片API供应商后，将返回真实处理结果。';
+          resultTitle = '🖼️ 文字移除（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
+      } else if (node.type === 'grokChatNode') {
+        // ---- v2.4.1：Grok对话节点（对标网蜂窝Grok支持） ----
+        const gp = node.params || {};
+        const gprov = gp.providerId ? resolveProvider(node, 'llm') : null;
+        const gUp = collectInputs(node.id) || '';
+        const gPrompt = gUp || '你好，请介绍一下自己';
+        if (gprov && gprov.baseurl && (gprov.key || /localhost/.test(gprov.baseurl))) {
+          try {
+            const gMessages = [];
+            if (gp.systemPrompt) gMessages.push({ role: 'system', content: gp.systemPrompt });
+            gMessages.push({ role: 'user', content: gPrompt });
+            const gBody = {
+              model: gp.model || 'grok-2',
+              messages: gMessages,
+              temperature: Number(gp.temperature) || 0.7,
+              max_tokens: Number(gp.maxTokens) || 4096,
+              stream: false
+            };
+            const gresp = await fetch(gprov.baseurl.replace(/\/$/, '') + '/chat/completions', {
+              method: 'POST',
+              headers: { 'Authorization': 'Bearer ' + (gprov.key || ''), 'Content-Type': 'application/json' },
+              body: JSON.stringify(gBody)
+            });
+            const gdata = await gresp.json();
+            if (gdata.choices && gdata.choices[0]) {
+              output = gdata.choices[0].message.content || '';
+              resultTitle = '🤖 Grok 对话结果';
+              bodyHtml = buildTextResult(output);
+              node._meta = { real: true, simulated: false, failed: false, provider: gprov.name, model: gp.model };
+            } else {
+              throw new Error((gdata.error && gdata.error.message) || 'Grok API返回格式错误');
+            }
+          } catch (ge) {
+            output = '【Grok降级】调用失败：' + ge.message;
+            bodyHtml = buildTextResult('⚠️ ' + output);
+            node._meta = { real: false, simulated: true, failed: true };
+          }
+        } else {
+          await sleep(600);
+          output = '【模拟Grok】模型：' + (gp.model || 'grok-2') + '\n\n你好！我是xAI的Grok助手，我可以帮助你回答问题、写作、编程等。\n\n在「设置 → 供应商管理」中配置xAI Grok API或兼容中转站后，将返回真实对话结果。';
+          resultTitle = '🤖 Grok 对话（模拟）';
+          bodyHtml = buildTextResult(output);
+          node._meta = { real: false, simulated: true, failed: false };
+        }
       } else if (/fileUpload|documentConvert|imageConvert|modelConvert|imageGrid/i.test(node.type)) {
         await sleep(300);
         output = '[' + node.type + '] 处理完成';

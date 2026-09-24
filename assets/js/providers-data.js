@@ -112,6 +112,22 @@
         { id: 'triposr-1.0', label: 'TripoSR 1.0（快速）' },
         { id: 'tripo3d-v2', label: 'Tripo3D v2（高质量）' }
       ] },
+    { name: 'xAI Grok', nameEn: 'xAI Grok', baseurl: 'https://api.x.ai/v1', category: 'llm', categoryEn: CAT_EN.llm, icon: '𝕏', protocol: 'openai',
+      models: [
+        { id: 'grok-2', name: 'Grok 2', type: 'llm' },
+        { id: 'grok-2-1212', name: 'Grok 2 (1212)', type: 'llm' },
+        { id: 'grok-2-mini', name: 'Grok 2 Mini', type: 'llm' },
+        { id: 'grok-vision-beta', name: 'Grok Vision Beta', type: 'llm' }
+      ] },
+    { name: 'ElevenLabs Omni', nameEn: 'ElevenLabs Omni', baseurl: 'https://api.elevenlabs.io/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎙️', protocol: 'custom',
+      models: [
+        { id: 'omni-v1', name: 'Omni v1', type: 'video' }
+      ] },
+    { name: 'Agnes API', nameEn: 'Agnes API', baseurl: 'https://api.agnesapi.com/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🔮', protocol: 'openai',
+      models: [
+        { id: 'agnes-image', name: 'Agnes 图片生成', type: 'image' },
+        { id: 'agnes-video', name: 'Agnes 视频生成', type: 'video' }
+      ] },
     { name: 'Meshy', nameEn: 'Meshy', baseurl: 'https://api.meshy.ai/v1', category: '3d', categoryEn: CAT_EN['3d'], icon: '🎲',
       desc: 'Meshy AI 3D 资产生成，支持纹理重绘与格式转换',
       descEn: 'Meshy AI 3D asset generation, texture repaint and format conversion',

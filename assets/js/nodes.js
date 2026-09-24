@@ -306,6 +306,42 @@
       { key: 'serviceWeight', label: '服务权重', type: 'number', min: 0, max: 100, value: 20 },
       { key: 'includeAdvice', label: '包含议价建议', type: 'checkbox', value: true }
     ],
+    // v2.4.1：飞书消息节点（对标网蜂窝飞书集成）
+    feishuMessageNode: [
+      { key: 'webhookUrl', label: '飞书机器人Webhook', type: 'text', placeholder: 'https://open.feishu.cn/open-apis/bot/v2/hook/xxx', hint: '在飞书群设置中添加自定义机器人获取' },
+      { key: 'msgType', label: '消息类型', type: 'select', options: [
+        { value: 'text', label: '纯文本' }, { value: 'rich', label: '富文本' }, { value: 'card', label: '消息卡片' }, { value: 'markdown', label: 'Markdown' }
+      ], value: 'text' },
+      { key: 'title', label: '消息标题', type: 'text', placeholder: '输入消息标题（卡片/富文本用）' },
+      { key: 'content', label: '消息内容', type: 'textarea', placeholder: '输入消息内容，支持引用上游节点输出' },
+      { key: 'atAll', label: '@所有人', type: 'checkbox', value: false },
+      { key: 'secret', label: '签名校验Secret', type: 'text', placeholder: '可选，机器人开启签名校验时填写' }
+    ],
+    // v2.4.1：图片文字移除节点（对标网蜂窝remove_text_from_image）
+    removeTextNode: [
+      { key: 'mode', label: '移除模式', type: 'select', options: [
+        { value: 'auto', label: '自动检测并移除' }, { value: 'region', label: '指定区域移除' }, { value: 'inpaint', label: 'AI修复重绘' }
+      ], value: 'auto' },
+      { key: 'region', label: '指定区域（x,y,w,h）', type: 'text', placeholder: '如：100,50,200,80（mode=region时用）' },
+      { key: 'outputFormat', label: '输出格式', type: 'select', options: [
+        { value: 'png', label: 'PNG' }, { value: 'jpg', label: 'JPG' }, { value: 'webp', label: 'WebP' }
+      ], value: 'png' },
+      { key: 'quality', label: '输出质量', type: 'select', options: [
+        { value: 'standard', label: '标准' }, { value: 'high', label: '高清' }
+      ], value: 'high' },
+      { key: 'providerId', label: 'AI修图供应商', type: 'select', dynamic: 'provider', providerCategory: 'image', hint: '选择支持inpaint的图片API供应商' }
+    ],
+    // v2.4.1：Grok对话节点（对标网蜂窝Grok支持）
+    grokChatNode: [
+      { key: 'model', label: '模型', type: 'select', options: [
+        { value: 'grok-2', label: 'Grok 2' }, { value: 'grok-2-1212', label: 'Grok 2 (1212)' }, { value: 'grok-2-mini', label: 'Grok 2 Mini' }, { value: 'grok-vision-beta', label: 'Grok Vision Beta' }
+      ], value: 'grok-2' },
+      { key: 'systemPrompt', label: '系统提示词', type: 'textarea', placeholder: '设置AI角色和行为，可选' },
+      { key: 'temperature', label: '温度 (0-2)', type: 'number', min: 0, max: 2, step: 0.1, value: 0.7 },
+      { key: 'maxTokens', label: '最大生成长度', type: 'number', min: 1, max: 32768, value: 4096 },
+      { key: 'stream', label: '流式输出', type: 'checkbox', value: true },
+      { key: 'providerId', label: 'API供应商', type: 'select', dynamic: 'provider', providerCategory: 'llm', hint: '在设置中配置xAI Grok或兼容中转站' }
+    ],
 
     /* 协同与优化 */
     expertDiscussionNode: [
