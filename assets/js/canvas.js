@@ -1435,6 +1435,17 @@
     return true;
   }
 
+  /* v2.3.1 移动节点位置（供智能编排等外部功能使用） */
+  function moveNode(id, x, y) {
+    const node = state.nodes[id];
+    if (!node) return false;
+    node.x = x;
+    node.y = y;
+    render();
+    notifyChange();
+    return true;
+  }
+
   /* ====================== 键盘删除（批量） ====================== */
   function onKeyDown(e) {
     // 避免在输入框/按钮里触发
@@ -1977,7 +1988,7 @@
     setState: importState,
     getNode, getSelected,
     updateNodeParams,
-    setZoom, resetZoom, autoLayout,
+    setZoom, resetZoom, autoLayout, moveNode,
     onStateChange(cb) { onStateChange = cb; },
     render,
     setNodeRunning, setNodeResult, setNodeBadge, getUpstream, removeLink,

@@ -1981,14 +1981,18 @@
       nodes.forEach(n => { const l = layer[n.id] || 0; if (!layers[l]) layers[l] = []; layers[l].push(n); });
       // 布局
       const startX = 200, startY = 150, gapX = 300, gapY = 160;
+      const newState = Canvas.getState ? JSON.parse(JSON.stringify(Canvas.getState())) : {nodes: {}};
       Object.entries(layers).forEach(([l, ns]) => {
         ns.forEach((n, i) => {
           const x = startX + parseInt(l) * gapX;
           const y = startY + i * gapY - (ns.length - 1) * gapY / 2;
-          if (Canvas.moveNode) Canvas.moveNode(n.id, x, y);
-          else if (n.x != null) { n.x = x; n.y = y; }
+          if (newState.nodes[n.id]) {
+            newState.nodes[n.id].x = x;
+            newState.nodes[n.id].y = y;
+          }
         });
       });
+      if (Canvas.setState) Canvas.setState(newState);
       if (Canvas.render) Canvas.render();
       toast('🧠 智能编排完成：已按数据流优化 ' + nodes.length + ' 个节点布局');
     });
