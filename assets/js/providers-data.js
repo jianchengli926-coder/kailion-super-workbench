@@ -12,6 +12,37 @@
 (function () {
   'use strict';
 
+  /* ====================== v2.7.2：公网部署智能检测 ======================
+   * 根据当前访问域名自动选择 Ollama 地址：
+   * - 本地访问（localhost/127.0.0.1/局域网IP）→ http://localhost:11434/v1
+   * - 公网访问（creator.kailioncrafts.com）→ https://ollama.kailioncrafts.com/v1
+   */
+  function detectOllamaBaseUrl() {
+    try {
+      var host = window.location.hostname || '';
+      var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(host);
+      if (isLocal) {
+        return 'http://localhost:11434/v1';
+      }
+      return 'https://ollama.kailioncrafts.com/v1';
+    } catch (e) {
+      return 'http://localhost:11434/v1';
+    }
+  }
+
+  function getDeployMode() {
+    try {
+      var host = window.location.hostname || '';
+      var isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(host);
+      return isLocal ? 'local' : 'public';
+    } catch (e) {
+      return 'local';
+    }
+  }
+
+  var OLLAMA_BASEURL = detectOllamaBaseUrl();
+  var DEPLOY_MODE = getDeployMode();
+
   /* ====================== 出厂预设模板 ====================== */
   // 字段：name / nameEn / baseurl / category / categoryEn / models[{id,label}] / desc / descEn / icon
   // preset 不含 key，用户在设置页填入后才落库
@@ -85,8 +116,8 @@
         { id: 'claude-3-5-sonnet', label: 'Claude 3.5 Sonnet' },
         { id: 'dall-e-3', label: 'DALL·E 3（生图）' }
       ] },
-    { name: 'Ollama 本地模型', nameEn: 'Ollama (Local)', baseurl: 'http://localhost:11434/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🦙', protocol: 'openai',
-      desc: '本地运行，无需联网，隐私安全（API Key 可留空）',
+    { name: 'Ollama 本地模型', nameEn: 'Ollama (Local)', baseurl: OLLAMA_BASEURL, category: 'universal', categoryEn: CAT_EN.universal, icon: '🦙', protocol: 'openai',
+      desc: DEPLOY_MODE === 'public' ? '主机本地模型，通过公网隧道访问（API Key 可留空）' : '本地运行，无需联网，隐私安全（API Key 可留空）',
       descEn: 'Runs locally, no internet needed, private and secure (API Key can be left empty)',
       models: [
         { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）' },
@@ -253,15 +284,21 @@
    */
   const BUILTIN_PROVIDERS = [
     {
-      id: 'builtin_doubao_relay',
-      name: '豆包中转站', nameEn: 'Doubao Relay',
-      baseurl: 'https://ark.cn-beijing.volces.com/api/v3',
-      key: '',
+      id: 'builtin_ollama_local',
+      name: 'Ollama 本地模型', nameEn: 'Ollama Local',
+      baseurl: OLLAMA_BASEURL,
+      key: 'ollama',
       category: 'universal', protocol: 'openai', isDefault: true,
       models: [
-        { id: 'ep-20260916205923-vpq88', label: '豆包模型 (ep-20260916205923-vpq88)' }
+        { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）' },
+        { id: 'qwen2.5vl:7b', label: 'Qwen 2.5 VL 7B（视觉）' },
+        { id: 'deepseek-r1:7b', label: 'DeepSeek R1 7B（推理）' },
+        { id: 'llama3.1', label: 'Llama 3.1' },
+        { id: 'mistral', label: 'Mistral' },
+        { id: 'gemma2', label: 'Gemma 2' },
+        { id: 'phi3', label: 'Phi 3' }
       ],
-      desc: '预置豆包火山方舟中转站，开箱即用'
+      desc: DEPLOY_MODE === 'public' ? '主机本地模型，通过公网隧道访问（默认模型，免费无限用）' : '本地运行，无需联网，隐私安全（默认模型，免费无限用）'
     },
     {
       id: 'builtin_zhipu_relay',
@@ -275,7 +312,18 @@
         { id: 'glm-3-turbo', label: 'GLM-3 Turbo' },
         { id: 'glm-4v', label: 'GLM-4V（视觉）' }
       ],
-      desc: '预置智谱AI中转站，开箱即用'
+      desc: '预置智谱AI中转站，可一键切换在线模型'
+    },
+    {
+      id: 'builtin_doubao_relay',
+      name: '豆包中转站', nameEn: 'Doubao Relay',
+      baseurl: 'https://ark.cn-beijing.volces.com/api/v3',
+      key: '',
+      category: 'universal', protocol: 'openai', isDefault: false,
+      models: [
+        { id: 'ep-20260916205923-vpq88', label: '豆包模型 (ep-20260916205923-vpq88)' }
+      ],
+      desc: '预置豆包火山方舟中转站，可一键切换在线模型'
     }
   ];
 
@@ -295,9 +343,24 @@
   window.PROVIDER_CAT_EN = CAT_EN;   // 供应商分类英文映射，供 i18n / UI 使用
   window.DEFAULT_PROVIDER_KEY = DEFAULT_PROVIDER_KEY;
   window.BUILTIN_PROVIDERS = BUILTIN_PROVIDERS;
+  window.OLLAMA_BASEURL = OLLAMA_BASEURL;
+  window.DEPLOY_MODE = DEPLOY_MODE;
   window.ProviderStore = {
     load, save, add, update, remove, getById, getDefault, setDefault, getByCategory,
-    seedBuiltinIfEmpty
+    seedBuiltinIfEmpty,
+    // v2.7.2：恢复默认配置（重置为出厂预设）
+    resetToDefaults: function () {
+      try {
+        save(BUILTIN_PROVIDERS.map(function (p) { return Object.assign({}, p); }));
+        // 设置 Ollama 为默认
+        var ollama = BUILTIN_PROVIDERS.find(function (p) { return p.id === 'builtin_ollama_local'; });
+        if (ollama) setDefault(ollama.id);
+        return true;
+      } catch (e) {
+        console.warn('[ProviderStore] 恢复默认配置失败：', e);
+        return false;
+      }
+    }
   };
 })();
 
