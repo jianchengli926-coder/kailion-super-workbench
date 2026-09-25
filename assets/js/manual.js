@@ -487,9 +487,7 @@
 
     box.querySelectorAll('.mn-card').forEach(card => {
       card.addEventListener('click', () => {
-        alert(
-          `【${card.dataset.name}】\n分类：${card.dataset.cat}\n类型：${card.dataset.type}\n\n${card.dataset.desc}\n\n提示：可在节点库中拖拽该节点到画布使用。`
-        );
+        UI.toast(`📌 ${card.dataset.name} - ${card.dataset.cat}`, 3000);
       });
     });
   }

@@ -689,7 +689,7 @@ function saveProxyConfig() {
     cloudNewtonKey: document.getElementById('cloudNewtonKey')?.value || ''
   };
   localStorage.setItem('kailion_proxy_config', JSON.stringify(config));
-  alert('代理配置已保存！' + (config.type !== 'none' ? '\n代理：' + config.type + '://' + config.host + ':' + config.port : ''));
+  UI.toast('✅ 代理配置已保存！' + (config.type !== 'none' ? ' (' + config.type + '://' + config.host + ':' + config.port + ')' : ''));
 }
 
 // v2.4.6：加载代理配置
