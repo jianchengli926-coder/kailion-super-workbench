@@ -1413,9 +1413,7 @@
         }
       } else if (node.type === 'videoReplaceNode' || node.type === 'videoReplicaNode') {
         // v2.12.7：视频替换/复刻节点（模拟输出）
-        const vrp = node.params || {};
         const vrType = node.type === 'videoReplaceNode' ? '视频替换' : '视频复刻';
-        const vrUp = collectInputs(node.id) || '';
         await sleep(600);
         output = '【' + vrType + '】功能开发中，需要视频AI后端支持';
         resultTitle = (node.type === 'videoReplaceNode' ? '🔄 ' : '🎬 ') + vrType;
