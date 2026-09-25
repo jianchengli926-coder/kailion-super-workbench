@@ -137,13 +137,18 @@
         { id: 'nomic-embed-text', label: 'Nomic Embed Text（向量）' }
       ] },
     { name: '硅基流动 SiliconFlow', nameEn: 'SiliconFlow', baseurl: 'https://api.siliconflow.cn/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🌊', protocol: 'openai',
-      desc: '国内开源模型聚合平台，价格低廉（需填入 sk- 开头的 Key）',
-      descEn: 'Domestic open-source model aggregator, low cost (needs sk- API key)',
+      desc: '国内开源模型聚合平台，多款模型免费（需填入 sk- 开头的 Key）',
+      descEn: 'Domestic open-source model aggregator, many free models (needs sk- API key)',
       models: [
-        { id: 'Qwen/Qwen2.5-7B-Instruct', label: 'Qwen2.5-7B-Instruct' },
-        { id: 'deepseek-ai/DeepSeek-V3', label: 'DeepSeek-V3' },
-        { id: 'THUDM/glm-4-9b-chat', label: 'GLM-4-9B-Chat' },
-        { id: 'Qwen/Qwen2-VL-7B-Instruct', label: 'Qwen2-VL-7B-Instruct（视觉）' }
+        { id: 'Qwen/Qwen2.5-7B-Instruct', label: 'Qwen2.5-7B（文本·免费）' },
+        { id: 'Qwen/Qwen2.5-72B-Instruct', label: 'Qwen2.5-72B（文本·强）' },
+        { id: 'deepseek-ai/DeepSeek-V3', label: 'DeepSeek-V3（推理）' },
+        { id: 'deepseek-ai/DeepSeek-R1', label: 'DeepSeek-R1（深度思考）' },
+        { id: 'Qwen/Qwen2-VL-7B-Instruct', label: 'Qwen2-VL-7B（视觉）' },
+        { id: 'Qwen/Qwen-Image', label: 'Qwen-Image（图像生成）' },
+        { id: 'black-forest-labs/FLUX.1-schnell', label: 'FLUX.1 Schnell（图像生成）' },
+        { id: 'stabilityai/stable-diffusion-xl-base-1.0', label: 'SDXL（图像生成）' },
+        { id: 'THUDM/glm-4-9b-chat', label: 'GLM-4-9B（文本）' }
       ] },
     { name: 'Tripo3D', nameEn: 'Tripo3D', baseurl: 'https://api.tripo3d.ai/v2', category: '3d', categoryEn: CAT_EN['3d'], icon: '🧊',
       desc: 'Tripo3D 文生/图生 3D 模型，支持 GLB/OBJ 导出',

@@ -331,7 +331,9 @@
     const maxTokens = p.maxTokens != null ? p.maxTokens : 2048;
     let full = '';
     try {
-      full = await API.chatCompletion(prov, {
+      // v2.11.0：使用故障转移，主供应商失败时自动切换备用
+      const _callFn = (window.Failover && window.Failover.chatCompletion) ? window.Failover.chatCompletion.bind(window.Failover) : API.chatCompletion.bind(API);
+      full = await _callFn(prov, {
         model: model, messages: messages, temperature: temperature, maxTokens: maxTokens, stream: true
       }, function (chunk) {
         if (stopRequested) return;
@@ -384,7 +386,9 @@
     if (p.steps != null) body.steps = Number(p.steps);
     if (p.guidance != null) body.guidance = Number(p.guidance);
     try {
-      const urls = await API.imageGeneration(prov, body, opts);
+      // v2.11.0：使用故障转移，主图像供应商失败时自动切换备用
+      const _imgCallFn = (window.Failover && window.Failover.imageGeneration) ? window.Failover.imageGeneration.bind(window.Failover) : API.imageGeneration.bind(API);
+      const urls = await _imgCallFn(prov, body, opts);
       const arr = (urls || []).filter(Boolean);
       if (!arr.length) throw new Error('API 未返回图片数据');
       return arr;
