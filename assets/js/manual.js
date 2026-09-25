@@ -256,7 +256,7 @@
         <header class="manual-header">
           <div>
             <h1 class="manual-title">${tr('📖 使用说明书')}</h1>
-            <p class="manual-sub">${BRAND.product} · ${BRAND.company} · v2.10.31</p>
+            <p class="manual-sub">${BRAND.product} · ${BRAND.company} · v2.10.32</p>
           </div>
           <input id="manual-search" class="input manual-search" placeholder="${tr('搜索节点名称或描述…（作用于下方节点清单）')}">
         </header>
