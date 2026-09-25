@@ -34,3 +34,11 @@ npm-debug.log*
 
 # Electron output
 release/
+
+# 大文件备份（不提交GitHub，保存在本地）
+锴利超级AI工作台_最终版备份_*/
+历史版本备份/
+参考资料/
+备份/
+*.log
+.DS_Store
