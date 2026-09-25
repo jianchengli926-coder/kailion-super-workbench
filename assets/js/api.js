@@ -437,26 +437,53 @@
     var prompt = params.prompt || 'a high-quality image';
     var size = params.size || '1024x1024';
     var n = params.n || 1;
-    return [
-      {
-        id: 'openai-generations',
-        label: 'OpenAI /images/generations',
-        url: base + '/images/generations',
-        body: { model: model, prompt: prompt, n: n, size: size, quality: params.quality || 'standard', style: params.style || 'vivid' }
-      },
-      {
-        id: 'v1-images-generations',
-        label: '/v1/images/generations',
-        url: base + '/v1/images/generations',
-        body: { model: model, prompt: prompt, n: n, size: size }
-      },
-      {
-        id: 'chat-completions-image',
-        label: 'chat/completions 生图',
+    var hasImage = !!params.image;
+    var forms = [];
+    // v2.12.4：图生图模式 - 有图片输入时优先尝试图生图接口
+    if (hasImage) {
+      forms.push({
+        id: 'image-edits',
+        label: '图生图 /images/edits',
+        url: base + '/images/edits',
+        body: { model: model, image: params.image, prompt: prompt, n: n, size: size }
+      });
+      forms.push({
+        id: 'v1-image-edits',
+        label: '图生图 /v1/images/edits',
+        url: base + '/v1/images/edits',
+        body: { model: model, image: params.image, prompt: prompt, n: n, size: size }
+      });
+      // chat/completions 多模态图生图
+      forms.push({
+        id: 'chat-completions-img2img',
+        label: 'chat/completions 图生图',
         url: base + '/chat/completions',
-        body: { model: model, messages: [{ role: 'user', content: [{ type: 'text', text: prompt + '\n\n（请直接生成图片，不要只给文字描述）' }] }] }
-      }
-    ];
+        body: { model: model, messages: [{ role: 'user', content: [
+          { type: 'text', text: prompt + '\n\n（请基于参考图片生成新图片，直接输出图片）' },
+          { type: 'image_url', image_url: { url: params.image } }
+        ] }] }
+      });
+    }
+    // 文生图模式（始终可用，作为兜底）
+    forms.push({
+      id: 'openai-generations',
+      label: 'OpenAI /images/generations',
+      url: base + '/images/generations',
+      body: { model: model, prompt: prompt, n: n, size: size, quality: params.quality || 'standard', style: params.style || 'vivid' }
+    });
+    forms.push({
+      id: 'v1-images-generations',
+      label: '/v1/images/generations',
+      url: base + '/v1/images/generations',
+      body: { model: model, prompt: prompt, n: n, size: size }
+    });
+    forms.push({
+      id: 'chat-completions-image',
+      label: 'chat/completions 生图',
+      url: base + '/chat/completions',
+      body: { model: model, messages: [{ role: 'user', content: [{ type: 'text', text: prompt + '\n\n（请直接生成图片，不要只给文字描述）' }] }] }
+    });
+    return forms;
   }
 
   // 从任意生图响应里提取图片 URL / data URI

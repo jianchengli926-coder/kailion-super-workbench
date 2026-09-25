@@ -194,10 +194,16 @@
   }
 
   /* ====================== 节点类型识别与超时配置 ====================== */
+  // v2.12.4：排除输入节点，避免被误判为生成节点
+  function isInputNode(type) {
+    return /^(imageInput|videoInput|fileUpload)Node$/i.test(type);
+  }
   function isImageNode(type) {
+    if (isInputNode(type)) return false;
     return /image|GeneratorPro|gptImage|creativeInspiration|dalle|flux|zImage|agnesImage|doubaoGenerator/i.test(type);
   }
   function isVideoNode(type) {
+    if (isInputNode(type)) return false;
     // grokChatNode是对话节点，不是视频生成节点，需排除
     if (type === 'grokChatNode') return false;
     return /video|seedance|omni|minimax|grok|veo|kling|agnesVideo/i.test(type);
@@ -398,9 +404,35 @@
     const n = p.count != null ? p.count : (p.n != null ? p.n : 1);
     const quality = p.quality || 'standard';
     const style = p.style || 'vivid';
+    // v2.12.4：图生图 - 收集上游图片输入（图片输入节点/素材节点等）
+    let inputImage = null;
+    try {
+      if (window.Canvas) {
+        const upIds = Canvas.getUpstream(node.id);
+        for (const upId of upIds) {
+          const upNode = Canvas.getNode(upId);
+          const out = upNode && upNode._output;
+          if (out && typeof out === 'string') {
+            if (out.match(/\.(png|jpg|jpeg|gif|webp|bmp)(\?|$)/i) || out.startsWith('data:image/') || (out.startsWith('http') && out.match(/image/i))) {
+              inputImage = inputImage || out;
+              break;
+            }
+          } else if (out && Array.isArray(out)) {
+            for (const item of out) {
+              if (typeof item === 'string' && (item.match(/\.(png|jpg|jpeg|gif|webp)(\?|$)/i) || item.startsWith('data:image/'))) {
+                inputImage = inputImage || item;
+                break;
+              }
+            }
+            if (inputImage) break;
+          }
+        }
+      }
+    } catch (e) { /* 收集上游图片失败，忽略，继续文生图 */ }
     const body = {
       model: model, prompt: prompt, size: size, n: n, quality: quality, style: style
     };
+    if (inputImage) body.image = inputImage;
     if (p.seed != null) body.seed = Number(p.seed);
     if (p.steps != null) body.steps = Number(p.steps);
     if (p.guidanceScale != null) body.guidance_scale = Number(p.guidanceScale);
@@ -1267,6 +1299,43 @@
           output = String(cached);
           bodyHtml = buildTextResult(output);
         }
+      } else if (isInputNode(node.type)) {
+        // ---- v2.12.4：输入节点（图片/视频/文件）专门处理，不调用API ----
+        const inp = node.params || {};
+        const inpFile = inp.file || inp.image || inp.video || inp.url || '';
+        const inpResize = inp.resize || 'none';
+        if (!inpFile) {
+          output = '【输入节点】请先选择文件';
+          resultTitle = '📎 输入节点';
+          bodyHtml = buildTextResult('⚠️ ' + output + '\n\n点击节点右侧的「选择文件」按钮上传图片/视频/文件。');
+          node._meta = { real: false, simulated: true, failed: true };
+        } else {
+          const isImg = /\.(jpg|jpeg|png|gif|webp|bmp|svg)(\?|$)/i.test(inpFile) || inpFile.startsWith('data:image/');
+          const isVid = /\.(mp4|mov|avi|webm|mkv)(\?|$)/i.test(inpFile) || inpFile.startsWith('data:video/');
+          if (isImg) {
+            output = inpFile;
+            resultTitle = '🖼️ 图片输入';
+            bodyHtml = '<div style="padding:12px;text-align:center;">' +
+              '<img src="' + esc(inpFile) + '" style="max-width:100%;max-height:200px;border-radius:8px;" alt="输入图片">' +
+              '<div style="margin-top:8px;font-size:12px;color:#94a3b8;">预处理: ' + ({none:'不处理',upscale:'放大',crop:'裁剪'}[inpResize] || inpResize) + '</div>' +
+              '</div>';
+            node._meta = { real: true, simulated: false, failed: false, kind: 'image', url: inpFile };
+          } else if (isVid) {
+            output = inpFile;
+            resultTitle = '🎬 视频输入';
+            bodyHtml = '<div style="padding:12px;text-align:center;">' +
+              '<video src="' + esc(inpFile) + '" controls style="max-width:100%;max-height:200px;border-radius:8px;"></video>' +
+              '<div style="margin-top:8px;font-size:12px;color:#94a3b8;">视频文件已加载</div>' +
+              '</div>';
+            node._meta = { real: true, simulated: false, failed: false, kind: 'video', url: inpFile };
+          } else {
+            output = inpFile;
+            resultTitle = '📁 文件输入';
+            bodyHtml = buildTextResult('✅ 文件已加载\n\n' + inpFile.substring(0, 100) + (inpFile.length > 100 ? '...' : ''));
+            node._meta = { real: true, simulated: false, failed: false, kind: 'file', url: inpFile };
+          }
+        }
+        await sleep(150);
       } else if (node.type === 'promptNode') {
         output = (node.params && node.params.text) || '（空提示词）';
         bodyHtml = buildTextResult(output);
