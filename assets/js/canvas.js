@@ -198,6 +198,10 @@
       var label = m.model || m.provider || '真实';
       return { cls: 'badge-real', text: label.length > 14 ? label.slice(0, 14) : label };
     }
+    // v2.12.4：输入节点显示"输入"标签
+    if (m.label) {
+      return { cls: 'badge-pending', text: m.label };
+    }
     return { cls: 'badge-pending', text: '待接' };
   }
 

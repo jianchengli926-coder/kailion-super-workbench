@@ -1319,7 +1319,7 @@
               '<img src="' + esc(inpFile) + '" style="max-width:100%;max-height:200px;border-radius:8px;" alt="输入图片">' +
               '<div style="margin-top:8px;font-size:12px;color:#94a3b8;">预处理: ' + ({none:'不处理',upscale:'放大',crop:'裁剪'}[inpResize] || inpResize) + '</div>' +
               '</div>';
-            node._meta = { real: true, simulated: false, failed: false, kind: 'image', url: inpFile };
+            node._meta = { real: false, simulated: false, failed: false, kind: 'image', url: inpFile, label: '图片输入' };
           } else if (isVid) {
             output = inpFile;
             resultTitle = '🎬 视频输入';
@@ -1327,12 +1327,12 @@
               '<video src="' + esc(inpFile) + '" controls style="max-width:100%;max-height:200px;border-radius:8px;"></video>' +
               '<div style="margin-top:8px;font-size:12px;color:#94a3b8;">视频文件已加载</div>' +
               '</div>';
-            node._meta = { real: true, simulated: false, failed: false, kind: 'video', url: inpFile };
+            node._meta = { real: false, simulated: false, failed: false, kind: 'video', url: inpFile, label: '视频输入' };
           } else {
             output = inpFile;
             resultTitle = '📁 文件输入';
             bodyHtml = buildTextResult('✅ 文件已加载\n\n' + inpFile.substring(0, 100) + (inpFile.length > 100 ? '...' : ''));
-            node._meta = { real: true, simulated: false, failed: false, kind: 'file', url: inpFile };
+            node._meta = { real: false, simulated: false, failed: false, kind: 'file', url: inpFile, label: '文件输入' };
           }
         }
         await sleep(150);
