@@ -661,6 +661,9 @@
 }
 .node-result:empty { display: none !important; }
 .stream-text { white-space: pre-wrap; word-break: break-word; color: var(--text-2); line-height: 1.5; }
+.stream-cursor { display: inline-block; animation: blink 1s step-end infinite; color: var(--accent); margin-left: 2px; }
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+.call-stats { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
 
 /* ---------- 执行日志面板 ---------- */
 .exec-log {

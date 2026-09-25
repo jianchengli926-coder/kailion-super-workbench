@@ -328,13 +328,19 @@
       messages.unshift(...node._chatHistory);
     }
     const temperature = p.temperature != null ? p.temperature : 0.7;
+    const topP = p.topP != null ? p.topP : 1;
     const maxTokens = p.maxTokens != null ? p.maxTokens : 2048;
+    const frequencyPenalty = p.frequencyPenalty != null ? p.frequencyPenalty : 0;
+    const presencePenalty = p.presencePenalty != null ? p.presencePenalty : 0;
+    const showStats = p.showStats !== false;
     let full = '';
+    const _callStart = Date.now();
     try {
       // v2.11.0：使用故障转移，主供应商失败时自动切换备用
       const _callFn = (window.Failover && window.Failover.chatCompletion) ? window.Failover.chatCompletion.bind(window.Failover) : API.chatCompletion.bind(API);
       full = await _callFn(prov, {
-        model: model, messages: messages, temperature: temperature, maxTokens: maxTokens, stream: true
+        model: model, messages: messages, temperature: temperature, top_p: topP,
+        maxTokens: maxTokens, frequency_penalty: frequencyPenalty, presence_penalty: presencePenalty, stream: true
       }, function (chunk) {
         if (stopRequested) return;
         if (!chunk) return;
@@ -345,10 +351,23 @@
         } catch (eEvt) {}
         const nodeEl = document.querySelector(`.node-card[data-id="${node.id}"] .node-result`);
         if (nodeEl) {
-          nodeEl.innerHTML = '<div class="stream-text">' + esc(full) + '</div>';
+          nodeEl.innerHTML = '<div class="stream-text">' + esc(full) + '<span class="stream-cursor">▊</span></div>';
           nodeEl.style.display = '';
         }
       }, opts);
+      // v2.12.0：调用统计信息
+      const _callDuration = ((Date.now() - _callStart) / 1000).toFixed(1);
+      const _inputTokens = messages.reduce((s, m) => s + String(m.content || '').length, 0);
+      const _outputTokens = full.length;
+      if (showStats) {
+        const nodeEl = document.querySelector(`.node-card[data-id="${node.id}"] .node-result`);
+        if (nodeEl) {
+          const statsHtml = '<div class="call-stats" style="margin-top:8px;padding:6px 10px;background:rgba(99,102,241,0.1);border-radius:6px;font-size:11px;color:var(--text-3);border-left:3px solid var(--accent)">' +
+            '⏱️ 耗时 ' + _callDuration + 's | 📝 输入约 ' + Math.ceil(_inputTokens/4) + ' tokens | 📤 输出约 ' + Math.ceil(_outputTokens/4) + ' tokens | 🤖 ' + esc(prov.name) + ' / ' + esc(model) +
+            '</div>';
+          nodeEl.innerHTML = '<div class="stream-text">' + esc(full) + '</div>' + statsHtml;
+        }
+      }
       // v2.3.4：多轮对话模式 - 保存对话历史
       if (p.dialogMode === 'multi') {
         if (!node._chatHistory) node._chatHistory = [];
@@ -384,13 +403,29 @@
     };
     if (p.seed != null) body.seed = Number(p.seed);
     if (p.steps != null) body.steps = Number(p.steps);
-    if (p.guidance != null) body.guidance = Number(p.guidance);
+    if (p.guidanceScale != null) body.guidance_scale = Number(p.guidanceScale);
+    if (p.negativePrompt) body.negative_prompt = p.negativePrompt;
+    const showStats = p.showStats !== false;
+    const _imgStart = Date.now();
     try {
       // v2.11.0：使用故障转移，主图像供应商失败时自动切换备用
       const _imgCallFn = (window.Failover && window.Failover.imageGeneration) ? window.Failover.imageGeneration.bind(window.Failover) : API.imageGeneration.bind(API);
       const urls = await _imgCallFn(prov, body, opts);
       const arr = (urls || []).filter(Boolean);
       if (!arr.length) throw new Error('API 未返回图片数据');
+      // v2.12.0：图像生成统计信息
+      if (showStats) {
+        const _imgDuration = ((Date.now() - _imgStart) / 1000).toFixed(1);
+        const nodeEl = document.querySelector(`.node-card[data-id="${node.id}"] .node-result`);
+        if (nodeEl) {
+          const statsHtml = '<div class="call-stats" style="margin-top:8px;padding:6px 10px;background:rgba(16,185,129,0.1);border-radius:6px;font-size:11px;color:var(--text-3);border-left:3px solid #10b981">' +
+            '⏱️ 耗时 ' + _imgDuration + 's | 🖼️ 生成 ' + arr.length + ' 张 | 📐 ' + size + ' | 🤖 ' + esc(prov.name) + ' / ' + esc(model) +
+            '</div>';
+          const existingStats = nodeEl.querySelector('.call-stats');
+          if (existingStats) existingStats.remove();
+          nodeEl.insertAdjacentHTML('beforeend', statsHtml);
+        }
+      }
       return arr;
     } catch (e) {
       throw new Error('图片生成失败：' + (e && e.message ? e.message : e));

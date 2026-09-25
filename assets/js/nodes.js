@@ -65,6 +65,9 @@
       { key: 'count', label: '生成数量', type: 'number', min: 1, max: 8, value: 1 },
       { key: 'seed', label: '随机种子（-1=随机）', type: 'number', value: -1 },
       { key: 'steps', label: '推理步数', type: 'number', min: 10, max: 100, value: 30 },
+      { key: 'guidanceScale', label: '引导强度', type: 'number', min: 1, max: 20, step: 0.5, value: 7.5, hint: '越高越贴合提示词' },
+      { key: 'negativePrompt', label: '负面提示词', type: 'textarea', placeholder: '不想出现的内容，如：模糊、低质量、变形…', hint: '排除不想要的元素' },
+      { key: 'showStats', label: '显示调用统计', type: 'checkbox', value: true, hint: '完成后显示耗时和模型信息' },
       { key: 'skipCache', label: '跳过缓存（强制重新生成）', type: 'checkbox', value: false }
     ],
     gptImageGeneratorNode: [
@@ -129,8 +132,12 @@
       { key: 'enableRAG', label: '🔍 检索增强（RAG）', type: 'checkbox', value: false, hint: '从知识库检索相关内容增强回答' },
       { key: 'enableKnowledge', label: '📚 知识库引用', type: 'checkbox', value: false, hint: '回答中引用知识库内容并标注来源' },
       { key: 'enableThinking', label: '🧠 思考模式（深度推理）', type: 'checkbox', value: false, hint: '启用深度思考链，先思考再输出答案' },
-      { key: 'temperature', label: '温度', type: 'number', min: 0, max: 2, step: 0.1, value: 0.7 },
+      { key: 'temperature', label: '温度（创造性）', type: 'number', min: 0, max: 2, step: 0.1, value: 0.7, hint: '0=精确，2=最随机' },
+      { key: 'topP', label: 'Top-P 核采样', type: 'number', min: 0, max: 1, step: 0.05, value: 1, hint: '控制词汇多样性，1=不限制' },
       { key: 'maxTokens', label: '最大输出 Token', type: 'number', min: 100, max: 8192, value: 2048 },
+      { key: 'frequencyPenalty', label: '频率惩罚', type: 'number', min: -2, max: 2, step: 0.1, value: 0, hint: '正值减少重复词' },
+      { key: 'presencePenalty', label: '存在惩罚', type: 'number', min: -2, max: 2, step: 0.1, value: 0, hint: '正值鼓励新话题' },
+      { key: 'showStats', label: '显示调用统计', type: 'checkbox', value: true, hint: '完成后显示Token数和耗时' },
       { key: 'skipCache', label: '跳过缓存（强制重新生成）', type: 'checkbox', value: false }
     ],
     contentReviewNode: [
