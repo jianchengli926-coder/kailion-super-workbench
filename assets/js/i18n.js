@@ -248,7 +248,7 @@
     'other.backToCanvas': '返回画布',
 
     /* ---------- 品牌 ---------- */
-    'brand.product': '锴利超级AI工作台',
+    'brand.product': 'KaiLionCrafts Creator',
     'brand.assistant': '小锴助手',
     'brand.slogan': 'AI 驱动的一站式创作工作台',
     'brand.company': '阳江市锴利国际贸易有限公司',
