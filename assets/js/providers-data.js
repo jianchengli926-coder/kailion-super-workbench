@@ -88,12 +88,18 @@
         { id: 'claude-3-opus-20240229', label: 'Claude 3 Opus' },
         { id: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku' }
       ] },
-    { name: 'Gemini', nameEn: 'Gemini', baseurl: 'https://generativelanguage.googleapis.com/v1beta', category: 'llm', categoryEn: CAT_EN.llm, icon: '💎', protocol: 'gemini',
-      desc: 'Google 官方多模态接口',
-      descEn: 'Google official multimodal API',
+    { name: 'Gemini', nameEn: 'Gemini', baseurl: 'https://generativelanguage.googleapis.com/v1beta/openai', category: 'universal', categoryEn: CAT_EN.universal, icon: '💎', protocol: 'openai',
+      desc: 'Google官方多模态接口，免费层每天500次（Flash-Lite）',
+      descEn: 'Google official multimodal API, free tier 500/day (Flash-Lite)',
       models: [
-        { id: 'gemini-pro', label: 'Gemini Pro' }, { id: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro' },
-        { id: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash' }
+        { id: 'gemini-3.1-flash-lite', label: 'Gemini 3.1 Flash-Lite（文本·免费·500次/天）' },
+        { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite（文本·免费）' },
+        { id: 'gemini-3-flash', label: 'Gemini 3 Flash（文本·免费）' },
+        { id: 'gemini-2.5-flash', label: 'Gemini 2.5 Flash（文本·免费）' },
+        { id: 'gemini-2.5-flash-tts', label: 'Gemini 2.5 Flash TTS（语音·免费）' },
+        { id: 'nano-banana', label: 'Nano Banana（图像生成·免费）' },
+        { id: 'gemini-3.1-pro', label: 'Gemini 3.1 Pro（付费）' },
+        { id: 'gemini-2.5-pro', label: 'Gemini 2.5 Pro（付费）' }
       ] },
     { name: '通义千问', nameEn: 'Qwen (Tongyi Qianwen)', baseurl: 'https://dashscope.aliyuncs.com/compatible-mode/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🟡',
       desc: '阿里云百炼，通义千问系列',

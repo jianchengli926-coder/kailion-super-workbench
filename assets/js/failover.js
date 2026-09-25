@@ -27,6 +27,7 @@
   const TEXT_PRIORITY = [
     'builtin_zhipu_relay',       // 智谱GLM（免费）
     'siliconflow',               // 硅基流动（免费）
+    'gemini',                    // Gemini（免费·500次/天）
     'builtin_ollama',            // Ollama本地
     'wawapi_relay',              // wawapi中转站
     'openai',                    // OpenAI
@@ -38,6 +39,7 @@
   const IMAGE_PRIORITY = [
     'builtin_zhipu_relay',       // 智谱CogView（免费）
     'siliconflow',               // 硅基流动Qwen-Image
+    'gemini',                    // Gemini Nano Banana（免费）
     'builtin_ollama',            // Ollama本地（如有图像模型）
     'openai',                    // OpenAI DALL-E
     'wawapi_relay'               // wawapi中转站
