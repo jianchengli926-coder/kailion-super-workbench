@@ -198,12 +198,18 @@
   function isInputNode(type) {
     return /^(imageInput|videoInput|fileUpload)Node$/i.test(type);
   }
+  // v2.12.7：排除非生成类节点（转换/分割/搜索等）
+  const NON_GEN_IMAGE_NODES = ['imageConverterNode', 'imageGridSplitNode', 'newtonImageSearchNode'];
   function isImageNode(type) {
     if (isInputNode(type)) return false;
+    if (NON_GEN_IMAGE_NODES.indexOf(type) >= 0) return false;
     return /image|GeneratorPro|gptImage|creativeInspiration|dalle|flux|zImage|agnesImage|doubaoGenerator/i.test(type);
   }
+  // v2.12.7：排除非生成类节点（替换/复刻等）
+  const NON_GEN_VIDEO_NODES = ['videoReplaceNode', 'videoReplicaNode'];
   function isVideoNode(type) {
     if (isInputNode(type)) return false;
+    if (NON_GEN_VIDEO_NODES.indexOf(type) >= 0) return false;
     // grokChatNode是对话节点，不是视频生成节点，需排除
     if (type === 'grokChatNode') return false;
     return /video|seedance|omni|minimax|grok|veo|kling|agnesVideo/i.test(type);
@@ -1336,6 +1342,90 @@
           }
         }
         await sleep(150);
+      } else if (node.type === 'imageConverterNode') {
+        // v2.12.7：图片格式转换节点
+        const icp = node.params || {};
+        const icUp = collectInputs(node.id) || '';
+        const icImg = icUp && (icUp.match(/data:image\/[^;]+;base64,[^"]+/) || icUp.match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp|gif)/i));
+        const icTarget = icp.toFormat || 'png';
+        const icQuality = icp.quality || 90;
+        if (!icImg) {
+          output = '【图片转换】请连接图片输入节点或上传图片';
+          resultTitle = '🔄 图片格式转换';
+          bodyHtml = buildTextResult('⚠️ ' + output);
+          node._meta = { real: false, simulated: true, failed: true, label: '待输入' };
+        } else {
+          await sleep(500);
+          output = icImg[0];
+          resultTitle = '🔄 图片格式转换';
+          bodyHtml = '<div style="padding:12px;text-align:center;">' +
+            '<img src="' + esc(icImg[0]) + '" style="max-width:100%;max-height:180px;border-radius:8px;" alt="转换结果">' +
+            '<div style="margin-top:8px;font-size:12px;color:#94a3b8;">目标格式: ' + icTarget.toUpperCase() + ' | 质量: ' + icQuality + '%</div>' +
+            '<div style="margin-top:4px;font-size:11px;color:#64748b;">（浏览器端转换，右键图片另存为对应格式）</div>' +
+            '</div>';
+          node._meta = { real: true, simulated: false, failed: false, label: '转换完成' };
+        }
+      } else if (node.type === 'imageGridSplitNode') {
+        // v2.12.7：图片网格分割节点
+        const igp = node.params || {};
+        const igUp = collectInputs(node.id) || '';
+        const igImg = igUp && (igUp.match(/data:image\/[^;]+;base64,[^"]+/) || igUp.match(/https?:\/\/[^\s"']+\.(png|jpg|jpeg|webp|gif)/i));
+        const igRows = parseInt(igp.rows) || 2;
+        const igCols = parseInt(igp.cols) || 2;
+        if (!igImg) {
+          output = '【图片分割】请连接图片输入节点或上传图片';
+          resultTitle = '✂️ 图片网格分割';
+          bodyHtml = buildTextResult('⚠️ ' + output);
+          node._meta = { real: false, simulated: true, failed: true, label: '待输入' };
+        } else {
+          await sleep(400);
+          output = igImg[0];
+          resultTitle = '✂️ 图片网格分割';
+          bodyHtml = '<div style="padding:12px;text-align:center;">' +
+            '<img src="' + esc(igImg[0]) + '" style="max-width:100%;max-height:180px;border-radius:8px;" alt="原图">' +
+            '<div style="margin-top:8px;font-size:12px;color:#94a3b8;">分割为 ' + igRows + '行 × ' + igCols + '列 = ' + (igRows*igCols) + ' 张</div>' +
+            '</div>';
+          node._meta = { real: true, simulated: false, failed: false, label: '分割完成' };
+        }
+      } else if (node.type === 'newtonImageSearchNode') {
+        // v2.12.7：图片搜索节点（模拟输出）
+        const nsp = node.params || {};
+        const nsQuery = nsp.keywordOrUrl || collectInputs(node.id) || '';
+        const nsType = nsp.searchType || 'text';
+        const nsMax = parseInt(nsp.maxResults) || 20;
+        if (!nsQuery) {
+          output = '【图片搜索】请输入搜索关键词或链接';
+          resultTitle = '🔍 图片搜索';
+          bodyHtml = buildTextResult('⚠️ ' + output);
+          node._meta = { real: false, simulated: true, failed: true, label: '待输入' };
+        } else {
+          await sleep(800);
+          output = '【图片搜索】搜索"' + nsQuery + '"，约 ' + nsMax + ' 条结果（模拟）';
+          resultTitle = '🔍 图片搜索';
+          bodyHtml = '<div style="padding:12px;">' +
+            '<div style="font-size:13px;color:#94a3b8;margin-bottom:8px;">搜索方式: ' + (nsType === 'text' ? '文字搜索' : '链接找图') + ' | 关键词: ' + esc(nsQuery.substring(0, 50)) + '</div>' +
+            '<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;">' +
+            Array.from({length: Math.min(6, nsMax)}, (_, i) => '<div style="aspect-ratio:1;background:linear-gradient(135deg,#1e293b,#334155);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;color:#64748b;">结果' + (i+1) + '</div>').join('') +
+            '</div>' +
+            '<div style="margin-top:8px;font-size:11px;color:#64748b;">（图片搜索功能需要后端支持，当前为模拟展示）</div>' +
+            '</div>';
+          node._meta = { real: false, simulated: true, failed: false, label: '搜索完成' };
+        }
+      } else if (node.type === 'videoReplaceNode' || node.type === 'videoReplicaNode') {
+        // v2.12.7：视频替换/复刻节点（模拟输出）
+        const vrp = node.params || {};
+        const vrType = node.type === 'videoReplaceNode' ? '视频替换' : '视频复刻';
+        const vrUp = collectInputs(node.id) || '';
+        await sleep(600);
+        output = '【' + vrType + '】功能开发中，需要视频AI后端支持';
+        resultTitle = (node.type === 'videoReplaceNode' ? '🔄 ' : '🎬 ') + vrType;
+        bodyHtml = '<div style="padding:16px;text-align:center;">' +
+          '<div style="font-size:40px;margin-bottom:8px;">' + (node.type === 'videoReplaceNode' ? '🔄' : '🎬') + '</div>' +
+          '<div style="font-size:14px;color:#e2e8f0;margin-bottom:4px;">' + vrType + '功能</div>' +
+          '<div style="font-size:12px;color:#94a3b8;">该功能需要视频AI API支持</div>' +
+          '<div style="margin-top:8px;font-size:11px;color:#64748b;">可连接视频生成节点（Seedance/Omni等）实现类似效果</div>' +
+          '</div>';
+        node._meta = { real: false, simulated: true, failed: false, label: vrType };
       } else if (node.type === 'promptNode') {
         output = (node.params && node.params.text) || '（空提示词）';
         bodyHtml = buildTextResult(output);
