@@ -497,7 +497,7 @@
         if (ids.length) { Canvas.focusSelected(); UI.toast(window.I18N ? I18N.t('app.focusSelected') : '🎯 已聚焦选中节点'); }
         else { Canvas.fitAll(); UI.toast(window.I18N ? I18N.t('app.fitAll') : '🔍 已适配全部节点'); }
       }
-      // v2.12.10：Delete / Backspace 删除选中节点
+      // v2.12.24：Delete / Backspace 删除选中节点
       if (!mod && (key === 'delete' || key === 'backspace')) {
         const ids = Canvas.getSelectedIds();
         if (ids.length > 0) {

@@ -4,7 +4,7 @@
  * 暴露：window.Manual
  *
  * 模块：访问方式 / 快速开始 / 界面导览 / 工作流派方 / 90节点清单 / API配置指南 / 模型配置 / 锴利专线 / 抖音运营 / FAQ / 快捷键
- * v2.12.20 最终版：结合独立HTML说明书 + 旧版内嵌说明书
+ * v2.12.24 最终版：结合独立HTML说明书 + 旧版内嵌说明书
  */
 (function () {
   'use strict';
@@ -256,7 +256,7 @@
         <header class="manual-header">
           <div>
             <h1 class="manual-title">${tr('📖 使用说明书')}</h1>
-            <p class="manual-sub">${BRAND.product} · ${BRAND.company} · v2.12.20</p>
+            <p class="manual-sub">${BRAND.product} · ${BRAND.company} · v2.12.24</p>
           </div>
           <input id="manual-search" class="input manual-search" placeholder="${tr('搜索节点名称或描述…（作用于下方节点清单）')}">
         </header>
