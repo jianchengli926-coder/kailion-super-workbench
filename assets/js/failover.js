@@ -32,7 +32,8 @@
     'openai',                    // ⑤ OpenAI（在线）
     'deepseek',                  // ⑥ DeepSeek（在线）
     'doubao',                    // ⑦ 豆包（在线）
-    'builtin_ollama'             // ⑧ Ollama本地（最后兜底）
+    'builtin_ollama',            // ⑧ Ollama本地（最后兜底）
+    'builtin_ollama_local'       // ⑧ Ollama本地（兼容ID）
   ];
 
   // 图像模型优先级（从高到低）
@@ -42,7 +43,8 @@
     'gemini',                    // ③ Gemini Nano Banana（免费·在线）
     'openai',                    // ④ OpenAI DALL-E（在线）
     'wawapi_relay',              // ⑤ wawapi中转站（在线）
-    'builtin_ollama'             // ⑥ Ollama本地（最后兜底）
+    'builtin_ollama',            // ⑥ Ollama本地（最后兜底）
+    'builtin_ollama_local'       // ⑥ Ollama本地（兼容ID）
   ];
 
   /* ====================== 工具函数 ====================== */
@@ -64,7 +66,7 @@
   function isProviderUsable(provider) {
     if (!provider || !provider.baseurl) return false;
     // Ollama本地模型不需要key
-    if (provider.id === 'builtin_ollama' || provider.name && provider.name.includes('Ollama')) {
+    if ((provider.id === 'builtin_ollama' || provider.id === 'builtin_ollama_local') || (provider.name && provider.name.includes('Ollama'))) {
       return true;
     }
     // 其他供应商需要key
@@ -137,10 +139,14 @@
       const isFallback = i > 0;
 
       try {
-        // 如果是备用供应商，需要替换model参数
+        // 如果是备用供应商，需要检查并替换model参数
         let callParams = { ...params };
-        if (isFallback && !params.model) {
-          callParams.model = getModelForType(currentProvider, type);
+        if (isFallback) {
+          // 检查原模型是否在备用供应商的模型列表中
+          const providerModels = (currentProvider.models || []).map(m => m.id);
+          if (!params.model || !providerModels.includes(params.model)) {
+            callParams.model = getModelForType(currentProvider, type);
+          }
         }
 
         // 日志记录
@@ -196,8 +202,11 @@
 
       try {
         let callParams = { ...params };
-        if (isFallback && !params.model) {
-          callParams.model = getModelForType(currentProvider, type);
+        if (isFallback) {
+          const providerModels = (currentProvider.models || []).map(m => m.id);
+          if (!params.model || !providerModels.includes(params.model)) {
+            callParams.model = getModelForType(currentProvider, type);
+          }
         }
 
         if (window.APILogger && typeof window.APILogger.log === 'function') {
