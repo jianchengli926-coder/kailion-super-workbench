@@ -4,7 +4,7 @@
  * 暴露：window.Manual
  *
  * 模块：访问方式 / 快速开始 / 界面导览 / 工作流派方 / 90节点清单 / API配置指南 / 模型配置 / 锴利专线 / 抖音运营 / FAQ / 快捷键
- * v2.10.31 整合版：结合独立HTML说明书 + 旧版内嵌说明书
+ * v2.12.20 最终版：结合独立HTML说明书 + 旧版内嵌说明书
  */
 (function () {
   'use strict';
@@ -256,7 +256,7 @@
         <header class="manual-header">
           <div>
             <h1 class="manual-title">${tr('📖 使用说明书')}</h1>
-            <p class="manual-sub">${BRAND.product} · ${BRAND.company} · v2.10.32</p>
+            <p class="manual-sub">${BRAND.product} · ${BRAND.company} · v2.12.20</p>
           </div>
           <input id="manual-search" class="input manual-search" placeholder="${tr('搜索节点名称或描述…（作用于下方节点清单）')}">
         </header>
@@ -290,7 +290,7 @@
           </div>
           <div class="api-usage-steps">
             <p><b>🔐 登录密码：</b>所有访问方式统一密码 <code>441723</code>，5次错误锁定1分钟。</p>
-            <p><b>💡 启动方式：</b>双击桌面「启动锴利超级AI工作台.command」，自动检测环境、启动服务器、打开浏览器。</p>
+            <p><b>💡 启动方式：</b>双击桌面「启动企业AI创作工作台.command」，自动检测环境、启动服务器、打开浏览器。</p>
             <p><b>⚠️ 注意：</b>局域网和公网访问需要服务器电脑保持开机且工作台服务器正在运行。</p>
           </div>
         </section>

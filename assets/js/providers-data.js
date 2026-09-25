@@ -413,7 +413,7 @@
       });
       if (added > 0) {
         save(list);
-        console.log('[ProviderStore] 自动补充了 ' + added + ' 个内置供应商');
+        // console.log('[ProviderStore] 自动补充了 ' + added + ' 个内置供应商');
       }
     } catch (e) {
       console.warn('[ProviderStore] 内置供应商种子写入失败：', e);
