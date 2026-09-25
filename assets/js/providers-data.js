@@ -325,7 +325,7 @@
       id: 'builtin_zhipu_relay',
       name: '智谱中转站', nameEn: 'Zhipu Relay',
       baseurl: 'https://open.bigmodel.cn/api/paas/v4',
-      key: '463387098a9b4b4381513ba66cb6f15f.OK1hWS0wFnU3EGTR',
+      key: '',  // 用户在设置页面手动添加智谱API Key
       category: 'universal', protocol: 'openai', isDefault: false,
       models: [
         { id: 'glm-4.7-flash', label: 'GLM-4.7 Flash（深度思考·免费）' },
@@ -350,15 +350,71 @@
         { id: 'ep-20260916205923-vpq88', label: '豆包模型 (ep-20260916205923-vpq88)' }
       ],
       desc: '预置豆包火山方舟中转站，可一键切换在线模型'
+    },
+    {
+      id: 'siliconflow',
+      name: '硅基流动 SiliconFlow', nameEn: 'SiliconFlow',
+      baseurl: 'https://api.siliconflow.cn/v1',
+      key: '',  // 用户在设置页面手动添加硅基流动API Key
+      category: 'universal', protocol: 'openai', isDefault: false,
+      models: [
+        { id: 'Qwen/Qwen2.5-7B-Instruct', label: 'Qwen2.5-7B（文本·免费）' },
+        { id: 'Qwen/Qwen2.5-72B-Instruct', label: 'Qwen2.5-72B（文本·强）' },
+        { id: 'deepseek-ai/DeepSeek-V3', label: 'DeepSeek-V3（推理）' },
+        { id: 'deepseek-ai/DeepSeek-R1', label: 'DeepSeek-R1（深度思考）' },
+        { id: 'Qwen/Qwen2-VL-7B-Instruct', label: 'Qwen2-VL-7B（视觉）' },
+        { id: 'Qwen/Qwen-Image', label: 'Qwen-Image（图像生成）' },
+        { id: 'black-forest-labs/FLUX.1-schnell', label: 'FLUX.1 Schnell（图像生成）' },
+        { id: 'stabilityai/stable-diffusion-xl-base-1.0', label: 'SDXL（图像生成）' },
+        { id: 'THUDM/glm-4-9b-chat', label: 'GLM-4-9B（文本）' }
+      ],
+      desc: '国内开源模型聚合平台，多款模型免费'
+    },
+    {
+      id: 'gemini',
+      name: 'Gemini', nameEn: 'Gemini',
+      baseurl: 'https://generativelanguage.googleapis.com/v1beta',
+      key: '',  // 用户在设置页面手动添加Gemini API Key
+      category: 'universal', protocol: 'gemini', isDefault: false,
+      models: [
+        { id: 'gemini-flash-lite-latest', label: 'Gemini Flash-Lite Latest（最新轻量文本·免费）' },
+        { id: 'gemini-3.1-flash-lite', label: 'Gemini 3.1 Flash-Lite（文本·免费·500次/天）' },
+        { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Flash-Lite（文本·免费）' },
+        { id: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite（文本·免费）' },
+        { id: 'gemini-flash-latest', label: 'Gemini Flash Latest（最新文本·免费）' },
+        { id: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash（文本·免费）' },
+        { id: 'gemini-3.5-flash', label: 'Gemini 3.5 Flash（文本·免费）' },
+        { id: 'gemini-2.5-flash-image', label: 'Nano Banana（图像生成·免费）' },
+        { id: 'gemini-3.1-flash-image', label: 'Gemini 3.1 Flash Image（图像生成·免费）' },
+        { id: 'gemini-3.1-flash-lite-image', label: 'Gemini 3.1 Flash-Lite Image（轻量图像·免费）' },
+        { id: 'gemini-2.5-flash-preview-tts', label: 'Gemini 2.5 Flash TTS（语音·免费）' }
+      ],
+      desc: 'Google Gemini官方API，免费层500次/天'
     }
   ];
 
-  // 如果当前没有任何供应商，自动写入内置默认
+  // 检查并补充缺失的内置供应商（不覆盖已有配置）
   function seedBuiltinIfEmpty() {
     try {
       const existing = localStorage.getItem(DEFAULT_PROVIDER_KEY);
-      if (existing && existing !== '[]' && existing !== 'null') return; // 已有数据，不覆盖
-      save(BUILTIN_PROVIDERS.map(p => Object.assign({}, p)));
+      let list = [];
+      if (existing && existing !== '[]' && existing !== 'null') {
+        list = JSON.parse(existing);
+        if (!Array.isArray(list)) list = [];
+      }
+      // 检查每个内置供应商是否存在，不存在则添加
+      let added = 0;
+      BUILTIN_PROVIDERS.forEach(function (bp) {
+        const exists = list.some(function (p) { return p.id === bp.id; });
+        if (!exists) {
+          list.push(Object.assign({}, bp));
+          added++;
+        }
+      });
+      if (added > 0) {
+        save(list);
+        console.log('[ProviderStore] 自动补充了 ' + added + ' 个内置供应商');
+      }
     } catch (e) {
       console.warn('[ProviderStore] 内置供应商种子写入失败：', e);
     }
