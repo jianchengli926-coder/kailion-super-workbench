@@ -965,6 +965,41 @@
       });
     });
 
+    // v2.12.6：文件上传 - 用FileReader读取为base64，清除旧结果
+    box.querySelectorAll('input[type="file"][data-key]').forEach(fileInput => {
+      fileInput.addEventListener('change', () => {
+        const key = fileInput.dataset.key;
+        const file = fileInput.files && fileInput.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          if (!node.params) node.params = {};
+          node.params[key] = e.target.result; // base64 data URL
+          // 清除节点旧结果，避免显示旧的生成结果
+          node.result = '';
+          node._output = '';
+          node._meta = null;
+          // 更新节点DOM
+          if (window.Canvas) {
+            const nodeEl = document.querySelector('.node-card[data-id="' + node.id + '"]');
+            if (nodeEl) {
+              const resultBox = nodeEl.querySelector('.node-result');
+              if (resultBox) {
+                resultBox.style.display = 'none';
+                resultBox.innerHTML = '';
+              }
+              // 更新角标
+              if (window.Canvas.setNodeBadge) {
+                Canvas.setNodeBadge(node.id, { label: '已上传' });
+              }
+            }
+          }
+          if (window.UI && UI.toast) UI.toast('✅ 文件已上传: ' + file.name);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
     // v0.7.0：动态供应商下拉切换时，保存 providerId 并重渲染面板，联动模型下拉
     const provSel = box.querySelector('select[data-dynamic="provider"]');
     if (provSel) {
