@@ -25,24 +25,24 @@
   /* ====================== 供应商优先级 ====================== */
   // 文本模型优先级（从高到低）
   const TEXT_PRIORITY = [
-    'builtin_zhipu_relay',       // 智谱GLM（免费）
-    'siliconflow',               // 硅基流动（免费）
-    'gemini',                    // Gemini（免费·500次/天）
-    'builtin_ollama',            // Ollama本地
-    'wawapi_relay',              // wawapi中转站
-    'openai',                    // OpenAI
-    'deepseek',                  // DeepSeek
-    'doubao'                     // 豆包
+    'builtin_zhipu_relay',       // ① 智谱GLM（免费·在线）
+    'siliconflow',               // ② 硅基流动（免费·在线）
+    'gemini',                    // ③ Gemini（免费·在线·500次/天）
+    'wawapi_relay',              // ④ wawapi中转站（在线）
+    'openai',                    // ⑤ OpenAI（在线）
+    'deepseek',                  // ⑥ DeepSeek（在线）
+    'doubao',                    // ⑦ 豆包（在线）
+    'builtin_ollama'             // ⑧ Ollama本地（最后兜底）
   ];
 
   // 图像模型优先级（从高到低）
   const IMAGE_PRIORITY = [
-    'builtin_zhipu_relay',       // 智谱CogView（免费）
-    'siliconflow',               // 硅基流动Qwen-Image
-    'gemini',                    // Gemini Nano Banana（免费）
-    'builtin_ollama',            // Ollama本地（如有图像模型）
-    'openai',                    // OpenAI DALL-E
-    'wawapi_relay'               // wawapi中转站
+    'builtin_zhipu_relay',       // ① 智谱CogView（免费·在线）
+    'siliconflow',               // ② 硅基流动Qwen-Image（免费·在线）
+    'gemini',                    // ③ Gemini Nano Banana（免费·在线）
+    'openai',                    // ④ OpenAI DALL-E（在线）
+    'wawapi_relay',              // ⑤ wawapi中转站（在线）
+    'builtin_ollama'             // ⑥ Ollama本地（最后兜底）
   ];
 
   /* ====================== 工具函数 ====================== */
