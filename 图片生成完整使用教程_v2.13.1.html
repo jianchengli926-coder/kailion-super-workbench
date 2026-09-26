@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>锴利超级AI工作台 - 图片生成完整使用教程</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #f5f7fa; color: #333; line-height: 1.8; }
+.container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+.header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 40px; border-radius: 16px; margin-bottom: 30px; }
+.header h1 { font-size: 28px; margin-bottom: 10px; }
+.header p { opacity: 0.9; font-size: 16px; }
+.card { background: white; border-radius: 12px; padding: 30px; margin-bottom: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+.card h2 { font-size: 22px; color: #667eea; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 2px solid #f0f0f0; }
+.card h3 { font-size: 18px; color: #333; margin: 20px 0 12px; }
+.step { display: flex; gap: 16px; margin-bottom: 20px; }
+.step-num { width: 36px; height: 36px; background: #667eea; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { font-size: 16px; margin-bottom: 8px; color: #333; }
+.tip { background: #fff9e6; border-left: 4px solid #ffc107; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.tip strong { color: #f57c00; }
+.warn { background: #ffebee; border-left: 4px solid #f44336; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+.good { background: #e8f5e9; border-left: 4px solid #4caf50; padding: 16px 20px; border-radius: 0 8px 8px 0; margin: 16px 0; }
+code { background: #f5f5f5; padding: 2px 8px; border-radius: 4px; font-family: 'SF Mono', Consolas, monospace; font-size: 14px; color: #d63384; }
+pre { background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px; overflow-x: auto; margin: 12px 0; font-size: 14px; line-height: 1.6; }
+pre .comment { color: #6a9955; }
+pre .keyword { color: #569cd6; }
+table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+th, td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #eee; }
+th { background: #f8f9fa; font-weight: 600; color: #555; }
+tr:hover { background: #f8f9fa; }
+.tag { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 13px; margin: 2px; }
+.tag-green { background: #e8f5e9; color: #2e7d32; }
+.tag-blue { background: #e3f2fd; color: #1565c0; }
+.tag-orange { background: #fff3e0; color: #e65100; }
+.tag-red { background: #ffebee; color: #c62828; }
+.workflow-diagram { background: #f8f9fa; padding: 24px; border-radius: 8px; text-align: center; margin: 16px 0; }
+.workflow-node { display: inline-block; background: white; border: 2px solid #667eea; padding: 12px 20px; border-radius: 8px; margin: 4px; font-weight: 500; }
+.workflow-arrow { color: #667eea; font-size: 24px; margin: 0 8px; }
+.example-box { background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 12px 0; }
+.example-box .label { font-weight: bold; color: #667eea; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<div class="header">
+  <h1>🎨 图片生成完整使用教程</h1>
+  <p>锴利超级AI工作台 v2.13.1 | 文生图 + 图生图 + 完整工作流</p>
+</div>
+
+<!-- 第一章：模型选择 -->
+<div class="card">
+  <h2>📌 第一章：用什么模型？</h2>
+  
+  <h3>当前可用模型</h3>
+  <table>
+    <tr><th>供应商</th><th>模型</th><th>类型</th><th>状态</th><th>推荐场景</th></tr>
+    <tr>
+      <td>智谱中转站</td>
+      <td><code>cogview-3-flash</code></td>
+      <td><span class="tag tag-green">文生图</span></td>
+      <td><span class="tag tag-green">✅ 可用</span></td>
+      <td>产品图、场景图、插画</td>
+    </tr>
+    <tr>
+      <td>智谱中转站</td>
+      <td><code>glm-4-flash</code></td>
+      <td><span class="tag tag-blue">文本</span></td>
+      <td><span class="tag tag-green">✅ 可用</span></td>
+      <td>生成提示词、文案</td>
+    </tr>
+    <tr>
+      <td>Ollama本地</td>
+      <td><code>qwen2.5:7b</code></td>
+      <td><span class="tag tag-blue">文本</span></td>
+      <td><span class="tag tag-green">✅ 可用</span></td>
+      <td>离线生成提示词</td>
+    </tr>
+  </table>
+
+  <div class="tip">
+    <strong>💡 核心结论：</strong>图片生成用 <code>cogview-3-flash</code>（智谱），这是国产模型，<strong>中文提示词效果更好</strong>！不需要翻译成英文。
+  </div>
+
+  <h3>中文 vs 英文提示词？</h3>
+  <div class="good">
+    <strong>✅ 用中文！</strong>cogview 是智谱自研模型，对中文理解更准确。直接用中文描述即可，效果比英文好。
+  </div>
+  <div class="warn">
+    <strong>⚠️ 例外情况：</strong>如果你以后接入 Stable Diffusion / Midjourney / DALL-E 等国外模型，才需要用英文提示词。
+  </div>
+</div>
+
+<!-- 第二章：文生图 -->
+<div class="card">
+  <h2>🖼️ 第二章：文生图（文字→图片）</h2>
+  
+  <h3>工作流结构</h3>
+  <div class="workflow-diagram">
+    <span class="workflow-node">📝 提示词节点</span>
+    <span class="workflow-arrow">→</span>
+    <span class="workflow-node">🎨 Banana Pro 图片生成</span>
+  </div>
+
+  <h3>操作步骤</h3>
+  
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>添加「提示词」节点</h4>
+      <p>在左侧节点库 → 基础工具 → 拖入「提示词」节点，填写你的图片描述。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>添加「Banana Pro」节点</h4>
+      <p>节点库 → 图片生成 → 拖入「Banana Pro」节点，自动填充供应商和模型。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>连线并运行</h4>
+      <p>从提示词节点输出口拖线到图片节点输入口，点击「运行」。</p>
+    </div>
+  </div>
+
+  <h3>正面提示词怎么写？</h3>
+  <p><strong>公式：主体 + 细节 + 背景 + 光线 + 风格 + 画质</strong></p>
+  
+  <div class="example-box">
+    <div class="label">📝 产品主图示例（白底图）</div>
+    <pre>一把精美的不锈钢厨师刀，锤纹刀刃，黑檀木手柄，
+纯白背景，专业产品摄影，高清细节，柔和光线，4K分辨率</pre>
+  </div>
+
+  <div class="example-box">
+    <div class="label">📝 场景图示例（厨房场景）</div>
+    <pre>这把厨师刀放在现代厨房的木质砧板上，
+旁边有新鲜蔬菜和橄榄油，温暖的自然光，
+专业美食摄影风格，浅景深，高清细节</pre>
+  </div>
+
+  <div class="example-box">
+    <div class="label">📝 提示词万能模板</div>
+    <pre>【主体】一把XX产品，【细节】XX材质，XX颜色，
+【背景】XX背景/场景，【光线】XX光线，
+【风格】专业XX摄影风格，【画质】高清细节，4K</pre>
+  </div>
+
+  <h3>反面提示词怎么填？</h3>
+  <p>在 Banana Pro 节点的「负面提示词」字段填写，用<strong>中文逗号分隔</strong>。</p>
+  
+  <div class="example-box">
+    <div class="label">🚫 通用反面提示词（直接复制）</div>
+    <pre>模糊,低质量,变形,多余手指,水印,文字,边框,噪点,过曝,
+低分辨率,压缩痕迹,塑料感,不自然,歪斜,比例失调</pre>
+  </div>
+
+  <div class="example-box">
+    <div class="label">🚫 产品图专用反面提示词</div>
+    <pre>模糊,低质量,变形,水印,文字,边框,噪点,过曝,
+产品变形,刀刃缺口,手柄裂纹,背景杂乱,反光过强</pre>
+  </div>
+
+  <h3>参数设置建议</h3>
+  <table>
+    <tr><th>参数</th><th>推荐值</th><th>说明</th></tr>
+    <tr><td>尺寸</td><td>1024×1024</td><td>产品主图用方形</td></tr>
+    <tr><td>尺寸</td><td>1280×720</td><td>场景图/横版图</td></tr>
+    <tr><td>生成数量</td><td>1</td><td>先出1张看效果，满意再批量</td></tr>
+    <tr><td>随机种子</td><td>-1</td><td>-1=随机，固定数字可复现</td></tr>
+  </table>
+</div>
+
+<!-- 第三章：图生图 -->
+<div class="card">
+  <h2>🔄 第三章：图生图（产品白底图→场景图）</h2>
+  
+  <h3>工作流结构</h3>
+  <div class="workflow-diagram">
+    <span class="workflow-node">📷 图片输入</span>
+    <span class="workflow-arrow">+</span>
+    <span class="workflow-node">📝 提示词</span>
+    <span class="workflow-arrow">→</span>
+    <span class="workflow-node">🎨 Banana Pro</span>
+  </div>
+
+  <div class="tip">
+    <strong>💡 原理：</strong>上传你的产品白底图 + 文字描述场景，AI会参考产品外观，生成带场景的新图片。
+  </div>
+
+  <h3>操作步骤</h3>
+  
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>添加「图片输入」节点</h4>
+      <p>节点库 → 基础工具 → 拖入「图片输入」节点，点击上传你的产品白底图。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>添加「提示词」节点</h4>
+      <p>描述你想要的场景，例如："放在厨房砧板上，旁边有蔬菜"</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>添加「Banana Pro」节点</h4>
+      <p>把图片输入和提示词<strong>都连接</strong>到图片生成节点。</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-content">
+      <h4>运行生成</h4>
+      <p>点击运行，AI会参考产品图+文字描述生成场景图。</p>
+    </div>
+  </div>
+
+  <h3>图生图提示词技巧</h3>
+  
+  <div class="example-box">
+    <div class="label">📝 厨房场景（推荐）</div>
+    <pre>这把厨师刀放在现代厨房的木质砧板上，
+旁边有新鲜的番茄、罗勒叶和橄榄油瓶，
+温暖的午后阳光从窗户照进来，
+专业美食摄影，浅景深，高清细节，自然色调</pre>
+  </div>
+
+  <div class="example-box">
+    <div class="label">📝 户外露营场景</div>
+    <pre>这把刀放在露营野餐的木桌上，
+背景是森林和帐篷，暖色调营灯光线，
+户外生活方式摄影，自然氛围，高清细节</pre>
+  </div>
+
+  <div class="example-box">
+    <div class="label">📝 高端展示场景</div>
+    <pre>这把刀放在黑色大理石台面上，
+旁边有精致的刀架和皮质刀套，
+戏剧性侧光，高端产品摄影，暗调风格，金属质感</pre>
+  </div>
+
+  <div class="warn">
+    <strong>⚠️ 图生图注意：</strong>AI可能会改变产品细节（如手柄形状、刀刃纹理）。如果需要100%还原产品，建议用专业抠图+背景合成工具。图生图适合做<strong>氛围参考图</strong>。
+  </div>
+</div>
+
+<!-- 第四章：完整工作流 -->
+<div class="card">
+  <h2>⚡ 第四章：完整电商图片工作流（推荐）</h2>
+  
+  <h3>工作流结构</h3>
+  <div class="workflow-diagram">
+    <span class="workflow-node">📝 产品描述</span>
+    <span class="workflow-arrow">→</span>
+    <span class="workflow-node">🤖 LLM生成提示词</span>
+    <span class="workflow-arrow">→</span>
+    <span class="workflow-node">🎨 图片生成</span>
+  </div>
+
+  <h3>为什么要用LLM生成提示词？</h3>
+  <p>让AI帮你把简单的产品描述，扩展成专业、详细的绘画提示词，效果更好！</p>
+
+  <h3>LLM节点系统提示词设置</h3>
+  <div class="example-box">
+    <div class="label">🤖 LLM系统提示词（复制到LLM节点的system字段）</div>
+    <pre>你是一位专业的AI绘画提示词专家。
+请根据产品描述，生成一段详细的中文图片生成提示词，
+包含：主体描述、材质细节、背景场景、光线效果、摄影风格、画质参数。
+只输出提示词本身，不要解释。</pre>
+  </div>
+
+  <h3>完整流程演示</h3>
+  
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>输入简单描述</h4>
+      <p>提示词节点填写：<code>阳江不锈钢厨师刀，锤纹工艺，黑檀木手柄</code></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>LLM自动扩展提示词</h4>
+      <p>AI会生成类似：<code>一把精美的阳江不锈钢厨师刀，锤纹工艺刀刃呈现独特纹理，黑檀木手柄质感温润，纯白背景，专业产品摄影，柔和侧光突出金属光泽，高清细节，4K分辨率</code></p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>图片生成</h4>
+      <p>Banana Pro节点接收LLM输出的提示词，自动生成高质量产品图。</p>
+    </div>
+  </div>
+</div>
+
+<!-- 第五章：提示词库 -->
+<div class="card">
+  <h2>📚 第五章：提示词模板库（直接复制用）</h2>
+  
+  <h3>产品白底图</h3>
+  <div class="example-box">
+    <pre>一把精美的XX产品，XX材质，XX颜色，
+纯白背景，专业产品摄影，柔和光线，
+高清细节，4K分辨率，居中构图</pre>
+  </div>
+
+  <h3>厨房场景图</h3>
+  <div class="example-box">
+    <pre>XX产品放在现代厨房的木质砧板上，
+旁边有新鲜食材和厨具，温暖自然光，
+专业美食摄影，浅景深，生活气息</pre>
+  </div>
+
+  <h3>高端商务场景</h3>
+  <div class="example-box">
+    <pre>XX产品放在深色木质办公桌上，
+旁边有笔记本和钢笔，柔和台灯光线，
+商务风格摄影，专业质感，低调奢华</pre>
+  </div>
+
+  <h3>户外自然场景</h3>
+  <div class="example-box">
+    <pre>XX产品放在户外野餐的木桌上，
+背景是绿色草地和树木，自然阳光，
+生活方式摄影，清新自然，温暖色调</pre>
+  </div>
+
+  <h3>工业风场景</h3>
+  <div class="example-box">
+    <pre>XX产品放在工业风的金属工作台上，
+背景是砖墙和工具，硬朗侧光，
+工业风摄影，金属质感，力量感</pre>
+  </div>
+
+  <h3>反面提示词万能模板</h3>
+  <div class="example-box">
+    <pre>模糊,低质量,变形,水印,文字,边框,噪点,过曝,
+低分辨率,压缩痕迹,塑料感,不自然,歪斜,比例失调,
+多余物体,背景杂乱</pre>
+  </div>
+</div>
+
+<!-- 第六章：常见问题 -->
+<div class="card">
+  <h2>❓ 第六章：常见问题</h2>
+  
+  <h3>Q1：生成的图片不像我的产品？</h3>
+  <p><strong>A：</strong>图生图时，在提示词中强调产品特征，例如"保留原产品的锤纹刀刃和黑檀木手柄"。</p>
+
+  <h3>Q2：生成速度慢？</h3>
+  <p><strong>A：</strong>cogview-3-flash 通常 5-10 秒/张。如果超过30秒，检查网络或换尺寸为 1024×1024。</p>
+
+  <h3>Q3：提示词用中文还是英文？</h3>
+  <p><strong>A：</strong>用<strong>中文</strong>！cogview是国产模型，中文理解更准确。</p>
+
+  <h3>Q4：怎么批量生成多张？</h3>
+  <p><strong>A：</strong>在 Banana Pro 节点设置「生成数量」为 2-4，一次出多张选最好的。</p>
+
+  <h3>Q5：怎么保存生成的图片？</h3>
+  <p><strong>A：</strong>点击节点结果中的图片，右键保存，或点击图片下方的下载按钮。</p>
+
+  <h3>Q6：图生图不支持怎么办？</h3>
+  <p><strong>A：</strong>如果当前模型不支持图生图，可以：①先用文生图生成类似产品 ②用LLM生成详细描述再文生图 ③后续接入支持图生图的模型（如Stable Diffusion）。</p>
+</div>
+
+<!-- 第七章：演示工作流 -->
+<div class="card">
+  <h2>🚀 第七章：一键导入演示工作流</h2>
+  
+  <p>项目目录下的 <code>演示工作流/</code> 文件夹已准备好3个图片相关工作流：</p>
+  
+  <table>
+    <tr><th>文件</th><th>功能</th><th>节点数</th></tr>
+    <tr><td><code>06_文生图-产品主图.json</code></td><td>文字生成产品白底图</td><td>2</td></tr>
+    <tr><td><code>07_图生图-产品场景图.json</code></td><td>产品图+文字生成场景图</td><td>3</td></tr>
+    <tr><td><code>08_完整电商图片工作流.json</code></td><td>LLM生成提示词→图片生成</td><td>4</td></tr>
+  </table>
+
+  <h3>导入方法</h3>
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-content">
+      <h4>打开工作台</h4>
+      <p>访问 http://localhost:8766 ，输入密码登录。</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-content">
+      <h4>点击「导出」→「导入备份」</h4>
+      <p>选择对应的JSON文件，工作流自动加载到画布。</p>
+    </div>
+  </div>
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-content">
+      <h4>点击「运行」</h4>
+      <p>直接运行即可看到效果！</p>
+    </div>
+  </div>
+</div>
+
+<div class="card" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+  <h2 style="color: white; border: none;">🎯 明天展示流程建议</h2>
+  <p style="font-size: 16px; margin: 16px 0;">
+    1. 导入「08_完整电商图片工作流」→ 展示LLM自动生成提示词<br>
+    2. 导入「06_文生图-产品主图」→ 展示快速出图<br>
+    3. 导入「07_图生图-产品场景图」→ 上传产品图生成场景<br>
+    4. 展示92节点库 → 体现功能丰富度
+  </p>
+  <p style="opacity: 0.9;">祝展示圆满成功！🎉</p>
+</div>
+
+</div>
+</body>
+</html>

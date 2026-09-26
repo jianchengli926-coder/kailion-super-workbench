@@ -1,0 +1,15 @@
+{
+  "name": "完整电商图片工作流",
+  "desc": "LLM生成提示词→内容审查→图片生成→多图对比",
+  "nodes": [
+    {"id":"n1","type":"promptNode","x":50,"y":200,"params":{"text":"阳江不锈钢厨师刀，锤纹工艺，黑檀木手柄"}},
+    {"id":"n2","type":"llmContentNode","x":350,"y":100,"params":{"providerId":"builtin_zhipu_relay","model":"glm-4-flash","system":"你是一位专业的AI绘画提示词专家。请根据产品描述，生成一段详细的英文图片生成提示词，包含：主体描述、背景、光线、风格、画质参数。只输出提示词本身。","maxTokens":300}},
+    {"id":"n3","type":"imageGeneratorProNode","x":700,"y":100,"params":{"providerId":"builtin_zhipu_relay","model":"cogview-3-flash","size":"1024x1024","count":1,"negativePrompt":"blurry,low quality,deformed,watermark,text,border,noise,overexposed"}},
+    {"id":"n4","type":"imageGeneratorFastNode","x":700,"y":350,"params":{"providerId":"builtin_zhipu_relay","model":"cogview-3-flash","size":"1024x1024"}}
+  ],
+  "links": [
+    {"from":{"node":"n1","port":"out"},"to":{"node":"n2","port":"in"}},
+    {"from":{"node":"n2","port":"out"},"to":{"node":"n3","port":"in"}},
+    {"from":{"node":"n2","port":"out"},"to":{"node":"n4","port":"in"}}
+  ]
+}

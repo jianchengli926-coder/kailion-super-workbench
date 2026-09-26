@@ -1,0 +1,11 @@
+{
+  "name": "文生图-产品主图生成",
+  "desc": "用文字描述生成产品主图，适合电商白底图、场景图",
+  "nodes": [
+    {"id":"n1","type":"promptNode","x":50,"y":200,"params":{"text":"一把精美的不锈钢厨师刀，锤纹刀刃，黑檀木手柄，纯白背景，专业产品摄影，高清细节，柔和光线，4K"}},
+    {"id":"n2","type":"imageGeneratorProNode","x":400,"y":200,"params":{"providerId":"builtin_zhipu_relay","model":"cogview-3-flash","size":"1024x1024","count":1,"negativePrompt":"模糊,低质量,变形,多余手指,水印,文字,边框,噪点,过曝"}}
+  ],
+  "links": [
+    {"from":{"node":"n1","port":"out"},"to":{"node":"n2","port":"in"}}
+  ]
+}
