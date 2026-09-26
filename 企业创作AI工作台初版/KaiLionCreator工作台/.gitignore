@@ -1,0 +1,14 @@
+# macOS
+.DS_Store
+._*
+
+# 依赖与构建产物（本项目零依赖，保留以防将来引入）
+node_modules/
+dist/
+build/
+*.log
+
+# 本地临时文件
+*.local.json
+.env
+.env.*

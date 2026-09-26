@@ -167,7 +167,7 @@ const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
   const pathname = parsedUrl.pathname;
 
-  // v2.12.25：请求日志（静态资源不记录，只记录API和代理请求）
+  // v2.13.0：请求日志（静态资源不记录，只记录API和代理请求）
   const isStatic = pathname.startsWith('/assets/') || pathname === '/' || pathname === '/index.html';
   if (!isStatic && req.method !== 'OPTIONS') {
     const startTime = Date.now();
@@ -257,7 +257,7 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({
       status: 'ok',
       service: '锴利超级AI工作台后端代理',
-      version: '2.12.25',
+      version: '2.13.0',
       ollama: `http://${OLLAMA_HOST}:${OLLAMA_PORT}`
     }));
     return;

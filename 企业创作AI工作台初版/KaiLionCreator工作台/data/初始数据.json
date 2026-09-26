@@ -1,0 +1,11 @@
+{
+  "_meta": {
+    "app": "KaiLionCreator",
+    "vendor": "KaiLionCrafts",
+    "version": "1.0.0",
+    "exportedAt": "",
+    "includeKeys": false,
+    "note": "这是空占位文件，不含任何共享数据。把你在工作台里导出的共享数据包覆盖此文件（保持文件名为 初始数据.json），对方首次打开就会自动载入你配置好的内容。"
+  },
+  "data": {}
+}

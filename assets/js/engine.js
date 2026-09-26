@@ -256,6 +256,101 @@
     } catch (e) { /* 忽略存储异常 */ }
   }
 
+  /* ====================== 深度思考四阶段 LLM ====================== */
+  // v2.13.0：学习网蜂窝核心卖点 - 分析→规划→执行→反思四阶段深度思考
+  async function deepThinkingLLM(node, sys, user, prov, model, p, opts) {
+    const _callFn = (window.Failover && window.Failover.chatCompletion) ? window.Failover.chatCompletion.bind(window.Failover) : API.chatCompletion.bind(API);
+    const temperature = p.temperature != null ? p.temperature : 0.7;
+    const maxTokens = p.maxTokens != null ? p.maxTokens : 2048;
+    const nodeEl = () => document.querySelector('.node-card[data-id="' + node.id + '"] .node-result');
+    
+    function updateThinking(stage, text, isFinal) {
+      const el = nodeEl();
+      if (!el) return;
+      const stages = [
+        {key: 'analyze', icon: '🔍', name: '分析问题', color: '#3b82f6'},
+        {key: 'plan', icon: '📋', name: '制定规划', color: '#8b5cf6'},
+        {key: 'execute', icon: '✍️', name: '执行回答', color: '#10b981'},
+        {key: 'reflect', icon: '🤔', name: '反思优化', color: '#f59e0b'}
+      ];
+      let html = '<div style="margin-bottom:10px;padding:8px 12px;background:rgba(99,102,241,0.15);border-radius:8px;border-left:3px solid #6366f1;font-size:13px;color:#a5b4fc;">🧠 深度思考模式 - 四阶段推理</div>';
+      stages.forEach(function(s) {
+        const isActive = s.key === stage;
+        const isDone = stages.findIndex(x => x.key === stage) > stages.findIndex(x => x.key === s.key) || isFinal;
+        let status = '⏳';
+        if (isDone) status = '✅';
+        else if (isActive) status = '🔄';
+        html += '<div style="margin:4px 0;padding:4px 8px;font-size:12px;color:' + (isActive ? '#fff' : '#64748b') + ';">' + status + ' ' + s.icon + ' ' + s.name + '</div>';
+      });
+      if (text) {
+        html += '<div style="margin-top:8px;padding:10px;background:rgba(0,0,0,0.2);border-radius:6px;font-size:12px;color:#94a3b8;max-height:200px;overflow-y:auto;white-space:pre-wrap;">' + esc(text) + '</div>';
+      }
+      el.innerHTML = html;
+      el.style.display = '';
+    }
+    
+    async function callStage(systemMsg, userMsg, stageKey, stageName) {
+      updateThinking(stageKey, '正在' + stageName + '...', false);
+      let full = '';
+      try {
+        full = await _callFn(prov, {
+          model: model,
+          messages: [{role: 'system', content: systemMsg}, {role: 'user', content: userMsg}],
+          temperature: temperature, maxTokens: maxTokens, stream: true
+        }, function(chunk) {
+          if (stopRequested) return;
+          if (!chunk) return;
+          full += chunk;
+          updateThinking(stageKey, full, false);
+        }, opts);
+      } catch (e) {
+        throw new Error(stageName + '阶段失败：' + (e && e.message ? e.message : e));
+      }
+      return full || '';
+    }
+    
+    try {
+      // 阶段1：分析问题
+      const analyzeSys = '你是一位专业的问题分析专家。请深入分析用户的问题，找出核心诉求、关键约束、隐含需求和可能的陷阱。只输出分析结果，不要给出最终答案。';
+      const analysis = await callStage(analyzeSys, user, 'analyze', '分析问题');
+      await sleep(300);
+      
+      // 阶段2：制定规划
+      const planSys = '你是一位严谨的内容规划师。根据以下问题分析，请制定详细的回答大纲和步骤，包括每个部分要覆盖的要点。只输出规划大纲，不要给出完整回答。';
+      const planUser = '【问题】\n' + user + '\n\n【分析结果】\n' + analysis;
+      const plan = await callStage(planSys, planUser, 'plan', '制定规划');
+      await sleep(300);
+      
+      // 阶段3：执行回答
+      const execSys = sys + '\n\n请根据以下分析和规划，生成完整、高质量的最终回答。';
+      const execUser = '【问题】\n' + user + '\n\n【分析结果】\n' + analysis + '\n\n【回答规划】\n' + plan;
+      const answer = await callStage(execSys, execUser, 'execute', '执行回答');
+      await sleep(300);
+      
+      // 阶段4：反思优化
+      const reflectSys = '你是一位严格的质量审查官。请审查以下回答，指出不足并给出优化后的最终版本。如果回答已经很好，可以直接确认。输出格式：先简短评价，然后给出"【最终答案】"开头的优化版本。';
+      const reflectUser = '【问题】\n' + user + '\n\n【原始回答】\n' + answer;
+      const reflection = await callStage(reflectSys, reflectUser, 'reflect', '反思优化');
+      
+      // 提取最终答案
+      let finalAnswer = answer;
+      const finalMatch = reflection.match(/【最终答案】([\s\S]*)/);
+      if (finalMatch && finalMatch[1].trim().length > 50) {
+        finalAnswer = finalMatch[1].trim();
+      }
+      
+      // 显示最终结果（包含思考过程折叠）
+      const el = nodeEl();
+      if (el) {
+        el.innerHTML = '<details style="margin-bottom:10px;"><summary style="cursor:pointer;color:#a5b4fc;font-size:12px;padding:6px 8px;background:rgba(99,102,241,0.15);border-radius:6px;">🧠 查看深度思考过程（分析→规划→执行→反思）</summary><div style="padding:10px;font-size:11px;color:#64748b;max-height:300px;overflow-y:auto;"><div style="margin-bottom:8px;"><b style="color:#3b82f6;">🔍 分析：</b>' + esc(analysis.substring(0, 300)) + '</div><div style="margin-bottom:8px;"><b style="color:#8b5cf6;">📋 规划：</b>' + esc(plan.substring(0, 300)) + '</div><div style="margin-bottom:8px;"><b style="color:#f59e0b;">🤔 反思：</b>' + esc(reflection.substring(0, 300)) + '</div></div></details><div class="stream-text">' + esc(finalAnswer) + '</div>';
+      }
+      
+      return finalAnswer;
+    } catch (e) {
+      throw new Error('深度思考失败：' + (e && e.message ? e.message : e));
+    }
+  }
+
   /* ====================== LLM 生成 API ====================== */
   async function callLLM(node, opts) {
     const sys = (node.params && node.params.system) || '你是锴利超级AI工作台的写作助手。';
@@ -270,11 +365,12 @@
     const p = node.params || {};
     const model = p.model || (prov.models && prov.models[0] && prov.models[0].id) || 'gpt-4o-mini';
     
-    // v2.3.1：思考模式 - 在系统提示中注入深度思考指令
-    let systemPrompt = sys;
+    // v2.13.0：深度思考四阶段流程 - 分析→规划→执行→反思（学习网蜂窝核心卖点）
     if (p.enableThinking) {
-      systemPrompt += '\n\n【思考模式】请先进行深度思考和推理分析，然后给出最终答案。思考过程要严谨、有逻辑。';
+      return await deepThinkingLLM(node, sys, user, prov, model, p, opts);
     }
+    
+    let systemPrompt = sys;
     
     // v2.3.2：MCP & 技能 - 注入可用工具/技能描述
     if (p.enableMCP) {
@@ -1144,6 +1240,41 @@
   // ===== v2.5.0：专业内容生成节点辅助函数 =====
   const PROFESSIONAL_NODES = ['brandIPGeneratorNode','aipSuperIndividualNode','storyOutlineNode','shotGeneratorNode','storyAssemblerNode','contentReviewNode','geoOptimizerNode','expertDiscussionNode','infoRetrievalNode','digitalHumanCollaborationNode','directorConsoleNode','fortuneMasterNode','topicDiscoveryNode','dianLeiDaBillboardNode','productCustomizerNode','productParserNode','detailPageGeneratorNode','detailPageReplicaNode','salesScriptNode','imageTextNode','batchGeneratorNode','pptAssemblerNode','pptContentNode','newtonInquiryNode','newtonInquiryResultNode','miaoshouCollectDetailNode','miaoshouCollectSubmitNode','miaoshouPublishNode','miaoshouWritebackNode','klCertPackNode','klInquiryReplyNode','klProductShotNode','klSpecSheetNode','klSupplierScoreNode','klSiteCopyNode','cliNode','expertCollaborationNode'];
 
+  // v2.13.0：内容审查本地规则库（广告法违禁词 + 平台规则）
+  const CONTENT_REVIEW_RULES = {
+    extremeWords: ['最','最佳','最好','最大','最小','最多','最少','最强','最弱','最优','最先进','最流行','最受欢迎','最具','第一','唯一','首个','首选','顶尖','顶级','极品','极致','绝对','百分之百','100%','完美','无与伦比','史无前例','空前绝后','绝无仅有','独一无二','举世无双','领先世界','世界领先','行业领先','遥遥领先','领导者','缔造者','开创者','奠基人','鼻祖','之王','之王','霸主','霸主地位','垄断','万能','神器','神器级','黑科技','硬核','王炸','炸裂','爆品','爆款','必买','必入','必囤','闭眼入','不买后悔','错过再等一年','手慢无','抢疯了','卖疯了','卖爆了','断货王','销量冠军','销量第一','好评如潮','零差评','无差评','全网最低','全网最低价','历史最低价','抄底价','跳楼价','亏本甩卖','清仓大甩卖','最后一天','最后机会','限时特惠','仅限今日','马上涨价','即将售罄','库存紧张','仅剩X件','欲购从速','点击抢购','立即购买','马上下单','赶紧抢','快抢','速抢','拼手速','手慢则无','错过等一年','一年仅此一次','千载难逢','百年一遇','天赐良机','机不可失','时不再来','不容错过','千万不要错过','别错过','不要错过','必须拥有','一定要买','不买不是人','买了不后悔','后悔没早买','早买早享受','晚买哭着求','买到就是赚到','稳赚不赔','零风险','无风险','保本','保赚','包赚','躺赚','睡后收入','被动收入','财务自由','财富自由','一夜暴富','暴富','暴赚','日入过万','月入十万','年入百万','轻松赚钱','简单赚钱','快速致富','致富捷径','创业好项目','加盟好项目','零门槛','零基础','小白也能','新手必看','入门必备','干货满满','纯干货','硬核干货','知识点','考点','重点','必考点','必考','押题','命中','压中','原题','真题','模拟题','考前冲刺','提分','高分','满分','状元','学霸','学神','逆袭','翻盘','反转','震惊','惊呆','吓尿','跪了','服了','绝了','牛批','牛逼','yyds','永远的神','封神','神作','神级','神仙','神仙级','天花板','上限','巅峰','极致体验','极致享受','极致性价比','性价比之王','性价比天花板','物美价廉','物超所值','超值','划算','实惠','便宜','贱卖','白菜价','地板价','底价','最低价','全网最低','历史最低','全年最低','史低','骨折价','腰斩','剁手','吃土','吃灰','闲置','落灰','积灰','吃灰神器','吃灰必备','买前生产力买后爱奇艺','等等党','等等党永远不亏','早买早享受晚买享折扣','等等党大获全胜','背刺','背刺了','被背刺','背刺老用户','背刺等等党','背刺首发用户','背刺等等党','背刺等等党大获全胜','背刺等等党永远不亏','背刺等等党大获全胜永远不亏'],
+    medicalWords: ['治疗','治愈','疗效','药效','根治','痊愈','康复','神医','神药','特效药','偏方','秘方','祖传秘方','老中医','老军医','宫廷秘方','药到病除','包治百病','百病消','无副作用','零副作用','纯天然','纯植物','无添加','零添加','无激素','零激素','无防腐剂','零防腐剂','无香精','零香精','无色素','零色素','无荧光剂','零荧光剂','无重金属','零重金属','有机','绿色','无公害','无污染','健康','养生','保健','补品','营养品','保健品','药品','医疗器械','医用','临床','医学','医疗','医院','医生','护士','诊所','药房','药店','药效','药性','药理','药剂','药品','药方','处方','非处方','OTC','国药准字','药监局','FDA','CE认证','ISO认证','质检合格','质量保证','品质保证','正品保证','正品保障','假一赔十','假一赔百','假一赔万','正品行货','原厂正品','官方正品','官方授权','授权经销','总代理','一级代理','二级代理','三级代理','分销','代销','一件代发','代发','微商','微商圈','朋友圈营销','社群营销','私域流量','公域流量','流量密码','流量风口','风口','红利期','蓝海','红海','赛道','赛道选择','赛道风口','赛道红利','赛道蓝海','赛道红海','赛道天花板','赛道天花板','赛道龙头','赛道龙头企业','赛道龙头公司','赛道龙头股','赛道龙头股票'],
+    politicalWords: ['国家领导人','主席','总理','总书记','常委','政治局','中央','国务院','政府','官方','权威','央视','人民日报','新华社','人民网','新华网','环球时报','参考消息','光明日报','经济日报','中国日报','解放军报','武警','军队','部队','军人','警察','公安','交警','城管','法院','检察院','司法','法律','律师','法官','检察官','公证','仲裁','调解','诉讼','起诉','上诉','申诉','投诉','举报','信访','上访','维权','消费者权益','315','打假','假货','山寨','盗版','侵权','抄袭','剽窃','复制','盗版','破解','注册机','序列号','激活码','破解版','绿色版','便携版','免安装','去广告','去更新','去验证','去授权','去付费','免费版','完整版','专业版','企业版','旗舰版','豪华版','至尊版','钻石版','黄金版','白银版','青铜版','黑铁版','塑料版','玻璃版','陶瓷版','木质版','金属版','合金版','钛合金版','碳纤维版','航空级','航天级','军工级','工业级','商业级','消费级','入门级','进阶级','专业级','大师级','专家级','资深级','元老级','骨灰级','发烧级','硬核级','变态级','地狱级','噩梦级','困难级','普通级','简单级','轻松级','休闲级','娱乐级','搞笑级','沙雕级','鬼畜级','魔性级','洗脑级','上头级','上瘾级','沉迷级','无法自拔','欲罢不能','停不下来','根本停不下来','一用就停不下来','用过都说好','谁用谁知道','一般人我不告诉他','懂的都懂','懂王','内行','懂行','行家','专家','大师','宗师','泰斗','权威','大佬','大神','大牛','大咖','大V','网红','主播','博主','UP主','创作者','内容创作者','自媒体','新媒体','短视频','直播','带货','直播带货','短视频带货','图文带货','种草','安利','拔草','踩雷','避坑','排雷','种草机','安利机','拔草机','避雷','避坑指南','排雷指南','种草指南','安利指南','拔草指南','避雷指南','避坑攻略','排雷攻略','种草攻略','安利攻略','拔草攻略','避雷攻略','避坑清单','排雷清单','种草清单','安利清单','拔草清单','避雷清单','避坑大全','排雷大全','种草大全','安利大全','拔草大全','避雷大全','避坑合集','排雷合集','种草合集','安利合集','拔草合集','避雷合集'],
+    platformRules: {
+      douyin: ['最','第一','唯一','首选','顶级','极品','绝对','100%','完美','神器','爆款','必买','全网最低','历史最低','最后一天','限时特惠','马上涨价','库存紧张','手慢无','抢疯了','卖爆了','零差评','销量冠军','治疗','治愈','疗效','根治','纯天然','无添加','有机','绿色','官方正品','假一赔十','央视','人民日报','新华社','国家领导人','主席','总理','总书记'],
+      xiaohongshu: ['最','第一','唯一','首选','顶级','极品','绝对','100%','完美','神器','爆款','必买','全网最低','历史最低','最后一天','限时特惠','马上涨价','库存紧张','手慢无','抢疯了','卖爆了','零差评','销量冠军','治疗','治愈','疗效','根治','纯天然','无添加','有机','绿色','官方正品','假一赔十','央视','人民日报','新华社','国家领导人','主席','总理','总书记','医美','整形','整容','微整','打针','玻尿酸','肉毒素','水光针','美白针','瘦脸针','瘦腿针','丰胸','隆胸','隆鼻','割双眼皮','开眼角','纹眉','纹唇','纹身','半永久','永久','永久脱毛','永久祛斑','永久美白','永久除皱','永久抗衰','永久年轻','逆龄','冻龄','童颜','少女感','少女肌','婴儿肌','牛奶肌','鸡蛋肌','水光肌','透亮肌','发光肌','素颜肌','裸妆肌','伪素颜','心机妆','纯欲风','纯欲','欲纯','又纯又欲','纯欲天花板','纯欲风天花板','纯欲系','纯欲妆容','纯欲穿搭','纯欲发型','纯欲美甲','纯欲香水','纯欲口红','纯欲眼影','纯欲腮红','纯欲粉底','纯欲遮瑕','纯欲散粉','纯欲高光','纯欲修容','纯欲眉笔','纯欲眼线','纯欲睫毛膏','纯欲假睫毛','纯欲美瞳','纯欲隐形眼镜','纯欲眼镜','纯欲帽子','纯欲围巾','纯欲手套','纯欲袜子','纯欲鞋子','纯欲包包','纯欲衣服','纯欲裤子','纯欲裙子','纯欲内衣','纯欲睡衣','纯欲家居服','纯欲运动服','纯欲瑜伽服','纯欲健身服','纯欲泳衣','纯欲比基尼','纯欲内衣套装','纯欲睡衣套装','纯欲家居服套装','纯欲运动服套装','纯欲瑜伽服套装','纯欲健身服套装','纯欲泳衣套装','纯欲比基尼套装']
+    }
+  };
+  
+  // v2.13.0：本地违禁词扫描函数
+  function scanForbiddenWords(text) {
+    if (!text) return { hits: [], categories: {} };
+    const hits = [];
+    const categories = {};
+    const allRules = [
+      { name: '广告法极限词', words: CONTENT_REVIEW_RULES.extremeWords, level: 'high' },
+      { name: '医疗健康违禁词', words: CONTENT_REVIEW_RULES.medicalWords, level: 'high' },
+      { name: '政治敏感词', words: CONTENT_REVIEW_RULES.politicalWords, level: 'high' },
+      { name: '抖音平台规则', words: CONTENT_REVIEW_RULES.platformRules.douyin, level: 'medium' },
+      { name: '小红书平台规则', words: CONTENT_REVIEW_RULES.platformRules.xiaohongshu, level: 'medium' }
+    ];
+    allRules.forEach(function(rule) {
+      rule.words.forEach(function(word) {
+        if (text.includes(word)) {
+          hits.push({ word: word, category: rule.name, level: rule.level });
+          if (!categories[rule.name]) categories[rule.name] = [];
+          categories[rule.name].push(word);
+        }
+      });
+    });
+    return { hits: hits, categories: categories, total: hits.length };
+  }
+
   function isProfessionalContentNode(type) {
     return PROFESSIONAL_NODES.includes(type);
   }
@@ -1199,7 +1330,7 @@
       shotGeneratorNode: `你是一位资深视频分镜师。请根据以下大纲生成详细的分镜脚本：\n大纲：${input || '未提供'}\n\n请以表格形式输出：镜号、时长、景别（远景/全景/中景/近景/特写）、运镜（固定/推/拉/摇/移/跟）、画面描述、台词/旁白、字幕、音效/配乐提示。分镜要专业、可执行、画面感强。`,
       storyAssemblerNode: `你是一位视频剪辑师。请根据以下素材规划视频组装方案：\n素材：${input || '未提供'}\n\n请包含：素材整理、转场设计、节奏把控、配乐选择、字幕排版、导出设置（分辨率/帧率/码率）。方案要专业、可执行。`,
       contentReviewNode: `你是一位资深内容合规审查专家。请对以下内容进行多维度合规审查：\n内容：${input || '未提供'}\n\n请逐项审查：政治敏感检查、低俗色情检查、虚假宣传检查、侵权风险检查、广告法合规检查（极限词/绝对化用语）、平台规则合规检查。每项给出【通过/警告/不通过】评级和具体说明，最后给出【修改建议】和【总体评级】。`,
-      geoOptimizerNode: `你是一位GEO（生成式引擎优化）专家。请根据以下信息生成GEO优化方案：\n品牌/内容：${input || '未指定'}\n\n请包含：AI引擎检索友好度诊断、内容结构优化建议（语义标记/结构化数据/引用价值）、关键词策略（AI问答场景关键词）、权威性建设建议、引用诱饵内容建议、优化优先级排序。目标是让品牌在ChatGPT/Perplexity/Gemini等AI引擎回答时被引用。`,
+      geoOptimizerNode: `你是一位GEO（生成式引擎优化）专家。请根据以下信息生成完整的GEO优化方案：\n品牌/内容：${input || '未指定'}\n\n请按以下结构输出：\n\n## 一、AI引擎检索友好度诊断\n分析当前内容在AI引擎中的可见性问题\n\n## 二、JSON-LD结构化数据\n生成可直接复制使用的JSON-LD代码（包含Organization/Product/FAQ/Article等schema），用代码块包裹\n\n## 三、内容结构优化建议\n语义标记、结构化数据、引用价值提升\n\n## 四、AI问答场景关键词策略\n列出10个AI引擎高频问答关键词及优化建议\n\n## 五、权威性建设建议\nE-E-A-T提升、引用来源、专家背书\n\n## 六、引用诱饵内容建议\n设计容易被AI引擎引用的内容格式\n\n## 七、优化优先级排序\n按ROI排序的行动清单\n\n目标：让品牌在ChatGPT/Perplexity/Gemini等AI引擎回答时被优先引用。`,
       expertDiscussionNode: `你是一个专家讨论主持人。请围绕以下主题组织多位专家进行多轮讨论：\n主题：${input || '未指定'}\n\n请组织3-5位不同领域的专家，每位专家从自己的专业领域出发给出观点，专家之间要有碰撞和回应，最后给出综合结论。格式：【专家名-身份】观点... 【综合结论】...`,
       infoRetrievalNode: `你是一位信息检索与研究专家。请根据以下查询进行多源信息检索和综合分析：\n查询：${input || '未指定'}\n\n请包含：核心发现（3-5条）、详细分析（分点论述）、数据支撑（如有）、不同观点对比、信息来源说明、结论与建议。内容要客观、有深度、有依据。`,
       digitalHumanCollaborationNode: `你是一位数字人内容策划专家。请根据以下需求生成数字人协作方案：\n需求：${input || '未指定'}\n\n请包含：数字人人设（姓名/身份/性格）、协作模式（顺序/并行/讨论/混合）、各数字人分工、口播文案（分段落，标注语气和表情）、场景建议、动作建议、配乐建议、时长预估。文案要口语化、有亲和力。`,
@@ -2465,7 +2596,17 @@
           }
         });
         const pcnInput = pcnInputVals.length > 0 ? pcnInputVals.join('\n') : (pcnUp || '');
-        const pcnPrompt = getProfessionalPrompt(node.type, pcnInput, pcn);
+        // v2.13.0：内容审查节点 - 先本地违禁词扫描，再LLM审查
+        let pcnPrompt = getProfessionalPrompt(node.type, pcnInput, pcn);
+        if (node.type === 'contentReviewNode') {
+          const scanResult = scanForbiddenWords(pcnInput);
+          if (scanResult.total > 0) {
+            const scanSummary = Object.keys(scanResult.categories).map(function(cat) {
+              return cat + '（' + scanResult.categories[cat].length + '个）：' + scanResult.categories[cat].slice(0, 10).join('、') + (scanResult.categories[cat].length > 10 ? '等' : '');
+            }).join('\n');
+            pcnPrompt = '【本地规则预扫描结果】\n共命中 ' + scanResult.total + ' 个违禁/敏感词：\n' + scanSummary + '\n\n请结合以上本地扫描结果，对以下内容进行更深入的多维度合规审查，并针对每个命中词给出具体修改建议：\n\n' + pcnPrompt;
+          }
+        }
         const pcnProv = resolveProvider(node, 'llm') || getDefaultLLMProvider();
         const pcnIsLocal = /localhost|127\.0\.0\.1/i.test(pcnProv ? pcnProv.baseurl : '');
         if (pcnProv && pcnProv.baseurl && (pcnProv.key || pcnIsLocal) && window.API) {

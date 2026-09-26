@@ -1677,6 +1677,63 @@
       renderProviders();
     });
 
+    // ===== v2.13.0 供应商配置导出/导入 =====
+    const btnExportProviders = document.getElementById('btn-export-providers');
+    if (btnExportProviders) {
+      btnExportProviders.addEventListener('click', () => {
+        try {
+          const providers = ProviderStore.load();
+          const data = {
+            app: window.BRAND.product,
+            version: (window.BRAND && BRAND.version) || '2.13.0',
+            exportedAt: new Date().toISOString(),
+            type: 'provider-config',
+            providers: providers
+          };
+          const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(blob);
+          a.download = 'kailion-providers-' + new Date().toISOString().slice(0,10) + '.json';
+          a.click();
+          URL.revokeObjectURL(a.href);
+          toast('✅ 供应商配置已导出（' + providers.length + '个）');
+        } catch (e) {
+          toast('❌ 导出失败：' + e.message);
+        }
+      });
+    }
+    const btnImportProviders = document.getElementById('btn-import-providers');
+    const providerImportFile = document.getElementById('provider-import-file');
+    if (btnImportProviders && providerImportFile) {
+      btnImportProviders.addEventListener('click', () => providerImportFile.click());
+      providerImportFile.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const data = JSON.parse(ev.target.result);
+            const imported = data.providers || data;
+            if (!Array.isArray(imported)) throw new Error('格式不正确');
+            const existing = ProviderStore.load();
+            let added = 0, updated = 0;
+            imported.forEach(function(p) {
+              const idx = existing.findIndex(function(x) { return x.id === p.id || x.name === p.name; });
+              if (idx >= 0) { existing[idx] = Object.assign({}, existing[idx], p); updated++; }
+              else { existing.push(p); added++; }
+            });
+            ProviderStore.save(existing);
+            renderProviders();
+            toast('✅ 导入成功：新增' + added + '个，更新' + updated + '个');
+          } catch (err) {
+            toast('❌ 导入失败：' + err.message);
+          }
+        };
+        reader.readAsText(file);
+        providerImportFile.value = '';
+      });
+    }
+
     // ===== v1.2.1 全量数据导出/导入 =====
     // 需要导出的所有 localStorage key
     const ALL_BACKUP_KEYS = [

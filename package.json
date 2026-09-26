@@ -1,6 +1,6 @@
 {
   "name": "kailion-super-workbench",
-  "version": "2.12.25",
+  "version": "2.13.0",
   "description": "锴利超级AI工作台 - 跨平台AI创作工作台",
   "main": "electron/main.js",
   "author": "阳江市锴利国际贸易有限公司",

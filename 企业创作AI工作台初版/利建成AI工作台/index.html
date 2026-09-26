@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>利建成AI工作台</title>
+  <link rel="stylesheet" href="assets/css/tokens.css">
+  <link rel="stylesheet" href="assets/css/workbench.css">
+  <link rel="stylesheet" href="assets/css/results.css">
+  <link rel="stylesheet" href="assets/css/canvas-ext.css">
+</head>
+<body>
+
+  <!-- ============ 启动遮罩（v0.6.0，纯 CSS 淡出，2.2s 后自动隐藏） ============ -->
+  <div id="boot-splash">
+    <div class="boot-content">
+      <img src="assets/img/logo.png" alt="logo" class="boot-logo" onerror="this.style.display='none'">
+      <div class="boot-title gradient-text" data-i18n="brand.product">利建成AI工作台</div>
+      <div class="boot-sub" data-i18n="boot.sub">正在加载工作空间…</div>
+    </div>
+  </div>
+
+  <!-- ============ 顶部工具栏 ============ -->
+  <header id="topbar">
+    <div class="topbar-left">
+      <img class="topbar-logo" src="assets/img/logo.png" alt="logo">
+      <span class="topbar-product gradient-text" data-i18n="brand.product">利建成AI工作台</span>
+      <span class="topbar-divider"></span>
+      <span id="workflow-name" class="topbar-wfname" data-i18n="topbar.unnamed">未命名工作流</span>
+    </div>
+    <div class="topbar-center">
+      <!-- v0.9.0 执行模式选择 + 运行/停止 -->
+      <div class="run-controls" style="display:inline-flex;align-items:center;gap:4px;">
+        <select id="exec-mode" class="select select-sm" data-i18n-title="topbar.execMode" title="执行模式">
+          <option value="parallel" data-i18n="topbar.parallel">⚡ 并行</option>
+          <option value="serial" data-i18n="topbar.serial">🔢 串行</option>
+        </select>
+        <button id="btn-run" class="btn btn-primary" data-i18n-title="topbar.runTitle" title="运行工作流">
+          <span class="btn-icon">▶</span> <span data-i18n="topbar.run">运行</span>
+        </button>
+        <button id="btn-stop" class="btn btn-danger btn-sm hidden" data-i18n-title="topbar.stopTitle" title="停止执行">
+          <span class="btn-icon">⏹</span> <span data-i18n="topbar.stop">停止</span>
+        </button>
+      </div>
+      <button id="btn-save" class="btn" data-i18n-title="topbar.saveTitle" title="保存到本地">
+        <span class="btn-icon">💾</span> <span data-i18n="topbar.save">保存</span>
+      </button>
+      <!-- v0.6.0 导出下拉（id 用 btn-export-menu，避免与设置面板 btn-export 冲突） -->
+      <div class="export-dropdown" style="position:relative;display:inline-block">
+        <button id="btn-export-menu" class="btn" data-i18n-title="topbar.exportTitle" title="导出工作流">
+          <span class="btn-icon">📤</span> <span data-i18n="topbar.export">导出</span>
+        </button>
+        <div id="export-menu" class="export-menu hidden">
+          <div class="export-item" data-type="json" data-i18n="topbar.exportJson">📄 导出为 JSON</div>
+          <div class="export-item" data-type="png" data-i18n="topbar.exportPng">🖼️ 导出为 PNG 图片</div>
+        </div>
+      </div>
+      <button id="btn-autolayout" class="btn" data-i18n-title="topbar.autoLayout" title="自动布局">
+        <span class="btn-icon">✨</span> <span data-i18n="topbar.autoLayout">自动布局</span>
+      </button>
+      <button id="btn-sticky" class="btn btn-sm" data-i18n-title="topbar.stickyTitle" title="添加便签">
+        <span class="btn-icon">📝</span> <span data-i18n="topbar.sticky">便签</span>
+      </button>
+      <button id="btn-marketplace" class="btn btn-sm" data-i18n-title="market.title" title="工作流市场">
+        <span class="btn-icon">🏪</span> <span data-i18n="topbar.market">市场</span>
+      </button>
+      <button id="btn-batch" class="btn btn-sm" data-i18n-title="topbar.batchTitle" title="批量并行任务">
+        <span class="btn-icon">⚡</span> <span data-i18n="topbar.batch">批量</span>
+      </button>
+      <button id="btn-cron" class="btn btn-sm" data-i18n-title="topbar.timerTitle" title="定时任务">
+        <span class="btn-icon">⏰</span> <span data-i18n="topbar.timer">定时</span>
+      </button>
+      <button id="btn-coach" class="btn btn-sm" data-i18n-title="coach.title" title="画布诊断">
+        <span class="btn-icon">🔍</span> <span data-i18n="coach.run">诊断</span>
+      </button>
+    </div>
+    <div class="topbar-right">
+      <div class="zoom-group">
+        <button id="zoom-out" class="btn btn-sm" data-i18n-title="topbar.zoomOut" title="缩小">−</button>
+        <span id="zoom-label" class="zoom-label">100%</span>
+        <button id="zoom-in" class="btn btn-sm" data-i18n-title="topbar.zoomIn" title="放大">＋</button>
+        <button id="zoom-reset" class="btn btn-sm" data-i18n-title="topbar.zoomReset" title="重置缩放" data-i18n="common.reset">重置</button>
+      </div>
+      <span class="topbar-divider"></span>
+      <button id="btn-undo" class="btn btn-sm" data-i18n-title="topbar.undo" title="撤销 (Ctrl+Z)">↶</button>
+      <button id="btn-redo" class="btn btn-sm" data-i18n-title="topbar.redo" title="重做 (Ctrl+Y)">↷</button>
+      <span class="topbar-divider"></span>
+      <button id="btn-settings" class="btn btn-sm" data-i18n-title="topbar.settings" title="设置"><span data-i18n="settings.title">⚙ 设置</span></button>
+    </div>
+  </header>
+
+  <!-- ============ 执行进度条（v0.9.0） ============ -->
+  <div id="exec-progress" class="exec-progress hidden">
+    <div class="exec-progress-bar" id="exec-progress-bar"></div>
+    <span class="exec-progress-text" id="exec-progress-text">0 / 0</span>
+  </div>
+
+  <!-- v1.1.0 执行步骤可视化 -->
+  <div id="exec-stepper" class="exec-stepper hidden">
+    <span id="exec-stepper-step" class="exec-stepper-step"></span>
+    <span id="exec-stepper-summary" class="exec-stepper-summary"></span>
+  </div>
+
+  <!-- ============ 主区域 ============ -->
+  <div id="main">
+
+    <!-- 左侧导航栏 -->
+    <nav id="sidebar">
+      <div id="sidebar-nav" class="sidebar-nav"></div>
+      <div class="sidebar-footer">
+        <div class="user-card">
+          <div class="user-avatar">利</div>
+          <div class="user-info">
+            <div class="user-name" data-i18n="user.name">利建成</div>
+            <div class="user-role" data-i18n="user.role">管理员</div>
+          </div>
+        </div>
+        <button id="btn-manage" class="btn btn-sm btn-block" data-i18n="sidebar.manageLib">管理资源库</button>
+      </div>
+    </nav>
+
+    <!-- 中央内容区（画布 / 智能工作台 / 节点库 / 工作流列表 / 占位页） -->
+    <main id="content">
+
+      <!-- 智能工作台视图 -->
+      <section id="view-smart" class="view">
+        <div id="smart-root"></div>
+      </section>
+
+      <!-- 画布视图 -->
+      <section id="view-canvas" class="view active">
+        <div id="canvas-wrap">
+          <div id="canvas-grid"></div>
+          <svg id="canvas-svg"><g id="canvas-links-g"></g></svg>
+          <div id="canvas-nodes"></div>
+          <!-- 连线拖拽中的临时线 -->
+          <svg id="canvas-temp-svg" style="pointer-events:none"><g id="canvas-temp-g"></g></svg>
+        </div>
+      </section>
+
+      <!-- 节点库视图 -->
+      <section id="view-nodes" class="view">
+        <div class="panel-header">
+          <h2 data-i18n="other.nodeLib">节点库</h2>
+          <input id="node-search" class="input" data-i18n-placeholder="other.nodeSearchPlaceholder" placeholder="搜索节点名称或描述…">
+          <div class="node-mgmt-controls" id="node-mgmt-controls" style="display:none;gap:6px;">
+            <button id="btn-node-showall" class="btn btn-sm" data-i18n="nodeLib.showAll">全部显示</button>
+            <button id="btn-node-hideall" class="btn btn-sm" data-i18n="nodeLib.hideAll">全部隐藏</button>
+            <button id="btn-node-reset" class="btn btn-sm" data-i18n="nodeLib.resetDefault">恢复默认</button>
+          </div>
+          <button id="btn-node-mgmt" class="btn btn-sm" data-i18n-title="nodeLib.mgmtHint" title="管理节点可见性">
+            <span data-i18n="nodeLib.mgmtBtn">管理</span>
+          </button>
+        </div>
+        <div id="node-library" class="node-library"></div>
+      </section>
+
+      <!-- 技能库视图（v1.1.0） -->
+      <section id="view-skills" class="view">
+        <div id="skills-root"></div>
+      </section>
+
+      <!-- 工作流列表视图 -->
+      <section id="view-workflow" class="view">
+        <div class="panel-header">
+          <h2 data-i18n="other.workflowTemplates">工作流模板</h2>
+          <span class="tag" id="workflow-cat-count">20 个分类</span>
+        </div>
+        <div id="workflow-list" class="workflow-list"></div>
+      </section>
+
+      <!-- 工作流市场视图（v0.9.0） -->
+      <section id="view-marketplace" class="view">
+        <div class="panel-header">
+          <h2 data-i18n="market.title">🏪 工作流市场</h2>
+          <div class="marketplace-controls">
+            <input id="marketplace-search" class="input input-sm" data-i18n-placeholder="market.searchPlaceholder" placeholder="搜索示例工作流…">
+            <select id="marketplace-cat" class="select select-sm">
+              <option value="all" data-i18n="market.allCats">全部分类</option>
+            </select>
+            <select id="marketplace-sort" class="select select-sm">
+              <option value="default" data-i18n="market.defaultSort">默认排序</option>
+              <option value="nodes-asc" data-i18n="market.nodesAsc">节点数 ↑</option>
+              <option value="nodes-desc" data-i18n="market.nodesDesc">节点数 ↓</option>
+            </select>
+          </div>
+        </div>
+        <div id="marketplace-grid" class="marketplace-grid"></div>
+      </section>
+
+      <!-- 占位视图（专家/数字人/选题等未实化模块） -->
+      <section id="view-placeholder" class="view">
+        <div class="placeholder">
+          <div class="placeholder-icon" id="placeholder-icon">🖼️</div>
+          <h2 id="placeholder-title">素材库</h2>
+          <p id="placeholder-desc">该模块即将上线，敬请期待</p>
+          <button class="btn btn-primary" onclick="App.switchView('canvas')" data-i18n="other.backToCanvas">返回画布</button>
+        </div>
+      </section>
+
+      <!-- 资源库实化视图（素材/提示词/知识库共用容器） -->
+      <section id="view-resource" class="view">
+        <div id="resource-root"></div>
+      </section>
+
+      <!-- 使用说明书视图 -->
+      <section id="view-manual" class="view">
+        <div id="manual-root"></div>
+      </section>
+
+    </main>
+
+    <!-- 右侧参数面板 -->
+    <aside id="right-panel">
+      <div id="right-panel-content"></div>
+    </aside>
+
+  </div>
+
+  <!-- ============ AI 助手悬浮面板 ============ -->
+  <div id="ai-assistant">
+    <div id="ai-header" class="ai-header">
+      <div class="ai-avatar">🤖</div>
+      <span class="ai-name" data-i18n="assistant.name">小利助手</span>
+      <button id="ai-toggle" class="ai-toggle">−</button>
+    </div>
+    <div id="ai-body" class="ai-body">
+      <div id="ai-messages" class="ai-messages">
+        <div class="ai-msg ai-msg-bot" id="ai-welcome">
+          你好！我是小利助手 🤖<br>
+          你可以让我帮你搭建工作流，例如：<br>
+          · 「帮我生成详情页工作流」<br>
+          · 「添加一个提示词节点」<br>
+          · 「清空画布」
+        </div>
+      </div>
+      <div class="ai-input-row">
+        <input id="ai-input" class="input" data-i18n-placeholder="assistant.placeholder" placeholder="输入指令或问题…">
+        <button id="ai-send" class="btn btn-primary btn-sm" data-i18n="assistant.send">发送</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 设置页面（全屏遮罩） ============ -->
+  <div id="settings-overlay" class="overlay hidden">
+    <div class="settings-modal">
+      <div class="settings-header">
+        <h2 data-i18n="settings.title">⚙ 设置</h2>
+        <button id="settings-close" class="btn btn-sm">✕</button>
+      </div>
+      <div class="settings-body">
+        <!-- 供应商管理 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.providers">供应商管理</h3>
+          <p class="settings-desc" data-i18n="settings.providersDescFull">配置 AI 服务供应商与 API Key（仅保存在本地浏览器）</p>
+          <!-- v0.7.0 预设快速添加按钮组 -->
+          <div id="provider-presets" class="provider-presets"></div>
+          <div id="provider-list" class="provider-list"></div>
+          <form id="provider-form" class="provider-form provider-form-expanded">
+            <div class="form-row">
+              <label id="pf-form-title" class="form-label" data-i18n="settings.addProvider">添加供应商</label>
+            </div>
+            <div class="form-row">
+              <label data-i18n="settings.name">名称</label>
+              <input id="pf-name" class="input" data-i18n-placeholder="settings.namePlaceholder" placeholder="供应商名称（如 OpenAI）" required>
+            </div>
+            <div class="form-row">
+              <label data-i18n="settings.baseUrl">API 地址</label>
+              <input id="pf-baseurl" class="input" data-i18n-placeholder="settings.baseUrlPlaceholder" placeholder="API Base URL（如 https://api.openai.com/v1）">
+            </div>
+            <div class="form-row">
+              <label data-i18n="settings.apiKey">API Key</label>
+              <div class="pf-key-row">
+                <input id="pf-key" class="input" type="password" placeholder="sk-...">
+                <button type="button" id="pf-key-toggle" class="btn btn-sm" data-i18n-title="settings.toggleKey" title="显示/隐藏 Key">👁</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label data-i18n="settings.category">分类</label>
+              <select id="pf-category" class="select" data-i18n-title="settings.category" title="供应商分类">
+                <option value="llm" data-i18n="settings.catLlm">🧠 大模型 (LLM)</option>
+                <option value="image" data-i18n="settings.catImage">🎨 图片生成</option>
+                <option value="video" data-i18n="settings.catVideo">🎬 视频生成</option>
+                <option value="3d" data-i18n="settings.cat3d">🧊 3D 生成</option>
+                <option value="universal" data-i18n="settings.catUniversal">🔀 通用中转站</option>
+              </select>
+            </div>
+            <div class="form-row">
+              <label data-i18n="settings.models">模型列表</label>
+              <div class="pf-models-block">
+                <div id="pf-models" class="pv-models"></div>
+                <div class="form-row pf-model-row">
+                  <input id="pf-model-input" class="input" data-i18n-placeholder="settings.modelPlaceholder" placeholder="输入模型 ID，如 gpt-4o">
+                  <button type="button" id="pf-model-add" class="btn btn-sm" data-i18n="settings.addModel">添加</button>
+                  <button type="button" id="pf-fetch-models" class="btn btn-sm" data-i18n="settings.fetchFromApi">🌐 从API获取</button>
+                </div>
+              </div>
+            </div>
+            <div class="form-row pf-submit-row">
+              <button type="submit" id="pf-submit" class="btn btn-primary btn-sm" data-i18n="settings.addProvider">添加供应商</button>
+              <button type="button" id="pf-cancel" class="btn btn-sm hidden" data-i18n="common.cancel">取消编辑</button>
+            </div>
+          </form>
+        </div>
+        <!-- 主题 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.theme">🎨 主题</h3>
+          <p class="settings-desc" data-i18n="settings.themeDescFull">选择界面主题，跟随系统将自动适配操作系统外观</p>
+          <div class="theme-preview" id="theme-selector">
+            <div class="theme-card" data-theme="dark" data-i18n="settings.themeDark">🌙 深色</div>
+            <div class="theme-card" data-theme="light" data-i18n="settings.themeLight">☀️ 浅色</div>
+            <div class="theme-card" data-theme="system" data-i18n="settings.themeAuto">💻 跟随系统</div>
+          </div>
+          <div id="theme-customizer-container" style="margin-top:16px;"></div>
+        </div>
+        <!-- v1.0.0：语言 / 运行历史 / API 日志 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.language">🌐 语言</h3>
+          <p class="settings-desc" data-i18n="settings.languageDesc">选择界面显示语言</p>
+          <select id="lang-select" class="select">
+            <option value="zh">中文</option>
+            <option value="en">English</option>
+          </select>
+        </div>
+        <div class="settings-section">
+          <h3 data-i18n="settings.runHistory">📜 运行历史</h3>
+          <p class="settings-desc" data-i18n="settings.runHistoryDesc">记录每次工作流运行详情，最多保留50条</p>
+          <div id="run-history-container"></div>
+        </div>
+        <div class="settings-section">
+          <h3 data-i18n="settings.apiLog">📊 API 调用日志</h3>
+          <p class="settings-desc" data-i18n="settings.apiLogDesc">记录所有API调用与费用估算，最多保留200条</p>
+          <div id="api-log-container"></div>
+        </div>
+        <!-- 版本历史 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.versionHistory">📜 工作流版本历史</h3>
+          <p class="settings-desc" data-i18n="settings.versionHistoryDesc">每次保存自动创建快照，最多保留 20 个版本，可随时回滚</p>
+          <div class="backup-row">
+            <button id="btn-version-save" class="btn btn-sm btn-primary" data-i18n="settings.saveVersion">💾 保存当前版本</button>
+            <button id="btn-version-clear" class="btn btn-sm btn-danger" data-i18n="settings.clearHistory">清空历史</button>
+          </div>
+          <div id="version-list" class="version-list">
+            <div class="version-empty" data-i18n="version.empty">暂无版本记录，点击上方按钮保存</div>
+          </div>
+        </div>
+        <!-- 数据统计 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.stats">📊 数据统计</h3>
+          <p class="settings-desc" data-i18n="settings.statsDesc">本地使用数据统计（仅保存在浏览器中）</p>
+          <div id="stats-cards" class="stats-cards"></div>
+        </div>
+        <!-- 节点结果缓存（v0.9.0） -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.nodeCache">🗄 节点结果缓存</h3>
+          <p class="settings-desc" data-i18n="settings.nodeCacheDescFull">相同参数的节点运行结果自动缓存，下次运行直接复用，节省 API 调用。图片/视频/3D 仅缓存 URL 与元数据。</p>
+          <div class="cache-info" id="cache-info">
+            <span class="cache-stat"><span data-i18n="settings.cacheEntries">缓存条目</span>：<strong id="cache-count">0</strong> / 50</span>
+            <span class="cache-stat"><span data-i18n="settings.cacheUsedSpace">占用空间</span>：<strong id="cache-size">0</strong> KB</span>
+          </div>
+          <div class="backup-row">
+            <button id="btn-cache-clear" class="btn btn-sm btn-danger" data-i18n="settings.clearCache">🗑 清除缓存</button>
+            <button id="btn-cache-refresh" class="btn btn-sm" data-i18n="settings.refreshStats">🔄 刷新统计</button>
+          </div>
+        </div>
+        <!-- 数据备份 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.backup">数据备份</h3>
+          <p class="settings-desc" data-i18n="settings.backupDescFull">导出或导入全部数据（工作流/供应商/素材库/提示词等），JSON格式</p>
+          <div class="backup-row">
+            <button id="btn-export-all" class="btn btn-sm btn-primary">📦 导出全部数据</button>
+            <button id="btn-export" class="btn btn-sm">📄 仅导出当前工作流</button>
+            <button id="btn-import" class="btn btn-sm">📥 导入备份</button>
+            <input type="file" id="import-file" accept=".json" style="display:none">
+          </div>
+          <p class="settings-desc" style="margin-top:8px;font-size:12px;opacity:0.7;">导出全部数据包含：工作流、API供应商、素材库、提示词库、知识库、收藏节点、主题设置、运行历史等所有配置</p>
+        </div>
+        <!-- 关于 -->
+        <div class="settings-section">
+          <h3 data-i18n="settings.about">关于</h3>
+          <p class="settings-desc">
+            <strong data-i18n="brand.product">利建成AI工作台</strong> v1.1.0<br>
+            <span data-i18n="brand.company">阳江市锴利国际贸易有限公司</span><br>
+            <span data-i18n="settings.aboutDesc">基于原生 HTML/CSS/JS 构建，无外部依赖</span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 脚本（按依赖顺序） ============ -->
+  <script src="assets/js/nodes-data.js"></script>
+  <!-- v1.0.0：国际化核心，须在任何业务模块之前加载 -->
+  <script src="assets/js/i18n.js"></script>
+  <!-- v0.7.0：供应商数据与 API 封装，须在 engine/ui 之前加载 -->
+  <script src="assets/js/providers-data.js"></script>
+  <script src="assets/js/api.js"></script>
+  <!-- v1.0.0：API 调用日志，须在 engine/api 之后、业务页面前加载 -->
+  <script src="assets/js/api-logger.js"></script>
+  <!-- v0.9.0：节点结果缓存，须在 engine 之前加载 -->
+  <script src="assets/js/cache.js"></script>
+  <script src="assets/js/nodes.js"></script>
+  <script src="assets/js/canvas.js"></script>
+  <script src="assets/js/engine.js"></script>
+  <!-- v1.0.0：运行历史，须在 engine 之后加载 -->
+  <script src="assets/js/run-history.js"></script>
+  <script src="assets/js/ui.js"></script>
+  <!-- v0.8.0 新增模块 -->
+  <script src="assets/js/workflow-templates.js"></script>
+  <script src="assets/js/theme-manager.js"></script>
+  <script src="assets/js/version-history.js"></script>
+  <script src="assets/js/shortcuts.js"></script>
+  <script src="assets/js/stats.js"></script>
+  <script src="assets/js/smart.js"></script>
+  <script src="assets/js/manual.js"></script>
+  <script src="assets/js/resources.js"></script>
+  <script src="assets/js/tasks.js"></script>
+  <script src="assets/js/export.js"></script>
+  <!-- v0.9.0：工作流市场 -->
+  <script src="assets/js/marketplace.js"></script>
+  <!-- v1.1.0：画布诊断 + 技能库，须在 canvas/engine/ui 之后、app 之前 -->
+  <script src="assets/js/coach.js"></script>
+  <script src="assets/js/skills.js"></script>
+  <script src="assets/js/app.js"></script>
+  <!-- v1.0.0：全局搜索（Ctrl/Cmd+K），最后加载以索引全部数据 -->
+  <script src="assets/js/search.js"></script>
+</body>
+</html>
