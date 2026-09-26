@@ -1241,9 +1241,13 @@
   // Register language change callback - re-render right panel
   if (window.I18N && typeof I18N.onLangChange === 'function') {
     I18N.onLangChange(function() {
-      if (window.UI && UI.renderRightPanel) {
+      if (window.UI && UI.renderRightPanel && window.Canvas) {
         var sel = document.querySelector('.node-card.selected');
-        if (sel && sel.dataset.id) UI.renderRightPanel(sel.dataset.id);
+        if (sel && sel.dataset.id) {
+          var st = Canvas.getState();
+          var node = (st && st.nodes && st.nodes[sel.dataset.id]) || null;
+          if (node) UI.renderRightPanel(node);
+        }
       }
     });
   }

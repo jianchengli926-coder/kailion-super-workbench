@@ -769,7 +769,7 @@
         }
         // pending / processing：继续轮询
       }
-      throw new Error(tr('api.err.videoPollTimeout', '视频生成轮询超时（60s），任务仍未完成。'));
+      throw new Error(tr('api.err.videoPollTimeout', '视频生成轮询超时（5分钟），任务仍未完成。'));
     } catch (e) {
       _alErr = e;
       if (e.name === 'AbortError') {
@@ -954,7 +954,7 @@
         }
         // pending / processing：继续轮询
       }
-      throw new Error(tr('api.err.model3DPollTimeout', '3D 生成轮询超时（90s），任务仍未完成。'));
+      throw new Error(tr('api.err.model3DPollTimeout', '3D 生成轮询超时（3分钟），任务仍未完成。'));
     } catch (e) {
       _alErr = e;
       if (e.name === 'AbortError') {

@@ -219,8 +219,7 @@
     if (historyIdx <= 0) return;
     historyIdx--;
     skipRecord = true;
-    Canvas.setState(history[historyIdx]);
-    skipRecord = false;
+    try { Canvas.setState(history[historyIdx]); } finally { skipRecord = false; }
     updateUndoRedoButtons();
     UI.toast(window.I18N ? I18N.t('app.undo') : '已撤销');
   }
@@ -229,8 +228,7 @@
     if (historyIdx >= history.length - 1) return;
     historyIdx++;
     skipRecord = true;
-    Canvas.setState(history[historyIdx]);
-    skipRecord = false;
+    try { Canvas.setState(history[historyIdx]); } finally { skipRecord = false; }
     updateUndoRedoButtons();
     UI.toast(window.I18N ? I18N.t('app.redo') : '已重做');
   }
@@ -271,8 +269,7 @@
       const data = JSON.parse(raw);
       if (data.canvas) {
         skipRecord = true;
-        Canvas.setState(data.canvas);
-        skipRecord = false;
+        try { Canvas.setState(data.canvas); } finally { skipRecord = false; }
         if (data.workflowName) {
           const wfEl = document.getElementById('workflow-name');
           if (wfEl) wfEl.textContent = data.workflowName;
@@ -321,8 +318,7 @@
   function loadRecent(item) {
     if (!item || !item.canvasState) return;
     skipRecord = true;
-    Canvas.setState(item.canvasState);
-    skipRecord = false;
+    try { Canvas.setState(item.canvasState); } finally { skipRecord = false; }
     pushHistory();
     if (item.name) {
       const el = document.getElementById('workflow-name');
