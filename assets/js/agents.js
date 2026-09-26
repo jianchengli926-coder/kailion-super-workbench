@@ -204,9 +204,9 @@
       if (node) addedIds.push(node.id || node);
     });
     // 自动连线（串行）
-    if (addedIds.length > 1 && window.Canvas.connectNodes) {
+    if (addedIds.length > 1 && window.Canvas.connect) {
       for (let i = 0; i < addedIds.length - 1; i++) {
-        try { window.Canvas.connectNodes(addedIds[i], addedIds[i + 1]); } catch (e) {}
+        try { window.Canvas.connect(addedIds[i], addedIds[i + 1]); } catch (e) {}
       }
     }
     // 命名工作流
