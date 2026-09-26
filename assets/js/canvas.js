@@ -1466,38 +1466,16 @@
     const tag = (e.target.tagName || '').toLowerCase();
     if (tag === 'input' || tag === 'textarea' || tag === 'select' || tag === 'button' || e.target.isContentEditable) return;
 
-    // 弹窗/遮罩打开时不响应删除快捷键，避免误删画布
+    // 弹窗/遮罩打开时不响应快捷键
     if (document.querySelector('.overlay:not(.hidden)')) return;
 
-    // Ctrl+Z 撤销 / Ctrl+Shift+Z 或 Ctrl+Y 重做（v2.2.0-super）
-    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'z') {
-      e.preventDefault();
-      if (e.shiftKey) redo(); else undo();
-      return;
-    }
-    if ((e.ctrlKey || e.metaKey) && !e.altKey && e.key.toLowerCase() === 'y') {
-      e.preventDefault();
-      redo();
-      return;
-    }
-
+    // v2.12.25：撤销/重做/删除已统一由 app.js 处理，避免两套系统重复执行
     // Space 键 → 临时平移模式
     if (e.code === 'Space') {
       e.preventDefault();
       spacePressed = true;
       wrap.style.cursor = 'grabbing';
       return;
-    }
-
-    if (e.key === 'Delete' || e.key === 'Backspace') {
-      const ids = getSelectedIds();
-      if (ids.length) {
-        e.preventDefault();
-        removeNodes(ids);
-      } else if (state.selected) {
-        e.preventDefault();
-        removeNode(state.selected);
-      }
     }
   }
 

@@ -444,6 +444,8 @@
       const tag = (e.target.tagName || '').toLowerCase();
       if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
       if (e.target.isContentEditable) return;
+      // 弹窗/遮罩打开时不响应画布快捷键，避免误操作
+      if (document.querySelector('.overlay:not(.hidden)')) return;
 
       const mod = e.ctrlKey || e.metaKey;
       const key = e.key.toLowerCase();
