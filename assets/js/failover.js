@@ -54,6 +54,8 @@
 
   // v2.12.25：修复 APILogger.log 调用方式——原代码传字符串被静默忽略，
   // 改为传对象以符合 api-logger.js 的 log(call) 签名。
+  // 注意：api-logger 仅区分 success（绿点）与非 success（红点），
+  // 信息性日志也用 success 状态，避免误显示为失败。
   function logFailover(providerName, message, status) {
     try {
       if (window.APILogger && typeof window.APILogger.log === 'function') {
@@ -64,7 +66,7 @@
           inputTokens: 0,
           outputTokens: 0,
           duration: 0,
-          status: status || 'info',
+          status: status || 'success',
           error: message || ''
         });
       }
@@ -169,7 +171,7 @@
         }
 
         // 日志记录
-        logFailover(currentProvider.name, isFallback ? '尝试备用供应商' : '使用主供应商', 'info');
+        logFailover(currentProvider.name, isFallback ? '尝试备用供应商' : '使用主供应商', 'success');
 
         const result = await window.API.chatCompletion(currentProvider, callParams, onStreamChunk, opts);
 
@@ -224,7 +226,7 @@
           }
         }
 
-        logFailover(currentProvider.name, isFallback ? '尝试备用图像供应商' : '使用主图像供应商', 'info');
+        logFailover(currentProvider.name, isFallback ? '尝试备用图像供应商' : '使用主图像供应商', 'success');
 
         const result = await window.API.imageGeneration(currentProvider, callParams, opts);
 
