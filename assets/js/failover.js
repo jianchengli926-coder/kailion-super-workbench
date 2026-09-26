@@ -52,6 +52,25 @@
     return window.ProviderStore || null;
   }
 
+  // v2.12.25：修复 APILogger.log 调用方式——原代码传字符串被静默忽略，
+  // 改为传对象以符合 api-logger.js 的 log(call) 签名。
+  function logFailover(providerName, message, status) {
+    try {
+      if (window.APILogger && typeof window.APILogger.log === 'function') {
+        window.APILogger.log({
+          provider: 'failover',
+          model: providerName || '',
+          type: 'failover',
+          inputTokens: 0,
+          outputTokens: 0,
+          duration: 0,
+          status: status || 'info',
+          error: message || ''
+        });
+      }
+    } catch (e) { /* 日志失败不影响主流程 */ }
+  }
+
   function getAllProviders() {
     const store = getProviderStore();
     if (!store || typeof store.load !== 'function') return [];
@@ -150,23 +169,19 @@
         }
 
         // 日志记录
-        if (window.APILogger && typeof window.APILogger.log === 'function') {
-          window.APILogger.log('failover', isFallback ? `尝试备用供应商: ${currentProvider.name}` : `使用主供应商: ${currentProvider.name}`);
-        }
+        logFailover(currentProvider.name, isFallback ? '尝试备用供应商' : '使用主供应商', 'info');
 
         const result = await window.API.chatCompletion(currentProvider, callParams, onStreamChunk, opts);
 
         // 成功
-        if (isFallback && window.APILogger) {
-          window.APILogger.log('failover', `✅ 备用供应商 ${currentProvider.name} 调用成功`);
+        if (isFallback) {
+          logFailover(currentProvider.name, '备用供应商调用成功', 'success');
         }
         return result;
 
       } catch (err) {
         lastError = err;
-        if (window.APILogger) {
-          window.APILogger.log('failover', `❌ ${currentProvider.name} 调用失败: ${err.message || err}`);
-        }
+        logFailover(currentProvider.name, '调用失败: ' + (err.message || err), 'failed');
         // 继续尝试下一个
         continue;
       }
@@ -209,22 +224,18 @@
           }
         }
 
-        if (window.APILogger && typeof window.APILogger.log === 'function') {
-          window.APILogger.log('failover', isFallback ? `尝试备用图像供应商: ${currentProvider.name}` : `使用主图像供应商: ${currentProvider.name}`);
-        }
+        logFailover(currentProvider.name, isFallback ? '尝试备用图像供应商' : '使用主图像供应商', 'info');
 
         const result = await window.API.imageGeneration(currentProvider, callParams, opts);
 
-        if (isFallback && window.APILogger) {
-          window.APILogger.log('failover', `✅ 备用图像供应商 ${currentProvider.name} 调用成功`);
+        if (isFallback) {
+          logFailover(currentProvider.name, '备用图像供应商调用成功', 'success');
         }
         return result;
 
       } catch (err) {
         lastError = err;
-        if (window.APILogger) {
-          window.APILogger.log('failover', `❌ ${currentProvider.name} 图像生成失败: ${err.message || err}`);
-        }
+        logFailover(currentProvider.name, '图像生成失败: ' + (err.message || err), 'failed');
         continue;
       }
     }

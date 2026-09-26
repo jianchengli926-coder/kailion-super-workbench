@@ -433,6 +433,9 @@
      第一个成功后记住形态（localStorage kailion_image_form_<id>），后续直接命中。 */
   function buildImageForms(provider, params) {
     var base = normalizeBaseUrl(provider.baseurl);
+    // v2.12.25：修复双 /v1/v1/ 路径 bug——base 已含 /v1 时不再重复拼接
+    var baseHasV1 = /\/v\d+$/i.test(base);
+    var v1Prefix = baseHasV1 ? '' : '/v1';
     var model = params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'dall-e-3';
     var prompt = params.prompt || 'a high-quality image';
     var size = params.size || '1024x1024';
@@ -450,7 +453,7 @@
       forms.push({
         id: 'v1-image-edits',
         label: '图生图 /v1/images/edits',
-        url: base + '/v1/images/edits',
+        url: base + v1Prefix + '/images/edits',
         body: { model: model, image: params.image, prompt: prompt, n: n, size: size }
       });
       // chat/completions 多模态图生图
@@ -474,7 +477,7 @@
     forms.push({
       id: 'v1-images-generations',
       label: '/v1/images/generations',
-      url: base + '/v1/images/generations',
+      url: base + v1Prefix + '/images/generations',
       body: { model: model, prompt: prompt, n: n, size: size }
     });
     forms.push({

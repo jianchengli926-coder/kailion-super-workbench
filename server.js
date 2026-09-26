@@ -247,7 +247,7 @@ const server = http.createServer((req, res) => {
     res.end(JSON.stringify({
       status: 'ok',
       service: '锴利超级AI工作台后端代理',
-      version: '1.0.0',
+      version: '2.12.24',
       ollama: `http://${OLLAMA_HOST}:${OLLAMA_PORT}`
     }));
     return;
