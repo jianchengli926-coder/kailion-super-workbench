@@ -489,6 +489,30 @@
         const fields = NodeDef.getFields(type);
         if (Array.isArray(fields)) {
           fields.forEach(d => { if (d.value !== undefined) defaultParams[d.key] = d.value; });
+          // v2.13.1：自动填充默认供应商和模型，避免新建节点时空providerId导致运行失败
+          const provField = fields.find(f => f.dynamic === 'provider');
+          if (provField && !defaultParams.providerId && window.ProviderStore) {
+            const cat = provField.providerCategory || 'llm';
+            const provs = ProviderStore.getByCategory(cat) || [];
+            const online = provs.find(p => p.key && !/localhost|127\.0\.0\.1/i.test(p.baseurl || ''));
+            const local = provs.find(p => /localhost|127\.0\.0\.1/i.test(p.baseurl || ''));
+            const chosen = online || local || provs[0];
+            if (chosen) {
+              defaultParams.providerId = chosen.id;
+              const modelField = fields.find(f => f.dynamic === 'model');
+              if (modelField && !defaultParams[modelField.key] && chosen.models && chosen.models.length) {
+                // v2.13.1：按节点分类智能选择默认模型（图片节点优先选图片模型，视频节点优先选视频模型）
+                const cat = (provField.providerCategory || '').toLowerCase();
+                let preferred = null;
+                if (cat === 'image') {
+                  preferred = chosen.models.find(m => /cogview|image|flux|sd|dalle|banana|seedream/i.test(m.id || ''));
+                } else if (cat === 'video') {
+                  preferred = chosen.models.find(m => /video|seedance|veo|kling|sora|omni/i.test(m.id || ''));
+                }
+                defaultParams[modelField.key] = (preferred || chosen.models[0]).id;
+              }
+            }
+          }
         }
       }
     } catch (e) { /* 默认参数读取失败，忽略 */ }
