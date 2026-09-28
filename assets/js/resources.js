@@ -99,16 +99,51 @@
     }
   }
 
-  /* ====================== 知识库 ====================== */
+  /* ====================== 知识库（个人+公司双库） ====================== */
   function renderKB(root) {
     const KB_CATS = ['全部', '产品知识', '技术文档', '市场资料', '学习笔记', '灵感创意', '其他'];
     const KB_STATUS = ['全部状态', '草稿', '在用', '已验证', '已归档'];
     let activeCat = '全部', activeStatus = '全部状态', viewMode = 'list';
+    let kbTab = 'personal';
 
     root.innerHTML = `
       <div class="res-wrap">
         <div class="res-header">
-          <div><h2 class="res-title">📚 知识库</h2><p class="res-sub">分类管理企业知识，支持认知拓扑视图与链接导入（本地存储）</p></div>
+          <div><h2 class="res-title">📚 知识库</h2><p class="res-sub">公司知识库 + 个人知识库，分类管理企业知识</p></div>
+        </div>
+        <div class="kb-tabs" style="display:flex;gap:8px;margin-bottom:16px;">
+          <button class="btn btn-sm kb-tab-btn ${kbTab==='personal'?'btn-primary':''}" data-tab="personal">👤 个人知识库</button>
+          <button class="btn btn-sm kb-tab-btn ${kbTab==='company'?'btn-primary':''}" data-tab="company">🏢 公司知识库</button>
+        </div>
+        <div id="kb-tab-content"></div>
+      </div>`;
+
+    function switchTab(tab) {
+      kbTab = tab;
+      root.querySelectorAll('.kb-tab-btn').forEach(b => {
+        b.classList.toggle('btn-primary', b.dataset.tab === tab);
+      });
+      const content = document.getElementById('kb-tab-content');
+      if (tab === 'company') {
+        if (window.CompanyKB) {
+          CompanyKB.render(content);
+        } else {
+          content.innerHTML = '<div class="manual-empty">公司知识库模块加载中...</div>';
+        }
+      } else {
+        renderPersonalKB(content);
+      }
+    }
+
+    root.querySelectorAll('.kb-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+    });
+
+    switchTab('personal');
+
+    function renderPersonalKB(container) {
+      container.innerHTML = `
+        <div class="res-header" style="margin-bottom:12px;">
           <div class="res-tools">
             <input id="kb-search" class="input" style="width:160px" placeholder="搜索文档…">
             <button id="kb-upload" class="btn btn-primary btn-sm">📤 上传文档</button>
@@ -122,20 +157,19 @@
           <div class="kb-status-bar" id="kb-status"></div>
         </div>
         <div id="kb-list" class="kb-list"></div>
-      </div>
-      <div id="kb-url-modal" class="modal-overlay hidden">
-        <div class="modal-box" style="max-width:480px">
-          <div class="modal-header"><span>导入网页链接</span><button class="modal-close" onclick="document.getElementById('kb-url-modal').classList.add('hidden')">✕</button></div>
-          <div class="modal-body">
-            <div class="form-row"><label>网页 URL</label><input id="kb-url-input" class="input" placeholder="https://example.com/article"></div>
-            <div class="form-row"><label>分类</label><select id="kb-url-cat" class="select">${KB_CATS.filter(c=>c!=='全部').map(c=>`<option>${c}</option>`).join('')}</select></div>
+        <div id="kb-url-modal" class="modal-overlay hidden">
+          <div class="modal-box" style="max-width:480px">
+            <div class="modal-header"><span>导入网页链接</span><button class="modal-close" onclick="document.getElementById('kb-url-modal').classList.add('hidden')">✕</button></div>
+            <div class="modal-body">
+              <div class="form-row"><label>网页 URL</label><input id="kb-url-input" class="input" placeholder="https://example.com/article"></div>
+              <div class="form-row"><label>分类</label><select id="kb-url-cat" class="select">${KB_CATS.filter(c=>c!=='全部').map(c=>`<option>${c}</option>`).join('')}</select></div>
+            </div>
+            <div class="modal-footer">
+              <button class="btn" onclick="document.getElementById('kb-url-modal').classList.add('hidden')">取消</button>
+              <button id="kb-url-ok" class="btn btn-primary">导入</button>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button class="btn" onclick="document.getElementById('kb-url-modal').classList.add('hidden')">取消</button>
-            <button id="kb-url-ok" class="btn btn-primary">导入</button>
-          </div>
-        </div>
-      </div>`;
+        </div>`;
 
     let list = load(KB_KEY);
 
@@ -282,6 +316,7 @@
     document.getElementById('kb-search').addEventListener('input', draw);
 
     drawCats(); drawStatus(); draw();
+  }
   }
 
   /* ====================== 素材库 ====================== */
