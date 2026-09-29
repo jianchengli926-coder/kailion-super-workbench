@@ -165,7 +165,13 @@ function proxyRequest(req, res, targetHost, targetPort, targetPath, options = {}
 // 创建HTTP服务器
 const server = http.createServer((req, res) => {
   const parsedUrl = url.parse(req.url, true);
-  const pathname = parsedUrl.pathname;
+  // v2.13.2：解码URL路径，支持中文文件名
+  let pathname = parsedUrl.pathname;
+  try {
+    pathname = decodeURIComponent(pathname);
+  } catch (e) {
+    // 解码失败时使用原始路径
+  }
 
   // v2.13.1：请求日志（静态资源不记录，只记录API和代理请求）
   const isStatic = pathname.startsWith('/assets/') || pathname === '/' || pathname === '/index.html';
