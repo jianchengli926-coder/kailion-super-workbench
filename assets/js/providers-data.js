@@ -962,13 +962,13 @@
   }
 
   // MutationObserver 监听设置面板懒加载后再注入按钮，参考 watchFetchButton 模式
+  // v2.14.1：移除 60s 超时——观察者仅在 DOM 变化时触发，开销极小，
+  // 提前停止会导致用户 60s 后编辑 Ollama 供应商时刷新按钮不显示。
   function watchRefreshOllamaButton() {
     ensureRefreshOllamaButton();
     if (typeof MutationObserver === 'undefined') return;
     var obs = new MutationObserver(function () { ensureRefreshOllamaButton(); });
     obs.observe(document.body, { childList: true, subtree: true });
-    // 60s 后停止观察，避免长期开销
-    setTimeout(function () { try { obs.disconnect(); } catch (e) {} }, 60000);
   }
   if (document.readyState === 'complete') watchRefreshOllamaButton();
   else window.addEventListener('load', watchRefreshOllamaButton);

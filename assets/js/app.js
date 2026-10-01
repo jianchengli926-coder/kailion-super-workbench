@@ -582,9 +582,18 @@
         const el = document.getElementById('workflow-name');
         if (el) el.textContent = data.workflowName;
       }
-      // 导入供应商（ProviderStore.save 接受数组）
+      // 导入供应商（合并而非覆盖，避免删除 seedBuiltinIfEmpty 已添加的 Ollama 等内置供应商）
       if (Array.isArray(data.providers) && window.ProviderStore) {
-        try { ProviderStore.save(data.providers); } catch (eP) {}
+        try {
+          var existing = ProviderStore.load();
+          var existingIds = {};
+          existing.forEach(function (p) { existingIds[p.id] = true; });
+          var merged = existing.slice();
+          data.providers.forEach(function (p) {
+            if (p && p.id && !existingIds[p.id]) { merged.push(p); existingIds[p.id] = true; }
+          });
+          ProviderStore.save(merged);
+        } catch (eP) {}
       }
       // 导入资源库/素材等（best-effort，直接写入 resources.js 使用的 key）
       const SEED_KEY_MAP = {
