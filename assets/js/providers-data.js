@@ -1,6 +1,7 @@
 /**
  * providers-data.js - 供应商预设模板 + 本地存储工具
  * 暴露：window.PROVIDER_PRESETS / window.DEFAULT_PROVIDER_KEY / window.ProviderStore
+ * 版本：v2.14.0
  *
  * 职责：
  *  - PROVIDER_PRESETS：常用 OpenAI 兼容供应商出厂模板
@@ -136,14 +137,16 @@
       desc: DEPLOY_MODE === 'public' ? '主机本地模型，通过公网隧道访问（API Key 可留空）' : '本地运行，无需联网，隐私安全（API Key 可留空）',
       descEn: 'Runs locally, no internet needed, private and secure (API Key can be left empty)',
       models: [
-        { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）' },
-        { id: 'qwen2.5vl:7b', label: 'Qwen 2.5 VL 7B（视觉）' },
-        { id: 'deepseek-r1:7b', label: 'DeepSeek R1 7B（推理）' },
-        { id: 'llama3.1', label: 'Llama 3.1' },
-        { id: 'mistral', label: 'Mistral' },
-        { id: 'gemma2', label: 'Gemma 2' },
-        { id: 'phi3', label: 'Phi 3' },
-        { id: 'nomic-embed-text', label: 'Nomic Embed Text（向量）' }
+        { id: 'qwen3.5:9b', label: 'Qwen 3.5 9B（文本·视觉·思考）', capabilities: ['text', 'vision', 'tools', 'thinking'], installed: true },
+        { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）', capabilities: ['text', 'tools'], installed: true },
+        { id: 'qwen2.5vl:7b', label: 'Qwen 2.5 VL 7B（视觉）', capabilities: ['text', 'vision'], installed: true },
+        { id: 'deepseek-r1:7b', label: 'DeepSeek R1 7B（推理·思考）', capabilities: ['text', 'thinking', 'tools'], installed: true },
+        { id: 'nomic-embed-text:latest', label: 'Nomic Embed Text（向量嵌入）', capabilities: ['embedding'], installed: true },
+        { id: 'x/flux2-klein:4b-fp4', label: 'Flux2 Klein 4B（图片·实验性）', capabilities: ['image'], installed: true, experimental: '当前Ollama接口不支持图片生成调用' },
+        { id: 'llama3.1', label: 'Llama 3.1（未安装）', capabilities: ['text'], installed: false },
+        { id: 'mistral', label: 'Mistral（未安装）', capabilities: ['text'], installed: false },
+        { id: 'gemma2', label: 'Gemma 2（未安装）', capabilities: ['text'], installed: false },
+        { id: 'phi3', label: 'Phi 3（未安装）', capabilities: ['text'], installed: false }
       ] },
     { name: '硅基流动 SiliconFlow', nameEn: 'SiliconFlow', baseurl: 'https://api.siliconflow.cn/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🌊', protocol: 'openai',
       desc: '国内开源模型聚合平台，多款模型免费（需填入 sk- 开头的 Key）',
@@ -311,13 +314,16 @@
       key: 'ollama',
       category: 'universal', protocol: 'openai', isDefault: true,
       models: [
-        { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）' },
-        { id: 'qwen2.5vl:7b', label: 'Qwen 2.5 VL 7B（视觉）' },
-        { id: 'deepseek-r1:7b', label: 'DeepSeek R1 7B（推理）' },
-        { id: 'llama3.1', label: 'Llama 3.1' },
-        { id: 'mistral', label: 'Mistral' },
-        { id: 'gemma2', label: 'Gemma 2' },
-        { id: 'phi3', label: 'Phi 3' }
+        { id: 'qwen3.5:9b', label: 'Qwen 3.5 9B（文本·视觉·思考）', capabilities: ['text', 'vision', 'tools', 'thinking'], installed: true },
+        { id: 'qwen2.5:7b', label: 'Qwen 2.5 7B（文本）', capabilities: ['text', 'tools'], installed: true },
+        { id: 'qwen2.5vl:7b', label: 'Qwen 2.5 VL 7B（视觉）', capabilities: ['text', 'vision'], installed: true },
+        { id: 'deepseek-r1:7b', label: 'DeepSeek R1 7B（推理·思考）', capabilities: ['text', 'thinking', 'tools'], installed: true },
+        { id: 'nomic-embed-text:latest', label: 'Nomic Embed Text（向量嵌入）', capabilities: ['embedding'], installed: true },
+        { id: 'x/flux2-klein:4b-fp4', label: 'Flux2 Klein 4B（图片·实验性）', capabilities: ['image'], installed: true, experimental: '当前Ollama接口不支持图片生成调用' },
+        { id: 'llama3.1', label: 'Llama 3.1（未安装）', capabilities: ['text'], installed: false },
+        { id: 'mistral', label: 'Mistral（未安装）', capabilities: ['text'], installed: false },
+        { id: 'gemma2', label: 'Gemma 2（未安装）', capabilities: ['text'], installed: false },
+        { id: 'phi3', label: 'Phi 3（未安装）', capabilities: ['text'], installed: false }
       ],
       desc: DEPLOY_MODE === 'public' ? '主机本地模型，通过公网隧道访问（默认模型，免费无限用）' : '本地运行，无需联网，隐私安全（默认模型，免费无限用）'
     },
@@ -780,9 +786,199 @@
   if (document.readyState === 'complete') watchFetchButton();
   else window.addEventListener('load', watchFetchButton);
 
+  /* ====================== v2.14.0：Ollama 本地模型刷新 + 能力标签 ======================
+   * - refreshOllamaModels(baseurl)：GET {baseurl去掉末尾/v1}/api/tags
+   *   解析 models[].name 与 models[].capabilities（兼容 details.capabilities）
+   *   capabilities 映射：completion→text, vision→vision, tools→tools,
+   *   thinking→thinking, embedding→embedding, image→image
+   * - applyOllamaRefresh(providerId)：按 id 合并进 provider.models（不删除用户自定义模型）
+   * - getModelCapBadges(model)：渲染彩色能力标签 HTML（无 capabilities 字段返回空串，向后兼容）
+   * ============================================================ */
+  var OLLAMA_CAP_MAP = {
+    completion: 'text', vision: 'vision', tools: 'tools',
+    thinking: 'thinking', embedding: 'embedding', image: 'image'
+  };
+  var OLLAMA_CAP_LABELS = { text: '文本', vision: '视觉', image: '图片', embedding: '向量', tools: '工具', thinking: '思考' };
+  var OLLAMA_CAP_STYLE = {
+    text: 'background:#dbeafe;color:#1e40af;',
+    vision: 'background:#ede9fe;color:#6d28d9;',
+    image: 'background:#dcfce7;color:#15803d;',
+    embedding: 'background:#ffedd5;color:#c2410c;',
+    tools: 'background:#cffafe;color:#0e7490;',
+    thinking: 'background:#fce7f3;color:#be185d;'
+  };
+
+  // 根据 model.capabilities 渲染彩色能力标签 HTML；旧数据无该字段返回空串
+  function getModelCapBadges(model) {
+    if (!model || !Array.isArray(model.capabilities) || !model.capabilities.length) return '';
+    var html = '';
+    model.capabilities.forEach(function (cap) {
+      var style = OLLAMA_CAP_STYLE[cap];
+      if (!style) return;
+      html += '<span style="display:inline-block;margin-left:4px;padding:0 6px;border-radius:8px;font-size:11px;line-height:16px;' + style + 'vertical-align:middle;">' + (OLLAMA_CAP_LABELS[cap] || cap) + '</span>';
+    });
+    if (model.installed === false) {
+      html += '<span style="display:inline-block;margin-left:4px;padding:0 6px;border-radius:8px;font-size:11px;line-height:16px;background:#f3f4f6;color:#6b7280;vertical-align:middle;">未安装</span>';
+    }
+    if (model.experimental) {
+      html += '<span title="' + String(model.experimental).replace(/"/g, '&quot;') + '" style="display:inline-block;margin-left:4px;padding:0 6px;border-radius:8px;font-size:11px;line-height:16px;background:#fef9c3;color:#a16207;vertical-align:middle;">实验性</span>';
+    }
+    return html;
+  }
+
+  // 调用 Ollama 原生接口 GET {baseurl去掉末尾/v1}/api/tags
+  // 返回 [{id, label, capabilities:[...], installed:true}]
+  async function refreshOllamaModels(baseurl) {
+    var base = String(baseurl || '').replace(/\/+$/, '');
+    if (!base) throw new Error('请先填写API地址');
+    // 去掉末尾的 /v1（公网代理形式 /api/ollama/v1 → /api/ollama）
+    if (/\/v1$/i.test(base)) base = base.slice(0, -3);
+    var url = base + '/api/tags';
+
+    var ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+    var timer = setTimeout(function () { try { ctrl && ctrl.abort(); } catch (e) {} }, FETCH_TIMEOUT_MS);
+    var resp;
+    try {
+      resp = await fetch(url, { method: 'GET', signal: ctrl ? ctrl.signal : undefined });
+    } catch (e) {
+      if (e && e.name === 'AbortError') {
+        var te = new Error('请求超时（10秒），请确认 Ollama 已启动'); te.kind = 'timeout'; throw te;
+      }
+      var ne = new Error('连接失败，请确认 Ollama 服务已启动（' + ((e && e.message) || '网络错误') + '）');
+      ne.kind = 'network'; throw ne;
+    } finally { clearTimeout(timer); }
+
+    if (!resp.ok) {
+      var he = new Error('Ollama 接口返回 HTTP ' + resp.status); he.status = resp.status; he.kind = 'http'; throw he;
+    }
+    var data;
+    try { data = await resp.json(); }
+    catch (e) { var pe = new Error('返回数据不是有效JSON'); pe.kind = 'parse'; throw pe; }
+
+    var arr = (data && Array.isArray(data.models)) ? data.models : [];
+    var out = [];
+    arr.forEach(function (m) {
+      if (!m || !m.name) return;
+      var rawCaps = (m.details && Array.isArray(m.details.capabilities)) ? m.details.capabilities
+                  : (Array.isArray(m.capabilities) ? m.capabilities : []);
+      var caps = [];
+      rawCaps.forEach(function (c) {
+        var mapped = OLLAMA_CAP_MAP[c];
+        if (mapped && caps.indexOf(mapped) < 0) caps.push(mapped);
+      });
+      out.push({ id: m.name, label: m.name, capabilities: caps, installed: true });
+    });
+    return out;
+  }
+
+  // 按 id 合并刷新结果进指定供应商的 models（已存在的只更新 capabilities 与 installed=true，
+  // 不存在的新增；刷新结果中没有的用户自定义模型保留不动），然后 ProviderStore.update 落库
+  async function applyOllamaRefresh(providerId) {
+    var provider = window.ProviderStore && window.ProviderStore.getById ? window.ProviderStore.getById(providerId) : null;
+    if (!provider) throw new Error('未找到供应商（id=' + providerId + '）');
+    var refreshed = await refreshOllamaModels(provider.baseurl);
+    var existing = (provider.models || []).slice();
+    var byId = {};
+    existing.forEach(function (m) { if (m && m.id != null) byId[m.id] = m; });
+    var updated = 0, added = 0;
+    refreshed.forEach(function (rm) {
+      var old = byId[rm.id];
+      if (old) {
+        old.capabilities = rm.capabilities.slice();
+        old.installed = true;
+        updated++;
+      } else {
+        var nm = { id: rm.id, label: rm.label, capabilities: rm.capabilities.slice(), installed: true };
+        existing.push(nm);
+        byId[rm.id] = nm;
+        added++;
+      }
+    });
+    if (window.ProviderStore && typeof window.ProviderStore.update === 'function') {
+      window.ProviderStore.update(providerId, { models: existing });
+    }
+    return { added: added, updated: updated, total: refreshed.length };
+  }
+
+  // 判断当前表单编辑的是否为 Ollama 供应商
+  function isEditingOllamaForm() {
+    var baseurlEl = document.getElementById('pf-baseurl');
+    var baseurl = baseurlEl ? baseurlEl.value.trim() : '';
+    if (!baseurl) return false;
+    if (/ollama/i.test(baseurl)) return true;
+    if (baseurl === (window.OLLAMA_BASEURL || '')) return true;
+    return false;
+  }
+
+  // 解析当前编辑供应商 id：优先隐藏域 #pf-id，其次按 baseurl 匹配，兜底内置 Ollama
+  function resolveEditingProviderId() {
+    var idEl = document.getElementById('pf-id');
+    var id = idEl ? idEl.value.trim() : '';
+    if (id) return id;
+    var baseurlEl = document.getElementById('pf-baseurl');
+    var baseurl = baseurlEl ? baseurlEl.value.trim() : '';
+    if (baseurl && window.ProviderStore && typeof window.ProviderStore.load === 'function') {
+      var list = window.ProviderStore.load();
+      for (var i = 0; i < list.length; i++) {
+        if (list[i] && list[i].baseurl === baseurl) return list[i].id;
+      }
+    }
+    return 'builtin_ollama_local';
+  }
+
+  async function onRefreshOllamaClick() {
+    var btn = document.getElementById('pf-refresh-ollama');
+    var providerId = resolveEditingProviderId();
+    var original = btn ? btn.textContent : '🔄 刷新本地模型';
+    if (btn) { btn.disabled = true; btn.textContent = '刷新中...'; }
+    try {
+      var res = await applyOllamaRefresh(providerId);
+      toastMsg('刷新完成：本地共 ' + res.total + ' 个模型，更新 ' + res.updated + ' 个，新增 ' + res.added + ' 个');
+    } catch (e) {
+      toastMsg((e && e.message) ? e.message : '刷新本地模型失败');
+    } finally {
+      if (btn) { btn.disabled = false; btn.textContent = original; }
+    }
+  }
+
+  // 在 #pf-fetch-models 旁注入 #pf-refresh-ollama；仅当编辑 Ollama 供应商时可见
+  function ensureRefreshOllamaButton() {
+    var fetchBtn = document.getElementById('pf-fetch-models');
+    if (!fetchBtn) return;
+    var existing = document.getElementById('pf-refresh-ollama');
+    var visible = isEditingOllamaForm();
+    if (!existing) {
+      var fresh = document.createElement('button');
+      fresh.id = 'pf-refresh-ollama';
+      fresh.type = 'button';
+      fresh.textContent = '🔄 刷新本地模型';
+      fresh.style.marginLeft = '8px';
+      fresh.addEventListener('click', onRefreshOllamaClick);
+      if (fetchBtn.nextSibling) fetchBtn.parentNode.insertBefore(fresh, fetchBtn.nextSibling);
+      else fetchBtn.parentNode.appendChild(fetchBtn);
+      existing = fresh;
+    }
+    existing.style.display = visible ? '' : 'none';
+  }
+
+  // MutationObserver 监听设置面板懒加载后再注入按钮，参考 watchFetchButton 模式
+  function watchRefreshOllamaButton() {
+    ensureRefreshOllamaButton();
+    if (typeof MutationObserver === 'undefined') return;
+    var obs = new MutationObserver(function () { ensureRefreshOllamaButton(); });
+    obs.observe(document.body, { childList: true, subtree: true });
+    // 60s 后停止观察，避免长期开销
+    setTimeout(function () { try { obs.disconnect(); } catch (e) {} }, 60000);
+  }
+  if (document.readyState === 'complete') watchRefreshOllamaButton();
+  else window.addEventListener('load', watchRefreshOllamaButton);
+
   window.Providers = {
     discoverModels: discoverModels,
     ensureModels: ensureModels,
-    parseModelIds: parseModelIds
+    parseModelIds: parseModelIds,
+    refreshOllamaModels: refreshOllamaModels,
+    applyOllamaRefresh: applyOllamaRefresh,
+    getModelCapBadges: getModelCapBadges
   };
 })();

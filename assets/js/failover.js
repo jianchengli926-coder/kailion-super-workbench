@@ -1,14 +1,18 @@
 /**
- * failover.js - 模型故障转移模块
+ * failover.js - 模型故障转移模块 (v2.14.0)
  * 暴露：window.Failover
  *
  * 功能：
  *  - 当主供应商调用失败时，自动切换到备用供应商
  *  - 优先使用在线模型，全部失败时切换到本地Ollama
- *  - 区分文本模型和图像模型，自动选择对应类型的备用模型
+ *  - 区分 text / vision / image / embedding / video / 3d 模型，自动选择对应类型备用模型
+ *  - 视觉任务不会错误切到纯文本模型；图片任务不会切到文本模型
+ *  - qwen3.5 仅在 Ollama 环境使用，不会作为 model 参数传给非 Ollama 供应商
+ *  - opts.onProviderUsed(providerName, modelId) 回调报告实际使用的供应商/模型
  *  - 可配置故障转移开关和优先级
  *
- * v2.11.0 新增
+ * v2.14.0 新增：videoGeneration / model3DGeneration / embedding 故障转移；
+ *              getModelForType 支持 vision/embedding/video/3d；onProviderUsed 回调。
  */
 (function () {
   'use strict';
@@ -45,6 +49,26 @@
     'wawapi_relay',              // ⑤ wawapi中转站（在线）
     'builtin_ollama',            // ⑥ Ollama本地（最后兜底）
     'builtin_ollama_local'       // ⑥ Ollama本地（兼容ID）
+  ];
+
+  // v2.14.0：视频 / 3D 模型优先级
+  const VIDEO_PRIORITY = [
+    'wawapi_relay',              // ① wawapi 中转站（视频/3D 模型多）
+    'openai',                    // ② OpenAI（在线）
+    'siliconflow',               // ③ 硅基流动
+    'builtin_zhipu_relay',       // ④ 智谱
+    'builtin_ollama',            // ⑤ Ollama本地（最后兜底）
+    'builtin_ollama_local'
+  ];
+
+  // v2.14.0：嵌入模型优先级（嵌入通常复用文本供应商）
+  const EMBEDDING_PRIORITY = [
+    'builtin_zhipu_relay',
+    'siliconflow',
+    'openai',
+    'wawapi_relay',
+    'builtin_ollama',
+    'builtin_ollama_local'
   ];
 
   /* ====================== 工具函数 ====================== */
@@ -84,32 +108,90 @@
     return providers.find(p => p.id === id) || null;
   }
 
+  // v2.14.0：判断是否 Ollama 供应商（本地地址 或 ID/名称含 Ollama）
+  function isOllamaProviderLocal(p) {
+    if (!p) return false;
+    var u = String(p.baseurl || '').toLowerCase();
+    if (u.indexOf('localhost') >= 0 || u.indexOf('127.0.0.1') >= 0 || u.indexOf('0.0.0.0') >= 0) return true;
+    var n = String(p.name || p.id || '').toLowerCase();
+    return n.indexOf('ollama') >= 0;
+  }
+
   function isProviderUsable(provider) {
     if (!provider || !provider.baseurl) return false;
+    // v2.14.0：没有模型列表的供应商不可用（无法选模型）
+    if (!provider.models || !provider.models.length) return false;
     // Ollama本地模型不需要key
-    if ((provider.id === 'builtin_ollama' || provider.id === 'builtin_ollama_local') || (provider.name && provider.name.includes('Ollama'))) {
-      return true;
-    }
+    if (isOllamaProviderLocal(provider)) return true;
     // 其他供应商需要key
     return !!(provider.key && provider.key.length > 0);
   }
 
+  // v2.14.0：按任务类型选模型。返回模型 id；找不到同类型模型返回 ''（调用方应明确报错）。
+  // type: 'text' | 'vision' | 'image' | 'embedding' | 'video' | '3d'
   function getModelForType(provider, type) {
     if (!provider.models || !provider.models.length) return '';
-    if (type === 'image') {
-      // 优先选择图像生成模型
-      const imageModel = provider.models.find(m =>
-        m.label && (m.label.includes('图像') || m.label.includes('生图') || m.label.includes('Image') || m.id.includes('image') || m.id.includes('cogview') || m.id.includes('dall') || m.id.includes('flux') || m.id.includes('sd'))
-      );
-      if (imageModel) return imageModel.id;
+    var models = provider.models;
+    function hasCap(m, cap) {
+      return Array.isArray(m.capabilities) && m.capabilities.indexOf(cap) >= 0;
     }
-    // 默认返回第一个模型
-    return provider.models[0].id;
+    function idLabel(m) {
+      return String((m.id || '') + ' ' + (m.label || '')).toLowerCase();
+    }
+    var ollama = isOllamaProviderLocal(provider);
+    var m, i;
+
+    switch (type) {
+      case 'vision':
+        // 视觉任务：必须选支持 vision 的模型，不能切到纯文本模型
+        m = models.find(function (x) { return hasCap(x, 'vision'); })
+          || models.find(function (x) { return /vl|vision|qwen2\.5vl|qwen3(\.5)?|qwen3-vl|claude|gemini|gpt-4o|multimodal|glm-4v|4v/i.test(idLabel(x)); });
+        return m ? m.id : '';
+      case 'image':
+        // 图片任务：不能切到文本模型
+        m = models.find(function (x) { return hasCap(x, 'image') || hasCap(x, 'imagegen'); })
+          || models.find(function (x) { return /image|cogview|dall-e|dall|flux|stable|sd|qwen-image|图像|生图|nano banana/i.test(idLabel(x)); });
+        return m ? m.id : '';
+      case 'embedding':
+        m = models.find(function (x) { return hasCap(x, 'embedding'); })
+          || models.find(function (x) { return /embed|nomic|bge|m3e|text-embedding/i.test(idLabel(x)); });
+        return m ? m.id : '';
+      case 'video':
+        m = models.find(function (x) { return hasCap(x, 'video'); })
+          || models.find(function (x) { return /video|seedance|kling|veo|runway|pika|视频/i.test(idLabel(x)); });
+        return m ? m.id : '';
+      case '3d':
+        m = models.find(function (x) { return hasCap(x, '3d') || hasCap(x, 'three'); })
+          || models.find(function (x) { return /3d|tripo|meshy|trellis|triposr/i.test(idLabel(x)); });
+        return m ? m.id : '';
+      case 'text':
+      default:
+        // 优先 capability=text；排除 embedding/image/video/3d 专用模型
+        m = models.find(function (x) { return hasCap(x, 'text'); })
+          || models.find(function (x) {
+               return !hasCap(x, 'embedding') && !hasCap(x, 'image') &&
+                      !hasCap(x, 'video') && !hasCap(x, '3d');
+             });
+        // qwen3.5 只能在 Ollama 环境使用；替换时必须选文本模型，不能落到 embedding/image 等专用模型
+        if (m && !ollama && /qwen3(\.5)?/i.test(idLabel(m))) {
+          var alt = models.find(function (x) {
+            return x.id !== m.id && !/qwen3(\.5)?/i.test(idLabel(x)) &&
+                   !hasCap(x, 'embedding') && !hasCap(x, 'image') &&
+                   !hasCap(x, 'video') && !hasCap(x, '3d');
+          });
+          if (alt) m = alt;
+        }
+        return m ? m.id : models[0].id;
+    }
   }
 
   /* ====================== 获取备用供应商列表 ====================== */
   function getFallbackProviders(originalProviderId, type) {
-    const priority = type === 'image' ? IMAGE_PRIORITY : TEXT_PRIORITY;
+    var priority;
+    if (type === 'image') priority = IMAGE_PRIORITY;
+    else if (type === 'video' || type === '3d') priority = VIDEO_PRIORITY;
+    else if (type === 'embedding') priority = EMBEDDING_PRIORITY;
+    else priority = TEXT_PRIORITY;
     const allProviders = getAllProviders();
     const result = [];
 
@@ -124,125 +206,108 @@
 
     // 如果优先在线，把本地Ollama放最后
     if (CONFIG.preferOnline) {
-      const local = result.filter(p => p.id === 'builtin_ollama');
-      const online = result.filter(p => p.id !== 'builtin_ollama');
+      const local = result.filter(p => p.id === 'builtin_ollama' || p.id === 'builtin_ollama_local');
+      const online = result.filter(p => p.id !== 'builtin_ollama' && p.id !== 'builtin_ollama_local');
       return [...online, ...local];
     }
 
     return result;
   }
 
-  /* ====================== 带故障转移的文本调用 ====================== */
-  async function chatCompletion(provider, params, onStreamChunk, opts) {
+  // v2.14.0：通用故障转移执行器——所有类型方法复用此逻辑
+  // callFn(currentProvider, callParams, opts) → Promise<any>
+  async function runWithFailover(primaryProvider, type, params, opts, callFn, labelVerb) {
     opts = opts || {};
-    const originalId = provider.id || provider.name;
-    const type = 'text';
+    const originalId = primaryProvider.id || primaryProvider.name;
 
-    // 如果故障转移关闭，直接调用
     if (!CONFIG.enabled || opts.noFailover) {
-      return window.API.chatCompletion(provider, params, onStreamChunk, opts);
+      const direct = await callFn(primaryProvider, params, opts);
+      if (typeof opts.onProviderUsed === 'function') {
+        try { opts.onProviderUsed(primaryProvider.name || primaryProvider.id, (params && params.model) || ''); } catch (e) {}
+      }
+      return direct;
     }
 
-    // 构建尝试列表：原始供应商 + 备用供应商
-    const attempts = [provider];
+    const attempts = [primaryProvider];
     const fallbacks = getFallbackProviders(originalId, type);
-    // 只添加配置了key的备用供应商
     for (const fb of fallbacks) {
-      if (!attempts.find(a => a.id === fb.id)) {
-        attempts.push(fb);
-      }
+      if (!attempts.find(a => a.id === fb.id)) attempts.push(fb);
     }
 
     let lastError = null;
+    const noFallback = attempts.length <= 1;
 
     for (let i = 0; i < attempts.length; i++) {
       const currentProvider = attempts[i];
       const isFallback = i > 0;
-
       try {
-        // 如果是备用供应商，需要检查并替换model参数
-        let callParams = { ...params };
+        let callParams = Object.assign({}, params);
         if (isFallback) {
-          // 检查原模型是否在备用供应商的模型列表中
           const providerModels = (currentProvider.models || []).map(m => m.id);
-          if (!params.model || !providerModels.includes(params.model)) {
+          if (!params.model || providerModels.indexOf(params.model) < 0) {
             callParams.model = getModelForType(currentProvider, type);
+            // 关键约束：找不到同类型备用模型 → 跳过该供应商
+            if (!callParams.model) {
+              logFailover(currentProvider.name, '无可用的同类型(' + type + ')备用模型，跳过', 'success');
+              continue;
+            }
           }
         }
-
-        // 日志记录
-        logFailover(currentProvider.name, isFallback ? '尝试备用供应商' : '使用主供应商', 'success');
-
-        const result = await window.API.chatCompletion(currentProvider, callParams, onStreamChunk, opts);
-
-        // 成功
-        if (isFallback) {
-          logFailover(currentProvider.name, '备用供应商调用成功', 'success');
+        logFailover(currentProvider.name, isFallback ? ('尝试备用' + (labelVerb || '')) : '使用主供应商', 'success');
+        const result = await callFn(currentProvider, callParams, opts);
+        if (isFallback) logFailover(currentProvider.name, '备用' + (labelVerb || '') + '调用成功', 'success');
+        if (typeof opts.onProviderUsed === 'function') {
+          try { opts.onProviderUsed(currentProvider.name || currentProvider.id, callParams.model || ''); } catch (e) {}
         }
         return result;
-
       } catch (err) {
         lastError = err;
-        logFailover(currentProvider.name, '调用失败: ' + (err.message || err), 'failed');
-        // 继续尝试下一个
+        logFailover(currentProvider.name, (labelVerb || '调用') + '失败: ' + (err.message || err), 'failed');
         continue;
       }
     }
 
     // 全部失败
-    throw new Error(`所有供应商均调用失败。最后错误: ${lastError ? lastError.message || lastError : '未知错误'}`);
+    var suffix = lastError ? (lastError.message || lastError) : '未知错误';
+    if (noFallback) {
+      throw new Error('主供应商失败且未配置可用的备用供应商。错误: ' + suffix);
+    }
+    throw new Error('所有供应商均调用失败（类型: ' + type + '）。最后错误: ' + suffix);
+  }
+
+  /* ====================== 带故障转移的文本调用 ====================== */
+  async function chatCompletion(provider, params, onStreamChunk, opts) {
+    return runWithFailover(provider, 'text', params, opts, function (p, cp, o) {
+      return window.API.chatCompletion(p, cp, onStreamChunk, o);
+    }, '文本');
   }
 
   /* ====================== 带故障转移的图像调用 ====================== */
   async function imageGeneration(provider, params, opts) {
-    opts = opts || {};
-    const originalId = provider.id || provider.name;
-    const type = 'image';
+    return runWithFailover(provider, 'image', params, opts, function (p, cp, o) {
+      return window.API.imageGeneration(p, cp, o);
+    }, '图像');
+  }
 
-    if (!CONFIG.enabled || opts.noFailover) {
-      return window.API.imageGeneration(provider, params, opts);
-    }
+  /* ====================== 带故障转移的视频调用 (v2.14.0) ====================== */
+  async function videoGeneration(provider, params, opts) {
+    return runWithFailover(provider, 'video', params, opts, function (p, cp, o) {
+      return window.API.videoGeneration(p, cp, o);
+    }, '视频');
+  }
 
-    const attempts = [provider];
-    const fallbacks = getFallbackProviders(originalId, type);
-    for (const fb of fallbacks) {
-      if (!attempts.find(a => a.id === fb.id)) {
-        attempts.push(fb);
-      }
-    }
+  /* ====================== 带故障转移的 3D 调用 (v2.14.0) ====================== */
+  async function model3DGeneration(provider, params, opts) {
+    return runWithFailover(provider, '3d', params, opts, function (p, cp, o) {
+      return window.API.model3DGeneration(p, cp, o);
+    }, '3D');
+  }
 
-    let lastError = null;
-
-    for (let i = 0; i < attempts.length; i++) {
-      const currentProvider = attempts[i];
-      const isFallback = i > 0;
-
-      try {
-        let callParams = { ...params };
-        if (isFallback) {
-          const providerModels = (currentProvider.models || []).map(m => m.id);
-          if (!params.model || !providerModels.includes(params.model)) {
-            callParams.model = getModelForType(currentProvider, type);
-          }
-        }
-
-        logFailover(currentProvider.name, isFallback ? '尝试备用图像供应商' : '使用主图像供应商', 'success');
-
-        const result = await window.API.imageGeneration(currentProvider, callParams, opts);
-
-        if (isFallback) {
-          logFailover(currentProvider.name, '备用图像供应商调用成功', 'success');
-        }
-        return result;
-
-      } catch (err) {
-        lastError = err;
-        logFailover(currentProvider.name, '图像生成失败: ' + (err.message || err), 'failed');
-        continue;
-      }
-    }
-
-    throw new Error(`所有图像供应商均调用失败。最后错误: ${lastError ? lastError.message || lastError : '未知错误'}`);
+  /* ====================== 带故障转移的嵌入调用 (v2.14.0) ====================== */
+  async function embedding(provider, params, opts) {
+    return runWithFailover(provider, 'embedding', params, opts, function (p, cp, o) {
+      return window.API.embedding(p, cp, o);
+    }, '嵌入');
   }
 
   /* ====================== 配置管理 ====================== */
@@ -286,6 +351,8 @@
       usableProviders: usable.length,
       textFallbacks: getFallbackProviders(null, 'text').length,
       imageFallbacks: getFallbackProviders(null, 'image').length,
+      videoFallbacks: getFallbackProviders(null, 'video').length,
+      embeddingFallbacks: getFallbackProviders(null, 'embedding').length,
       providers: usable.map(p => ({ id: p.id, name: p.name, hasKey: !!(p.key && p.key.length) }))
     };
   }
@@ -294,10 +361,15 @@
   window.Failover = {
     chatCompletion,
     imageGeneration,
+    videoGeneration,
+    model3DGeneration,
+    embedding,
     setConfig,
     getConfig,
     getStatus,
     getFallbackProviders,
+    getModelForType,
+    isProviderUsable,
     CONFIG
   };
 

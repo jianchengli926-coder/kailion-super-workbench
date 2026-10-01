@@ -1,18 +1,24 @@
 /**
- * api.js - 统一 API 调用封装 (v0.1.0)
+ * api.js - 统一 API 调用封装 (v2.14.0)
  * 依赖：无（纯 fetch / AbortController / TextDecoder）
  * 暴露：window.API
  *
  * 职责：
  *  - chatCompletion：OpenAI 兼容对话补全，支持 SSE 流式 / 非流式
+ *    v2.14.0：支持 thinking 开关（Ollama qwen3.5）、onReasoning 回调、
+ *             reasoning/content 分离、空 content 时 reasoning 兜底
  *  - imageGeneration：OpenAI 兼容图片生成，兼容三种响应格式
  *  - videoGeneration：视频生成，支持同步返回与异步任务轮询
+ *    v2.14.0：统一改用 apiFetch（超时/重试/错误分类）
+ *  - model3DGeneration：3D 模型生成，异步轮询
+ *    v2.14.0：统一改用 apiFetch
+ *  - embedding：向量嵌入（OpenAI /embeddings + Ollama /api/embeddings 自动探测）
  *  - listModels：拉取供应商模型列表（失败静默返回空数组）
  *  - testConnection：最小请求探活，返回延迟与错误信息
  *  - buildHeaders / normalizeBaseUrl：通用工具
  *
  * 约定：
- *  - 供应商对象 {id, name, baseurl, key, category, protocol, models:[{id,label}], isDefault}
+ *  - 供应商对象 {id, name, baseurl, key, category, protocol, models:[{id,label,capabilities?}], isDefault}
  *  - baseurl 可能以 /v1 结尾或不带，内部统一用 normalizeBaseUrl 拼接路径
  *  - protocol 取值：'openai' | 'openai-responses' | 'anthropic' | 'gemini'
  *    缺省按 'openai' 处理（完全向后兼容旧调用）
@@ -20,8 +26,6 @@
  *      openai → Authorization: Bearer，/chat/completions
  *      anthropic → x-api-key + anthropic-version，/messages
  *      gemini → x-goog-api-key，/models/{model}:generateContent
- *  - imageGeneration / videoGeneration / model3DGeneration / listModels 仍走
- *    OpenAI 兼容格式（这些类目暂无原生协议差异）
  */
 (function () {
   'use strict';
@@ -61,6 +65,26 @@
   // 需要 API Key 吗：非本地地址且 key 为空时才需要
   function missingRequiredKey(provider) {
     return !!(provider && provider.baseurl && !provider.key && !isLocalBase(provider.baseurl));
+  }
+
+  // v2.14.0：判断是否 Ollama 供应商（本地地址 或 名称/ID 含 Ollama）
+  function isOllamaProvider(p) {
+    if (!p) return false;
+    if (isLocalBase(p.baseurl)) return true;
+    var n = String(p.name || p.id || '').toLowerCase();
+    return n.indexOf('ollama') >= 0;
+  }
+
+  // v2.14.0：判断模型是否支持 thinking（qwen3.5 / qwen3 系列，或模型对象声明 thinking capability）
+  function modelSupportsThinking(provider, modelId) {
+    var mid = String(modelId || '');
+    if (/qwen3(\.5)?/i.test(mid)) return true;
+    var list = (provider && provider.models) || [];
+    for (var i = 0; i < list.length; i++) {
+      if (list[i] && list[i].id === modelId && Array.isArray(list[i].capabilities) &&
+          list[i].capabilities.indexOf('thinking') >= 0) return true;
+    }
+    return false;
   }
 
   // 按协议适配器构建请求头：
@@ -291,12 +315,15 @@
 
     const stream = !!params.stream;
     const _fbModel = (provider.models && provider.models[0] && provider.models[0].id) || '';
+    const _model = params.model || _fbModel;
+    // v2.14.0：thinking 模型（qwen3.5）默认给更大的 max_tokens，因为思考过程会消耗大量 token
+    const _needThinking = !!params.thinking && isOllamaProvider(provider) && modelSupportsThinking(provider, _model);
     const ctx = {
-      model: params.model || _fbModel,
+      model: _model,
       systemPrompt: systemPrompt,
       msgs: norm,
       temperature: params.temperature != null ? params.temperature : 0.7,
-      maxTokens: params.maxTokens != null ? params.maxTokens : 2048,
+      maxTokens: params.maxTokens != null ? params.maxTokens : (_needThinking ? 8192 : 2048),
       stream: stream,
       join: join
     };
@@ -305,6 +332,10 @@
     if (hasProtocols) {
       url = proto.url(ctx);
       body = proto.body(ctx);
+      // v2.14.0：Ollama qwen3.5 thinking 开关——注入 Ollama 原生请求字段
+      if (_needThinking) {
+        body.thinking = { type: 'enabled' };
+      }
       headers = buildProtocolHeaders(provider, proto);
     } else {
       // 兜底：旧版 OpenAI 兼容
@@ -341,14 +372,26 @@
 
       // 流式 SSE 分支
       if (stream && resp.body) {
-        _alOut = await consumeSSE(resp, proto, onStreamChunk);
+        _alOut = await consumeSSE(resp, proto, onStreamChunk, opts);
         return _alOut;
       }
 
-      // 非流式分支
+      // 非流式分支（v2.14.0：分离 reasoning 与 content）
       const data = await readBody(resp);
-      const content = proto.readText(data);
-      if (!content) throw new Error(tr('api.err.noContent', '响应中未找到可识别的文本内容'));
+      const content = (typeof proto.readText === 'function') ? proto.readText(data) : '';
+      const reasoning = (typeof proto.readReasoning === 'function') ? (proto.readReasoning(data) || '') : '';
+      if (reasoning && typeof opts.onReasoning === 'function') {
+        try { opts.onReasoning(reasoning); } catch (e) {}
+      }
+      if (!content) {
+        // thinking 模型可能只产出了思考过程而没有最终回答（max_tokens 不足）
+        if (reasoning) {
+          console.warn('[API.chatCompletion] content 为空，使用 reasoning 作为兜底返回');
+          _alOut = String(reasoning);
+          return _alOut;
+        }
+        throw new Error(tr('api.err.noContent', '模型未返回最终内容（可能是 max_tokens 不足或模型异常）'));
+      }
       _alOut = String(content);
       return _alOut;
     } catch (e) {
@@ -375,12 +418,16 @@
   }
 
   // 消费 SSE 流：逐 data: 行解析增量，累计并回调
-  // proto 为协议适配器（可选）；传入后用 proto.readDelta(j) 提取增量，
-  // 未传时退化为旧版 OpenAI choices[0].delta.content 提取。
-  async function consumeSSE(resp, proto, onStreamChunk) {
+  // proto 为协议适配器；传入后用 proto.readDelta(j) / proto.readReasoningDelta(j) 提取增量。
+  // opts.onReasoning 为思考过程回调（v2.14.0）。
+  // 返回最终文本字符串（向后兼容）；reasoning 通过 onReasoning 回调传出。
+  // 流结束后若 content 为空但 reasoning 非空，用 reasoning 兜底返回；两者皆空则抛错。
+  async function consumeSSE(resp, proto, onStreamChunk, opts) {
+    opts = opts || {};
     const reader = resp.body.getReader();
     const decoder = new TextDecoder();
     let full = '';
+    let reasoningFull = '';
     let buf = '';
     let sseDone = false;
     while (!sseDone) {
@@ -402,6 +449,7 @@
         if (j.error) {
           throw new Error(typeof j.error === 'string' ? j.error : (j.error.message || tr('api.err.streamError', 'API 流式响应错误')));
         }
+        // content 增量
         let delta = '';
         if (proto && typeof proto.readDelta === 'function') {
           delta = proto.readDelta(j) || '';
@@ -412,7 +460,26 @@
           full += delta;
           if (typeof onStreamChunk === 'function') onStreamChunk(delta);
         }
+        // reasoning 增量（v2.14.0）
+        let rDelta = '';
+        if (proto && typeof proto.readReasoningDelta === 'function') {
+          rDelta = proto.readReasoningDelta(j) || '';
+        }
+        if (rDelta) {
+          reasoningFull += rDelta;
+          if (typeof opts.onReasoning === 'function') {
+            try { opts.onReasoning(rDelta); } catch (e) {}
+          }
+        }
       }
+    }
+    // v2.14.0：流结束后空内容兜底
+    if (!full && reasoningFull) {
+      console.warn('[API.consumeSSE] 流式 content 为空，使用 reasoning 作为兜底返回');
+      return reasoningFull;
+    }
+    if (!full && !reasoningFull) {
+      throw new Error(tr('api.err.streamEmpty', '流式响应未返回内容'));
     }
     return full;
   }
@@ -702,25 +769,13 @@
     let _alErr = null;
 
     const timeoutMs = opts.timeoutMs || TIMEOUT_VIDEO;
-    const controller = new AbortController();
-    const extSignal = opts.signal;
-    if (extSignal) {
-      if (extSignal.aborted) controller.abort();
-      else extSignal.addEventListener('abort', () => controller.abort(), { once: true });
-    }
-    let abortedByTimeout = false;
-    const timer = setTimeout(() => { abortedByTimeout = true; controller.abort(); }, timeoutMs);
     try {
-      const resp = await fetch(px(url), {
+      // v2.14.0：统一改用 apiFetch（内置超时/重试/错误分类），不再手写 AbortController
+      const resp = await apiFetch(url, {
         method: 'POST',
         headers: buildHeaders(provider),
-        body: JSON.stringify(body),
-        signal: controller.signal
-      });
-      if (!resp.ok) {
-        const text = await resp.text();
-        throw makeHttpError(resp.status, text);
-      }
+        body: JSON.stringify(body)
+      }, { signal: opts.signal, timeoutMs: timeoutMs, retries: 2 });
       const data = await readBody(resp);
 
       // 1) 同步模式：直接返回 URL
@@ -737,23 +792,17 @@
       const pollStart = Date.now();
       const pollTimeout = 300000; // 轮询超时 300s（5分钟），视频生成通常需2-5分钟
       while (Date.now() - pollStart < pollTimeout) {
-        await sleep(VIDEO_POLL_INTERVAL, controller.signal);
+        await sleep(VIDEO_POLL_INTERVAL, opts.signal);
         let pollResp;
         try {
-          pollResp = await fetch(px(pollUrl), {
+          pollResp = await apiFetch(pollUrl, {
             method: 'GET',
-            headers: buildHeaders(provider),
-            signal: controller.signal
-          });
+            headers: buildHeaders(provider)
+          }, { signal: opts.signal, timeoutMs: 30000, retries: 0 });
         } catch (e) {
-          if (e.name === 'AbortError') throw e;
-          // 轮询网络抖动，继续下一次
+          // 用户主动取消 → 抛出；轮询网络抖动 → 继续下一轮
+          if (opts.signal && opts.signal.aborted) throw e;
           continue;
-        }
-        if (!pollResp.ok) {
-          // 5xx 视为中转站临时抖动，继续下一轮轮询；4xx 才真失败
-          if (pollResp.status >= 500) { try { await pollResp.text(); } catch (e3) {} continue; }
-          throw makeHttpError(pollResp.status, await pollResp.text());
         }
         const pollData = await readBody(pollResp);
         // 成功：状态成功 或 直接返回 URL
@@ -772,16 +821,9 @@
       throw new Error(tr('api.err.videoPollTimeout', '视频生成轮询超时（5分钟），任务仍未完成。'));
     } catch (e) {
       _alErr = e;
-      if (e.name === 'AbortError') {
-        if (abortedByTimeout) {
-          throw new Error(tr('api.err.videoTimeout', '视频生成超时（' + Math.round(timeoutMs / 1000) + 's），请稍后重试或更换模型。', { s: Math.round(timeoutMs / 1000) }));
-        }
-        throw new Error(tr('api.err.abortedByUser', '已中止（用户停止执行）'));
-      }
       classifyError(e);
       throw e;
     } finally {
-      clearTimeout(timer);
       // ===== APILogger 埋点 =====
       try {
         if (window.APILogger) {
@@ -884,29 +926,17 @@
     };
 
     const timeoutMs = opts.timeoutMs || TIMEOUT_3D;
-    const controller = new AbortController();
-    const extSignal = opts.signal;
-    if (extSignal) {
-      if (extSignal.aborted) controller.abort();
-      else extSignal.addEventListener('abort', () => controller.abort(), { once: true });
-    }
-    let abortedByTimeout = false;
-    const timer = setTimeout(() => { abortedByTimeout = true; controller.abort(); }, timeoutMs);
     const started = Date.now();
     // ===== APILogger 埋点 =====
     const _alT0 = started;
     let _alErr = null;
     try {
-      const resp = await fetch(px(url), {
+      // v2.14.0：统一改用 apiFetch
+      const resp = await apiFetch(url, {
         method: 'POST',
         headers: buildHeaders(provider),
-        body: JSON.stringify(body),
-        signal: controller.signal
-      });
-      if (!resp.ok) {
-        const text = await resp.text();
-        throw makeHttpError(resp.status, text);
-      }
+        body: JSON.stringify(body)
+      }, { signal: opts.signal, timeoutMs: timeoutMs, retries: 2 });
       const data = await readBody(resp);
 
       // 1) 同步模式：直接返回 URL
@@ -925,21 +955,16 @@
       const pollStart = Date.now();
       const pollTimeout = 180000; // 轮询超时 180s（3分钟）
       while (Date.now() - pollStart < pollTimeout) {
-        await sleep(TD_POLL_INTERVAL, controller.signal);
+        await sleep(TD_POLL_INTERVAL, opts.signal);
         let pollResp;
         try {
-          pollResp = await fetch(px(pollUrl), {
+          pollResp = await apiFetch(pollUrl, {
             method: 'GET',
-            headers: buildHeaders(provider),
-            signal: controller.signal
-          });
+            headers: buildHeaders(provider)
+          }, { signal: opts.signal, timeoutMs: 30000, retries: 0 });
         } catch (e) {
-          if (e.name === 'AbortError') throw e;
+          if (opts.signal && opts.signal.aborted) throw e;
           continue; // 轮询网络抖动，继续
-        }
-        if (!pollResp.ok) {
-          if (pollResp.status >= 500) { try { await pollResp.text(); } catch (e3) {} continue; }
-          throw makeHttpError(pollResp.status, await pollResp.text());
         }
         const pollData = await readBody(pollResp);
         if (isTaskSucceeded(pollData)) {
@@ -957,16 +982,9 @@
       throw new Error(tr('api.err.model3DPollTimeout', '3D 生成轮询超时（3分钟），任务仍未完成。'));
     } catch (e) {
       _alErr = e;
-      if (e.name === 'AbortError') {
-        if (abortedByTimeout) {
-          throw new Error(tr('api.err.model3DTimeout', '3D 生成超时（' + Math.round(timeoutMs / 1000) + 's），请稍后重试或更换模型。', { s: Math.round(timeoutMs / 1000) }));
-        }
-        throw new Error(tr('api.err.abortedByUser', '已中止（用户停止执行）'));
-      }
       classifyError(e);
       throw e;
     } finally {
-      clearTimeout(timer);
       // ===== APILogger 埋点 =====
       try {
         if (window.APILogger) {
@@ -974,6 +992,102 @@
             provider: (provider && provider.name) || (provider && provider.id) || 'unknown',
             model: body.model,
             type: '3d',
+            inputTokens: 0,
+            outputTokens: 0,
+            duration: Date.now() - _alT0,
+            status: _alErr ? 'failed' : 'success',
+            error: _alErr ? (_alErr.message || String(_alErr)) : ''
+          });
+        }
+      } catch (e2) {}
+    }
+  }
+
+  /* ====================== 向量嵌入 embedding (v2.14.0) ====================== */
+  /**
+   * 向量嵌入
+   * - OpenAI 兼容：POST {baseurl}/embeddings  body {model, input}
+   * - Ollama 原生（自动探测）：POST {baseurl}/api/embeddings  body {model, prompt}
+   * 先试 OpenAI 格式，失败再试 Ollama 格式（仅 Ollama 供应商）。
+   * @param {Object} provider 供应商对象
+   * @param {Object} params {model, input: string|string[]}
+   * @returns {Promise<number[][]>} 每条输入对应的 embedding 向量数组
+   */
+  async function embedding(provider, params, opts) {
+    params = params || {};
+    opts = opts || {};
+    if (!provider || !provider.baseurl) {
+      throw new Error(tr('api.err.embProviderMissing', '嵌入供应商缺少 baseurl 或 key，请在「设置 → 供应商管理」中配置。'));
+    }
+    if (missingRequiredKey(provider)) {
+      throw new Error(tr('api.err.embProviderMissing', '嵌入供应商缺少 API Key。（本地服务如 Ollama 可留空）'));
+    }
+    if (params.input == null) {
+      throw new Error(tr('api.err.embInputMissing', 'embedding 缺少 input 参数'));
+    }
+    const model = params.model || (provider.models && provider.models[0] && provider.models[0].id) || 'text-embedding-3-small';
+    const input = params.input;
+
+    const _alT0 = Date.now();
+    let _alErr = null;
+    const timeoutMs = opts.timeoutMs || 30000;
+
+    const base = normalizeBaseUrl(provider.baseurl);
+    const baseHasV1 = /\/v\d+$/i.test(base);
+    const v1Prefix = baseHasV1 ? '' : '/v1';
+    const ollama = isOllamaProvider(provider);
+
+    // 候选端点：OpenAI 标准优先，Ollama 原生兜底
+    const candidates = [];
+    candidates.push({ url: base + '/embeddings', body: { model: model, input: input } });
+    if (!baseHasV1) {
+      candidates.push({ url: base + v1Prefix + '/embeddings', body: { model: model, input: input } });
+    }
+    if (ollama) {
+      // Ollama /api/embeddings 只接受单条 prompt 字符串
+      const promptStr = Array.isArray(input) ? input.join('\n') : String(input);
+      candidates.push({ url: base + '/api/embeddings', body: { model: model, prompt: promptStr } });
+    }
+
+    try {
+      var lastErr = null;
+      for (var i = 0; i < candidates.length; i++) {
+        var c = candidates[i];
+        try {
+          var resp = await apiFetch(c.url, {
+            method: 'POST',
+            headers: buildHeaders(provider),
+            body: JSON.stringify(c.body)
+          }, { signal: opts.signal, timeoutMs: timeoutMs, retries: 1 });
+          var data = await readBody(resp);
+          // OpenAI 格式：{ data: [{ embedding: [...] }] }
+          if (data && Array.isArray(data.data) && data.data.length && Array.isArray(data.data[0].embedding)) {
+            return data.data.map(function (d) { return d.embedding; });
+          }
+          // Ollama 格式：{ embedding: [...] } 单条
+          if (data && Array.isArray(data.embedding)) {
+            return [data.embedding];
+          }
+          lastErr = new Error('embedding 响应未识别: ' + JSON.stringify(data).slice(0, 120));
+        } catch (e) {
+          lastErr = e;
+          // 鉴权失败换端点也没用
+          if (e.kind === 'auth') break;
+          continue;
+        }
+      }
+      throw lastErr || new Error(tr('api.err.embAllFailed', 'embedding 所有端点均失败'));
+    } catch (e) {
+      _alErr = e;
+      classifyError(e);
+      throw e;
+    } finally {
+      try {
+        if (window.APILogger) {
+          APILogger.log({
+            provider: (provider && provider.name) || (provider && provider.id) || 'unknown',
+            model: model,
+            type: 'embedding',
             inputTokens: 0,
             outputTokens: 0,
             duration: Date.now() - _alT0,
@@ -1059,6 +1173,7 @@
     imageGeneration,
     videoGeneration,
     model3DGeneration,
+    embedding,
     listModels,
     testConnection,
     // 工具

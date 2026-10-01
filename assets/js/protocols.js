@@ -80,28 +80,26 @@
         ...(c.maxTokens ? { max_tokens: Number(c.maxTokens) } : {}),
         ...(c.stream ? { stream: true } : {})
       }),
+      // v2.14.0：readText 只返回最终 content，不再把 reasoning 拼到前面。
+      // reasoning 由 readReasoning / readReasoningDelta 单独提供，由 api.js 决定如何展示。
       readText: (j) => {
         const msg = j?.choices?.[0]?.message || {};
-        let c = msg.content;
-        const reasoning = msg.reasoning_content || '';
-        if (typeof c === 'string') {
-          if (c) return reasoning ? '【思考过程】\n' + reasoning + '\n\n【最终回答】\n' + c : c;
-          if (reasoning) return '【思考过程】\n' + reasoning;
-          return '';
-        }
-        if (Array.isArray(c)) {
-          const text = c.map(x => x.text || x.content || '').join('');
-          if (text) return reasoning ? '【思考过程】\n' + reasoning + '\n\n【最终回答】\n' + text : text;
-          if (reasoning) return '【思考过程】\n' + reasoning;
-          return '';
-        }
-        return reasoning ? '【思考过程】\n' + reasoning : '';
+        const c = msg.content;
+        if (typeof c === 'string') return c;
+        if (Array.isArray(c)) return c.map(x => x.text || x.content || '').join('');
+        return '';
+      },
+      readReasoning: (j) => {
+        const msg = j?.choices?.[0]?.message || {};
+        return msg.reasoning_content || msg.reasoning || '';
       },
       readDelta: (j) => {
         const delta = j?.choices?.[0]?.delta || {};
-        const content = delta.content || j?.choices?.[0]?.message?.content || '';
-        const reasoning = delta.reasoning_content || '';
-        return content || reasoning || '';
+        return delta.content || '';
+      },
+      readReasoningDelta: (j) => {
+        const delta = j?.choices?.[0]?.delta || {};
+        return delta.reasoning_content || '';
       },
       readUsage: (j) => j?.usage || null
     },
@@ -252,6 +250,14 @@
         : null
     }
   };
+
+  /* ---------------- 协议默认方法 mixin（v2.14.0） ----------------
+     openai 适配器已实现 reasoning 分离；其他协议默认不支持思考过程，
+     这里补上空实现，保证 api.js 可以无差别调用 proto.readReasoning*。 */
+  Object.values(PROTOCOLS).forEach(function (p) {
+    if (typeof p.readReasoning !== 'function') p.readReasoning = function () { return ''; };
+    if (typeof p.readReasoningDelta !== 'function') p.readReasoningDelta = function () { return ''; };
+  });
 
   /* ---------------- 协议识别 ---------------- */
 
