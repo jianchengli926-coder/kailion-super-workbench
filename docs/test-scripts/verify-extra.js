@@ -3,7 +3,7 @@
  */
 const { chromium } = require('playwright-core');
 const path = require('path');
-const PROJECT = '/Users/a123/Desktop/锴利超级AI工作台';
+const PROJECT = '/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台';
 const SHOT_DIR = path.join(PROJECT, 'docs', 'screenshots');
 
 const out = [];
