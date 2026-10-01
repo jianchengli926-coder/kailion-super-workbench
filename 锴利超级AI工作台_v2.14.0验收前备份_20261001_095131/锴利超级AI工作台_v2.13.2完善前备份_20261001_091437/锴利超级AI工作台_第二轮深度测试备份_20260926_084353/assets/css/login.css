@@ -1,0 +1,179 @@
+/* ============================================================
+   锴利超级AI工作台 - 登录页面样式
+   KaiLionCrafts 品牌登录界面
+   ============================================================ */
+
+#login-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  animation: loginFadeIn 0.5s ease;
+}
+
+@keyframes loginFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+#login-overlay.hidden {
+  display: none;
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 48px 56px;
+  text-align: center;
+  max-width: 420px;
+  width: 90%;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.4);
+  animation: loginSlideUp 0.6s ease;
+}
+
+@keyframes loginSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-logo {
+  width: 140px;
+  height: 140px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+  border: 3px solid rgba(212, 175, 55, 0.5);
+}
+
+.login-company-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: #d4af37;
+  margin: 0 0 6px;
+  letter-spacing: 1px;
+  background: linear-gradient(135deg, #d4af37, #f4e4bc, #d4af37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.login-company-subtitle {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 32px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.login-title {
+  font-size: 20px;
+  color: #ffffff;
+  margin: 0 0 24px;
+  font-weight: 500;
+}
+
+.login-input-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.login-input {
+  width: 100%;
+  padding: 16px 20px;
+  font-size: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+  outline: none;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  text-align: center;
+  letter-spacing: 8px;
+}
+
+.login-input::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 2px;
+}
+
+.login-input:focus {
+  border-color: #d4af37;
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
+}
+
+.login-input.error {
+  border-color: #ff4757;
+  animation: shake 0.4s ease;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-8px); }
+  75% { transform: translateX(8px); }
+}
+
+.login-button {
+  width: 100%;
+  padding: 16px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #1a1a2e;
+  background: linear-gradient(135deg, #d4af37, #f4e4bc);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 2px;
+}
+
+.login-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 175, 55, 0.4);
+}
+
+.login-button:active {
+  transform: translateY(0);
+}
+
+.login-error {
+  color: #ff4757;
+  font-size: 14px;
+  margin-top: 12px;
+  min-height: 20px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.login-error.show {
+  opacity: 1;
+}
+
+.login-footer {
+  margin-top: 28px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.login-footer a {
+  color: rgba(212, 175, 55, 0.6);
+  text-decoration: none;
+}

@@ -1,0 +1,10 @@
+{
+  "name": "GEO优化方案演示",
+  "nodes": [
+    {"id":"n1","type":"promptNode","x":50,"y":200,"params":{"text":"阳江不锈钢刀具，外贸出口，独立站kailioncrafts.com"}},
+    {"id":"n2","type":"geoOptimizerNode","x":400,"y":200,"params":{"targetEngine":"all","contentType":"product","keywords":"阳江刀具,不锈钢厨房刀,外贸出口"}}
+  ],
+  "links": [
+    {"from":{"node":"n1","port":"out"},"to":{"node":"n2","port":"in"}}
+  ]
+}
