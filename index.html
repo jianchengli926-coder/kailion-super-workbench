@@ -17,7 +17,9 @@
   <!-- ============ 启动遮罩（v0.6.0，纯 CSS 淡出，2.2s 后自动隐藏） ============ -->
   <div id="boot-splash">
     <div class="boot-content">
-      <img src="assets/img/logo.png" alt="logo" class="boot-logo" onerror="this.style.display='none'">
+      <div class="boot-brand-container">
+        <img src="assets/img/kailion-brand-logo.png" alt="KaiLionCrafts" class="boot-brand-logo" onerror="this.style.display='none'">
+      </div>
       <div class="boot-title gradient-text" data-i18n="brand.product">锴利超级AI工作台</div>
       <div class="boot-sub" data-i18n="boot.sub">正在加载工作空间…</div>
     </div>
@@ -26,8 +28,9 @@
   <!-- ============ 顶部工具栏 ============ -->
   <header id="topbar">
     <div class="topbar-left">
-      <img class="topbar-logo" src="assets/img/logo.png" alt="logo">
-      <span class="topbar-product gradient-text" data-i18n="brand.product">锴利超级AI工作台</span>
+      <div class="topbar-brand">
+        <img class="topbar-brand-logo" src="assets/img/kailion-brand-logo.png" alt="KaiLionCrafts">
+      </div>
       <span class="topbar-divider"></span>
       <span id="workflow-name" class="topbar-wfname" data-i18n="topbar.unnamed">未命名工作流</span>
       <div class="mode-switch" style="margin-left:12px">

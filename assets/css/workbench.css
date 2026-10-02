@@ -27,6 +27,21 @@
   width: 28px; height: 28px; border-radius: 6px;
   object-fit: cover;
 }
+.topbar-brand {
+  display: flex; align-items: center; justify-content: center;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 4px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+  height: 40px;
+  flex-shrink: 0;
+}
+.topbar-brand-logo {
+  height: 32px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
 .topbar-product {
   font-size: 15px; font-weight: 700;
   background: var(--gradient-brand);
@@ -622,6 +637,8 @@
   .user-info, .user-name, .user-role { display: none; }
   .user-card { justify-content: center; }
   .topbar-product { display: none; }
+  .topbar-brand { height: 32px; padding: 3px 8px; }
+  .topbar-brand-logo { height: 24px; }
   .topbar-wfname { max-width: 100px; font-size: 12px; }
   .btn { padding: 6px 10px; font-size: 12px; }
   #ai-assistant { width: calc(100vw - 32px); right: 16px; bottom: 16px; }
@@ -923,6 +940,15 @@ input[type="color"].color-input { padding: 3px; height: 38px; cursor: pointer; }
   100% { opacity: 0; visibility: hidden; }
 }
 .boot-content { text-align: center; }
+.boot-brand-container {
+  display: inline-flex; align-items: center; justify-content: center;
+  background: #ffffff; border-radius: 16px;
+  padding: 16px 28px; margin-bottom: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.boot-brand-logo {
+  height: 56px; width: auto; display: block;
+}
 .boot-logo {
   width: 64px; height: 64px; border-radius: 16px;
   margin-bottom: 16px; display: inline-block;
