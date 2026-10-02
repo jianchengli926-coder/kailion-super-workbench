@@ -1,0 +1,441 @@
+{
+  "project": "锴利超级AI工作台",
+  "version": "2.14.2",
+  "gitCommit": "0cde197",
+  "gitTag": "v2.14.2 -> 55a5522",
+  "tagNote": "tag v2.14.2 指向 55a5522（非16de5b8），差异已记录未修改tag",
+  "github": "https://github.com/jianchengli926-coder/kailion-super-workbench",
+  "buildTime": "2026-10-02 08:33:33",
+  "workspaceStatus": "clean",
+  "deliveryScope": "Web/本地浏览器版",
+  "e2e": {
+    "total": 55,
+    "passed": 55,
+    "failed": 0,
+    "passRate": "100%"
+  },
+  "apiVerification": {
+    "health": "ok (version=2.14.2, bindHost=127.0.0.1)",
+    "homepage": "HTTP 200",
+    "ollamaModels": 6,
+    "qwen35Text": "PASS (max_tokens=8192, content非空, finish_reason=stop)",
+    "nomicEmbedding": "PASS (768维向量)",
+    "flux2Klein": "实验性/当前Ollama接口不支持图片生成（不伪造结果）"
+  },
+  "syntaxCheck": "52个目标JS文件全部通过",
+  "securityScan": "密码仅在assets/js/login.js；无API Key/ACCESS_TOKEN/私钥泄露",
+  "files": [
+    {
+      "path": "index.html",
+      "size": 33782,
+      "sha256": "ba1b28f61a5e1d7ab11d0a8f7b18313b3463e159381e9a4e190b58351fdf2432"
+    },
+    {
+      "path": "server.js",
+      "size": 18731,
+      "sha256": "101f538a4471882bb2e0a8580adeb7c442cfb636c5f88095b16ad114cde7c465"
+    },
+    {
+      "path": "package.json",
+      "size": 2540,
+      "sha256": "3a972f785d85e3c829302e7d6c5f0e24d3526e53c78d0732e78090d6ed62c8ab"
+    },
+    {
+      "path": "package-lock.json",
+      "size": 148506,
+      "sha256": "0ebcc3c94a7fc53f321b673d592079b2f70aab65de2088751d862c3836f6fca2"
+    },
+    {
+      "path": "playwright.config.js",
+      "size": 938,
+      "sha256": "4d29545359b706069e6b97c058dcaf86d09a891be629af7b1ab0152e0acb5fc8"
+    },
+    {
+      "path": "assets/js/agents.js",
+      "size": 21732,
+      "sha256": "60379a56ef907c08b3778f49da390e9dd4f5239c10d93d210fdb4e23cdaaed6c"
+    },
+    {
+      "path": "assets/js/api-logger.js",
+      "size": 15293,
+      "sha256": "cfbef306f66fb2620e0be9c4b996b9be5973cff94030a829110520b11b984c10"
+    },
+    {
+      "path": "assets/js/api.js",
+      "size": 51738,
+      "sha256": "68098ef6fd1e904df3e1db6a10b84c99870cb71193be6f74392988a25de1a8f3"
+    },
+    {
+      "path": "assets/js/app.js",
+      "size": 28819,
+      "sha256": "a1f512e942e249d1ab0b9ed37e7e0bb4cd14f5fbf591f08a97dbb9b17de7ae6a"
+    },
+    {
+      "path": "assets/js/blobstore.js",
+      "size": 10616,
+      "sha256": "8aa4c88fcc722da480214c74c4078d8a2931e1d1275b5458f7354d6221de71eb"
+    },
+    {
+      "path": "assets/js/cache.js",
+      "size": 5901,
+      "sha256": "b865e3520bb87aadec5d425396f92f1249721fcecb730463c9f661f3acb783ab"
+    },
+    {
+      "path": "assets/js/canvas.js",
+      "size": 78404,
+      "sha256": "0939333af7d6b512167c194c75132f64a324abc46878b7c323b6f0bea510bbcb"
+    },
+    {
+      "path": "assets/js/coach.js",
+      "size": 16727,
+      "sha256": "872b20a85066886f8d632966fbd681cab2b401cca4aa9f6a96eb58724d4f3bd3"
+    },
+    {
+      "path": "assets/js/company-kb.js",
+      "size": 33343,
+      "sha256": "4497486569ca0b4efd63df4fce38480172b979d1b62eefb2bc22d78b7eb4583a"
+    },
+    {
+      "path": "assets/js/engine.js",
+      "size": 185349,
+      "sha256": "4681080d9984c37afd1cc1855f9dd0213986531cc5a72fd6cb57798d477debcd"
+    },
+    {
+      "path": "assets/js/export.js",
+      "size": 18319,
+      "sha256": "f07478bedf92ed29f6a39d6a1952a4f7c75d38666440bb7116b8187be80b44e8"
+    },
+    {
+      "path": "assets/js/failover.js",
+      "size": 15744,
+      "sha256": "68b5cecb8e78bd04174c2b51d5b96e38eea47518ce8426ba4f2a1b0b51a21c0e"
+    },
+    {
+      "path": "assets/js/i18n.js",
+      "size": 127003,
+      "sha256": "9e6eefe70d781803e7bfc50c07641d945d7650d718a4d024f579f429ada6356e"
+    },
+    {
+      "path": "assets/js/imagetools.js",
+      "size": 37933,
+      "sha256": "8a58c84628a9622af3764cbebde009073da4db1d2649f29e620d7483a8244932"
+    },
+    {
+      "path": "assets/js/login.js",
+      "size": 10642,
+      "sha256": "64dd3d08631b5f98f07f0f747b506f3db78740c31d9422b6c013f93f7707e3fb"
+    },
+    {
+      "path": "assets/js/manual.js",
+      "size": 33877,
+      "sha256": "9ff5cd3034e019d747b7fefd66daf0a3665bf823a233a6a0cd13e3fe34dc8429"
+    },
+    {
+      "path": "assets/js/marketplace.js",
+      "size": 28617,
+      "sha256": "3263205b1be4d8ea58c0476637c376309b1b21556774dad79b40ae49b1e17e24"
+    },
+    {
+      "path": "assets/js/mcp.js",
+      "size": 10088,
+      "sha256": "076f970d7fae45ac0e2573f64dc49b6717ab45f271e7da063b47fa1e03bc08ce"
+    },
+    {
+      "path": "assets/js/nodes-data.js",
+      "size": 27762,
+      "sha256": "37816feb464e08f17b06b84ab25a94d866b324af0686b869be3aca399c000966"
+    },
+    {
+      "path": "assets/js/nodes.js",
+      "size": 80468,
+      "sha256": "81d18d658f11e46e8fde5d6cf27992ab8801ed5b1e6eae1d2b674ea8113997dd"
+    },
+    {
+      "path": "assets/js/ooxml.js",
+      "size": 51417,
+      "sha256": "83d4e2e971927b93a5f6623336741aebcab7d53cc9bbfa54e1c7eef1ad9aa47c"
+    },
+    {
+      "path": "assets/js/prompt-library.js",
+      "size": 63038,
+      "sha256": "f32e3293e76034e662fc717874c5b062ab3d592d0b112fe2598de2f0c53fc920"
+    },
+    {
+      "path": "assets/js/protocols.js",
+      "size": 12677,
+      "sha256": "c040d3db754bde743509101c79ee0487f681675cd151fa20bc6c754356975cc1"
+    },
+    {
+      "path": "assets/js/providers-data.js",
+      "size": 48772,
+      "sha256": "6dc82dadd2042dd7b744b55a441bd01e909aca5296200dabbc4240939648fcbc"
+    },
+    {
+      "path": "assets/js/resources.js",
+      "size": 99393,
+      "sha256": "b5fc7e922d194d0ec153b649b4d25616b2c4bc75e33943f41732cabeb71fb425"
+    },
+    {
+      "path": "assets/js/run-history.js",
+      "size": 13168,
+      "sha256": "e41edb8f0adeef4c8bf2bcb3076c16a74449b3fdf361b9768981c9cd2894f280"
+    },
+    {
+      "path": "assets/js/search.js",
+      "size": 16156,
+      "sha256": "83adcba0ab0e7bd77f5f4d3b44a78d3242274edd92d31a2bde42e8f7e3e167d2"
+    },
+    {
+      "path": "assets/js/shortcuts.js",
+      "size": 9212,
+      "sha256": "3f6c38eddc656f8ab1e4a82e563113099bb5817d5edc8af0c27f4c76d2abc747"
+    },
+    {
+      "path": "assets/js/skills.js",
+      "size": 17226,
+      "sha256": "ae37e0d22b98f3d2543cfcbb8d65f531a7fd80757280db4478532b871e7cfef8"
+    },
+    {
+      "path": "assets/js/smart.js",
+      "size": 27953,
+      "sha256": "65365c96ca68460368be832843110d00fe249f1ddbbd6483aeee8ae8ed66a739"
+    },
+    {
+      "path": "assets/js/stats.js",
+      "size": 9984,
+      "sha256": "698a78b57d4f816d42e28722ee8c8b2e25cc66b097dd67ba4683b129fc26ec73"
+    },
+    {
+      "path": "assets/js/super-data.js",
+      "size": 32692,
+      "sha256": "db1582471079cb8b11b7e5523faa8473b7539ae06630bf47aeceaeea4c7ae26d"
+    },
+    {
+      "path": "assets/js/tasks.js",
+      "size": 44662,
+      "sha256": "995dfec0e8feba81d5ffb0d2f42ce77a9fd9e6d280ab4f50dcd2c0c4ef7da644"
+    },
+    {
+      "path": "assets/js/theme-manager.js",
+      "size": 19055,
+      "sha256": "e03b31b6a87cfe360d3a5814496addbde1f7178b84ff328c62a1e68b34b813c9"
+    },
+    {
+      "path": "assets/js/ui.js",
+      "size": 108653,
+      "sha256": "797bac3b1abade8eaece10e857184318ff85efdc6daa93031654b8a9c743a2d2"
+    },
+    {
+      "path": "assets/js/version-history.js",
+      "size": 5515,
+      "sha256": "76ffd8f8b67228a914439c0f65d3bfee15bb0bd6852e3215af91b4bc9b77d54c"
+    },
+    {
+      "path": "assets/js/workflow-templates.js",
+      "size": 5890,
+      "sha256": "6ce9a88fd90b43eaa2fefe3f4b70e7fc7b3c47efdb250d65d60012af8b13c19b"
+    },
+    {
+      "path": "assets/js/zip.js",
+      "size": 8951,
+      "sha256": "e420c45f7de39c61a59bb3b44a44607905be820a6e18c09a694943efca53cfd3"
+    },
+    {
+      "path": "assets/css/canvas-ext.css",
+      "size": 7648,
+      "sha256": "10b87a1161af20e97c1849202a23d625cd86904c51ace752d1f51f98be0617ba"
+    },
+    {
+      "path": "assets/css/login.css",
+      "size": 7106,
+      "sha256": "2766605aa7eab9326d631c9bc1e22be8d077a91d3f5126e05056a17b54fa299a"
+    },
+    {
+      "path": "assets/css/results.css",
+      "size": 4167,
+      "sha256": "17828f3f33f24c94f2fe44f621341190689e76938cc1e5ed7d5d8f12b46a44ab"
+    },
+    {
+      "path": "assets/css/tokens.css",
+      "size": 9243,
+      "sha256": "5a817d45fd124b9a41a62ed33c3eaef8c9fa8cfb50c5b1e9718e4c028bdb84d4"
+    },
+    {
+      "path": "assets/css/workbench.css",
+      "size": 64314,
+      "sha256": "53d19d634616f2aa4b6af3e8b3d454c6ed118bc03b5e0adf2e3b53d191aea222"
+    },
+    {
+      "path": "cors-proxy/README.md",
+      "size": 6959,
+      "sha256": "67f2507a5a90111e78ff707a1caa6439ee72dc553418dbda47886124283f5ee6"
+    },
+    {
+      "path": "cors-proxy/ollama-proxy.py",
+      "size": 3004,
+      "sha256": "959fb59c6087d0c721f5cabe8a8f784b49fe3f77675fd5234e1020747ff47329"
+    },
+    {
+      "path": "cors-proxy/server.js",
+      "size": 8420,
+      "sha256": "b772bb4ab0c7b66769be98190e190a769aec88e0a21a3b9f0b92ccf217042f28"
+    },
+    {
+      "path": "cors-proxy/server.py",
+      "size": 6956,
+      "sha256": "4db880a5bcc69ce4bc601f75e30f2a3f8f26c43da016d355f7d27af68d5b60df"
+    },
+    {
+      "path": "tests/e2e/auth.spec.js",
+      "size": 4600,
+      "sha256": "1300a51d379b971103ec1633993c8643b33092ca30ddbcfeccad70eea684df4f"
+    },
+    {
+      "path": "tests/e2e/canvas.spec.js",
+      "size": 3589,
+      "sha256": "e314a435367ebfa42f11496569f6f648fad1bf2681c659c6901829b4c5e7ac9c"
+    },
+    {
+      "path": "tests/e2e/content.spec.js",
+      "size": 3771,
+      "sha256": "be032bee528d55f7418bba2f63669dbdccbf745037280511305aad13044c02eb"
+    },
+    {
+      "path": "tests/e2e/export.spec.js",
+      "size": 1901,
+      "sha256": "27d286308a9b7035be814649ef95d452519e8013b77d8208bb843b42dc149958"
+    },
+    {
+      "path": "tests/e2e/failover.spec.js",
+      "size": 3763,
+      "sha256": "7523b1eddc635358433ff1dfc03d1ae6a842faa5bb6a7c735bb397b9a9fb8324"
+    },
+    {
+      "path": "tests/e2e/helpers.js",
+      "size": 3995,
+      "sha256": "1dfcd4e513ffe9ee90a0fcee177b06c457e839d91db4d8fffda9d222dd4ea7bb"
+    },
+    {
+      "path": "tests/e2e/knowledge-base.spec.js",
+      "size": 4921,
+      "sha256": "a477a0a8a91b4dc94c20940fbb1a170646a0ac0a93c6dbc1ff7d795295253a0c"
+    },
+    {
+      "path": "tests/e2e/models.spec.js",
+      "size": 3446,
+      "sha256": "8033218d8106e9046d592b0b581f3ecbc2518abf4f16f250c4f4b4bfa4993b2d"
+    },
+    {
+      "path": "tests/e2e/responsive.spec.js",
+      "size": 2723,
+      "sha256": "14f9761d6e12c7919918a3a9425e3fbc773da507f6ae8e61a7c6d2aa8098edd9"
+    },
+    {
+      "path": "tests/e2e/tasks.spec.js",
+      "size": 4027,
+      "sha256": "bcce5de99dbbe39e9b8e6b14e5acfdefe82d55dd492429e5ad8f0313aa9f985d"
+    },
+    {
+      "path": "tests/e2e/fixtures/gen-image.js",
+      "size": 2011,
+      "sha256": "ed3049a32281c4eed12c13cbee4ac9cd03e662fe4454d5fbedb9d34672d9186c"
+    },
+    {
+      "path": "tests/e2e/fixtures/test-image.png",
+      "size": 680,
+      "sha256": "7becd653ed90f18f26706b5e0d911f22607df52e23a655716aa8f81e454832b6"
+    },
+    {
+      "path": "docs/operations-v2.14.2.md",
+      "size": 9404,
+      "sha256": "b3f9dd162805a0c70392f3b5a5c2424e9fb2ee2ab33609720e67380aa1a452b7"
+    },
+    {
+      "path": "docs/v2.14.2-regression-checklist.md",
+      "size": 6400,
+      "sha256": "051ea595149d4028eb64964cc26167fc278e78a5c1b7e74244d3957f4f24d9bd"
+    },
+    {
+      "path": "docs/v2.14.2-final-acceptance.md",
+      "size": 16924,
+      "sha256": "623bc23d4f6df40d1d98629ff75a51d03c370ac29aaa5b48451c120dbe6ecfa7"
+    },
+    {
+      "path": "docs/v2.14.2-e2e-test-report.html",
+      "size": 2893,
+      "sha256": "e6d9fdd1cf37934f1d3ca79ddc0dda951998d42250c79665fcfef8336598b85c"
+    },
+    {
+      "path": "docs/v2.14.2-e2e-test-results.json",
+      "size": 66432,
+      "sha256": "1d82602c248db275570e80e058c8f503404b5018e3e0d26ebeced51c0b641c41"
+    },
+    {
+      "path": "docs/v2.14.2-function-overview.html",
+      "size": 11853,
+      "sha256": "91a23ff8248b234ba67b14a12cc0490de0da1b6b920fb92fd3eb0d92bb58ee24"
+    },
+    {
+      "path": "docs/v2.14.2-function-inventory.html",
+      "size": 311311,
+      "sha256": "8622225c83c990fe1b2b6ffd3c9068cacf9e28d381f8cd086848128a0c26d64d"
+    },
+    {
+      "path": "docs/v2.14.2-function-inventory.json",
+      "size": 159734,
+      "sha256": "02c0592c01b3e48a5e7b4f51a7ff214dcb3009c88cb7a7c2363a12ee4bb524d0"
+    },
+    {
+      "path": "docs/v2.14.2-backend-audit.md",
+      "size": 14283,
+      "sha256": "d1a44e9f7ecbd2b3b91a922269f285d028dda26b588fe495416aa95c1e9d1096"
+    },
+    {
+      "path": "docs/v2.14.2-release-checklist.md",
+      "size": 5391,
+      "sha256": "0073cd06a3348afbd6186d2ac822a809684ccb7f2172a49656c242bb5bfa50b4"
+    }
+  ],
+  "totalFiles": 74,
+  "totalSizeBytes": 2399155,
+  "totalSizeHuman": "2.3MB",
+  "deliveredFeatures": [
+    "Web/本地浏览器版",
+    "本地Ollama模型集成",
+    "文案创作和流式输出",
+    "画布和工作流编辑器",
+    "公司知识库(586文档向量检索)",
+    "模型管理(6本地+21在线供应商)",
+    "故障转移(6类型保护)",
+    "批量和定时任务",
+    "DOCX/XLSX/PPTX/HTML/CSV/JSON导出",
+    "响应式布局(375/768/1920)",
+    "登录保护(5次锁定+sessionStorage)",
+    "服务器安全(SSRF防护+ACCESS_TOKEN)"
+  ],
+  "notIncluded": [
+    "Electron桌面版",
+    "Electron CSP/IPC/自动更新/安装包测试",
+    "在线图片/视频/3D生成(需API Key)",
+    "在线供应商故障转移(需API Key)",
+    "electron-builder构建链漏洞升级"
+  ],
+  "knownLimitations": [
+    "qwen3.5:9b为thinking模型，max_tokens≤1024时可能因思考过程占满token导致content为空（api.js有reasoning兜底和非流式回退）",
+    "x/flux2-klein:4b-fp4当前Ollama接口不支持图片生成，标记为实验性",
+    "前端登录密码仅为界面锁屏机制，非企业级认证；公网/局域网部署必须启用ACCESS_TOKEN",
+    "Electron桌面版未验收，仅交付Web/本地浏览器版"
+  ],
+  "startup": {
+    "command": "node server.js 8766",
+    "url": "http://127.0.0.1:8766",
+    "prerequisites": [
+      "Node.js >= 18",
+      "Ollama (可选，用于本地模型)"
+    ]
+  },
+  "rollback": {
+    "command": "git checkout <previous-commit>",
+    "backup": "锴利超级AI工作台_v2.14.2验收收口前备份_20261002_011740"
+  }
+}

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>锴利超级AI工作台 v2.14.2 交付清单</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f0f4f8;color:#1e293b;padding:20px}
+.container{max-width:1100px;margin:0 auto}
+h1{font-size:24px;margin-bottom:4px}
+.sub{color:#64748b;margin-bottom:20px;font-size:13px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:20px}
+.card{background:#fff;border-radius:10px;padding:14px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card .n{font-size:22px;font-weight:700}
+.card .l{font-size:11px;color:#64748b;margin-top:2px}
+.section{background:#fff;border-radius:10px;padding:20px;margin-bottom:16px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.section h2{font-size:16px;margin-bottom:12px;border-left:3px solid #d4af37;padding-left:10px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8fafc;padding:8px;text-align:left;border-bottom:2px solid #e2e8f0}
+td{padding:6px 8px;border-bottom:1px solid #f1f5f9}
+ul{padding-left:20px;font-size:13px;line-height:1.9}
+.badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600}
+.bg-green{background:#d1fae5;color:#065f46}
+.bg-orange{background:#fef3c7;color:#92400e}
+.bg-red{background:#fee2e2;color:#991b1b}
+.bg-blue{background:#dbeafe;color:#1e40af}
+</style></head><body><div class="container">
+<h1>锴利超级AI工作台 v2.14.2 交付清单</h1>
+<div class="sub">Git: 0cde197 · Tag: v2.14.2 -> 55a5522 · 构建: 2026-10-02 08:33:33 · 范围: Web/本地浏览器版</div>
+<div class="cards">
+<div class="card"><div class="n" style="color:#10b981">55/55</div><div class="l">E2E测试通过</div></div>
+<div class="card"><div class="n" style="color:#3b82f6">74</div><div class="l">交付文件数</div></div>
+<div class="card"><div class="n" style="color:#8b5cf6">2.3MB</div><div class="l">核心源码大小</div></div>
+<div class="card"><div class="n" style="color:#f59e0b">6</div><div class="l">本地Ollama模型</div></div>
+<div class="card"><div class="n" style="color:#06b6d4">586</div><div class="l">知识库文档</div></div>
+<div class="card"><div class="n" style="color:#ec4899">92</div><div class="l">画布节点</div></div>
+</div>
+<div class="section"><h2>API验证结果</h2>
+<table><tr><th>项目</th><th>结果</th></tr>
+<tr><td>服务器健康</td><td><span class="badge bg-green">ok (version=2.14.2, bindHost=127.0.0.1)</span></td></tr>
+<tr><td>首页</td><td><span class="badge bg-green">HTTP 200</span></td></tr>
+<tr><td>Ollama模型</td><td><span class="badge bg-green">6个模型在线</span></td></tr>
+<tr><td>qwen3.5文本</td><td><span class="badge bg-green">PASS (max_tokens=8192, content非空, finish_reason=stop)</span></td></tr>
+<tr><td>nomic embedding</td><td><span class="badge bg-green">PASS (768维向量)</span></td></tr>
+<tr><td>flux2-klein图片</td><td><span class="badge bg-orange">实验性/当前Ollama接口不支持图片生成（不伪造结果）</span></td></tr>
+</table></div>
+<div class="section"><h2>已交付功能</h2><ul><li>Web/本地浏览器版</li><li>本地Ollama模型集成</li><li>文案创作和流式输出</li><li>画布和工作流编辑器</li><li>公司知识库(586文档向量检索)</li><li>模型管理(6本地+21在线供应商)</li><li>故障转移(6类型保护)</li><li>批量和定时任务</li><li>DOCX/XLSX/PPTX/HTML/CSV/JSON导出</li><li>响应式布局(375/768/1920)</li><li>登录保护(5次锁定+sessionStorage)</li><li>服务器安全(SSRF防护+ACCESS_TOKEN)</li></ul></div>
+<div class="section"><h2>未纳入本版本验收</h2><ul><li>Electron桌面版</li><li>Electron CSP/IPC/自动更新/安装包测试</li><li>在线图片/视频/3D生成(需API Key)</li><li>在线供应商故障转移(需API Key)</li><li>electron-builder构建链漏洞升级</li></ul></div>
+<div class="section"><h2>已知限制</h2><ul><li>qwen3.5:9b为thinking模型，max_tokens≤1024时可能因思考过程占满token导致content为空（api.js有reasoning兜底和非流式回退）</li><li>x/flux2-klein:4b-fp4当前Ollama接口不支持图片生成，标记为实验性</li><li>前端登录密码仅为界面锁屏机制，非企业级认证；公网/局域网部署必须启用ACCESS_TOKEN</li><li>Electron桌面版未验收，仅交付Web/本地浏览器版</li></ul></div>
+<div class="section"><h2>交付文件列表（74个，2.3MB）</h2>
+<table><tr><th>文件路径</th><th>大小</th><th>SHA-256(前16位)</th></tr><tr><td><code>assets/js/agents.js</code></td><td>21.2KB</td><td style="font-family:monospace;font-size:11px">60379a56ef907c08…</td></tr>
+<tr><td><code>assets/js/api-logger.js</code></td><td>14.9KB</td><td style="font-family:monospace;font-size:11px">cfbef306f66fb262…</td></tr>
+<tr><td><code>assets/js/api.js</code></td><td>50.5KB</td><td style="font-family:monospace;font-size:11px">68098ef6fd1e904d…</td></tr>
+<tr><td><code>assets/js/app.js</code></td><td>28.1KB</td><td style="font-family:monospace;font-size:11px">a1f512e942e249d1…</td></tr>
+<tr><td><code>assets/js/blobstore.js</code></td><td>10.4KB</td><td style="font-family:monospace;font-size:11px">8aa4c88fcc722da4…</td></tr>
+<tr><td><code>assets/js/cache.js</code></td><td>5.8KB</td><td style="font-family:monospace;font-size:11px">b865e3520bb87aad…</td></tr>
+<tr><td><code>assets/js/canvas.js</code></td><td>76.6KB</td><td style="font-family:monospace;font-size:11px">0939333af7d6b512…</td></tr>
+<tr><td><code>assets/js/coach.js</code></td><td>16.3KB</td><td style="font-family:monospace;font-size:11px">872b20a85066886f…</td></tr>
+<tr><td><code>assets/js/company-kb.js</code></td><td>32.6KB</td><td style="font-family:monospace;font-size:11px">4497486569ca0b4e…</td></tr>
+<tr><td><code>assets/js/engine.js</code></td><td>181.0KB</td><td style="font-family:monospace;font-size:11px">4681080d9984c37a…</td></tr>
+<tr><td><code>assets/js/export.js</code></td><td>17.9KB</td><td style="font-family:monospace;font-size:11px">f07478bedf92ed29…</td></tr>
+<tr><td><code>assets/js/failover.js</code></td><td>15.4KB</td><td style="font-family:monospace;font-size:11px">68b5cecb8e78bd04…</td></tr>
+<tr><td><code>assets/js/i18n.js</code></td><td>124.0KB</td><td style="font-family:monospace;font-size:11px">9e6eefe70d781803…</td></tr>
+<tr><td><code>assets/js/imagetools.js</code></td><td>37.0KB</td><td style="font-family:monospace;font-size:11px">8a58c84628a9622a…</td></tr>
+<tr><td><code>assets/js/login.js</code></td><td>10.4KB</td><td style="font-family:monospace;font-size:11px">64dd3d08631b5f98…</td></tr>
+<tr><td><code>assets/js/manual.js</code></td><td>33.1KB</td><td style="font-family:monospace;font-size:11px">9ff5cd3034e019d7…</td></tr>
+<tr><td><code>assets/js/marketplace.js</code></td><td>27.9KB</td><td style="font-family:monospace;font-size:11px">3263205b1be4d8ea…</td></tr>
+<tr><td><code>assets/js/mcp.js</code></td><td>9.9KB</td><td style="font-family:monospace;font-size:11px">076f970d7fae45ac…</td></tr>
+<tr><td><code>assets/js/nodes-data.js</code></td><td>27.1KB</td><td style="font-family:monospace;font-size:11px">37816feb464e08f1…</td></tr>
+<tr><td><code>assets/js/nodes.js</code></td><td>78.6KB</td><td style="font-family:monospace;font-size:11px">81d18d658f11e46e…</td></tr>
+<tr><td><code>assets/js/ooxml.js</code></td><td>50.2KB</td><td style="font-family:monospace;font-size:11px">83d4e2e971927b93…</td></tr>
+<tr><td><code>assets/js/prompt-library.js</code></td><td>61.6KB</td><td style="font-family:monospace;font-size:11px">f32e3293e76034e6…</td></tr>
+<tr><td><code>assets/js/protocols.js</code></td><td>12.4KB</td><td style="font-family:monospace;font-size:11px">c040d3db754bde74…</td></tr>
+<tr><td><code>assets/js/providers-data.js</code></td><td>47.6KB</td><td style="font-family:monospace;font-size:11px">6dc82dadd2042dd7…</td></tr>
+<tr><td><code>assets/js/resources.js</code></td><td>97.1KB</td><td style="font-family:monospace;font-size:11px">b5fc7e922d194d0e…</td></tr>
+<tr><td><code>assets/js/run-history.js</code></td><td>12.9KB</td><td style="font-family:monospace;font-size:11px">e41edb8f0adeef4c…</td></tr>
+<tr><td><code>assets/js/search.js</code></td><td>15.8KB</td><td style="font-family:monospace;font-size:11px">83adcba0ab0e7bd7…</td></tr>
+<tr><td><code>assets/js/shortcuts.js</code></td><td>9.0KB</td><td style="font-family:monospace;font-size:11px">3f6c38eddc656f8a…</td></tr>
+<tr><td><code>assets/js/skills.js</code></td><td>16.8KB</td><td style="font-family:monospace;font-size:11px">ae37e0d22b98f3d2…</td></tr>
+<tr><td><code>assets/js/smart.js</code></td><td>27.3KB</td><td style="font-family:monospace;font-size:11px">65365c96ca684603…</td></tr>
+<tr><td><code>assets/js/stats.js</code></td><td>9.8KB</td><td style="font-family:monospace;font-size:11px">698a78b57d4f816d…</td></tr>
+<tr><td><code>assets/js/super-data.js</code></td><td>31.9KB</td><td style="font-family:monospace;font-size:11px">db1582471079cb8b…</td></tr>
+<tr><td><code>assets/js/tasks.js</code></td><td>43.6KB</td><td style="font-family:monospace;font-size:11px">995dfec0e8feba81…</td></tr>
+<tr><td><code>assets/js/theme-manager.js</code></td><td>18.6KB</td><td style="font-family:monospace;font-size:11px">e03b31b6a87cfe36…</td></tr>
+<tr><td><code>assets/js/ui.js</code></td><td>106.1KB</td><td style="font-family:monospace;font-size:11px">797bac3b1abade8e…</td></tr>
+<tr><td><code>assets/js/version-history.js</code></td><td>5.4KB</td><td style="font-family:monospace;font-size:11px">76ffd8f8b67228a9…</td></tr>
+<tr><td><code>assets/js/workflow-templates.js</code></td><td>5.8KB</td><td style="font-family:monospace;font-size:11px">6ce9a88fd90b43ea…</td></tr>
+<tr><td><code>assets/js/zip.js</code></td><td>8.7KB</td><td style="font-family:monospace;font-size:11px">e420c45f7de39c61…</td></tr>
+<tr><td><code>assets/css/canvas-ext.css</code></td><td>7.5KB</td><td style="font-family:monospace;font-size:11px">10b87a1161af20e9…</td></tr>
+<tr><td><code>assets/css/login.css</code></td><td>6.9KB</td><td style="font-family:monospace;font-size:11px">2766605aa7eab932…</td></tr>
+<tr><td><code>assets/css/results.css</code></td><td>4.1KB</td><td style="font-family:monospace;font-size:11px">17828f3f33f24c94…</td></tr>
+<tr><td><code>assets/css/tokens.css</code></td><td>9.0KB</td><td style="font-family:monospace;font-size:11px">5a817d45fd124b9a…</td></tr>
+<tr><td><code>assets/css/workbench.css</code></td><td>62.8KB</td><td style="font-family:monospace;font-size:11px">53d19d634616f2aa…</td></tr>
+<tr><td><code>cors-proxy/README.md</code></td><td>6.8KB</td><td style="font-family:monospace;font-size:11px">67f2507a5a90111e…</td></tr>
+<tr><td><code>cors-proxy/ollama-proxy.py</code></td><td>2.9KB</td><td style="font-family:monospace;font-size:11px">959fb59c6087d0c7…</td></tr>
+<tr><td><code>cors-proxy/server.js</code></td><td>8.2KB</td><td style="font-family:monospace;font-size:11px">b772bb4ab0c7b667…</td></tr>
+<tr><td><code>cors-proxy/server.py</code></td><td>6.8KB</td><td style="font-family:monospace;font-size:11px">4db880a5bcc69ce4…</td></tr>
+<tr><td><code>docs/operations-v2.14.2.md</code></td><td>9.2KB</td><td style="font-family:monospace;font-size:11px">b3f9dd162805a0c7…</td></tr>
+<tr><td><code>docs/v2.14.2-regression-checklist.md</code></td><td>6.2KB</td><td style="font-family:monospace;font-size:11px">051ea595149d4028…</td></tr>
+<tr><td><code>docs/v2.14.2-final-acceptance.md</code></td><td>16.5KB</td><td style="font-family:monospace;font-size:11px">623bc23d4f6df40d…</td></tr>
+<tr><td><code>docs/v2.14.2-e2e-test-report.html</code></td><td>2.8KB</td><td style="font-family:monospace;font-size:11px">e6d9fdd1cf37934f…</td></tr>
+<tr><td><code>docs/v2.14.2-e2e-test-results.json</code></td><td>64.9KB</td><td style="font-family:monospace;font-size:11px">1d82602c248db275…</td></tr>
+<tr><td><code>docs/v2.14.2-function-overview.html</code></td><td>11.6KB</td><td style="font-family:monospace;font-size:11px">91a23ff8248b234b…</td></tr>
+<tr><td><code>docs/v2.14.2-function-inventory.html</code></td><td>304.0KB</td><td style="font-family:monospace;font-size:11px">8622225c83c990fe…</td></tr>
+<tr><td><code>docs/v2.14.2-function-inventory.json</code></td><td>156.0KB</td><td style="font-family:monospace;font-size:11px">02c0592c01b3e48a…</td></tr>
+<tr><td><code>docs/v2.14.2-backend-audit.md</code></td><td>13.9KB</td><td style="font-family:monospace;font-size:11px">d1a44e9f7ecbd2b3…</td></tr>
+<tr><td><code>docs/v2.14.2-release-checklist.md</code></td><td>5.3KB</td><td style="font-family:monospace;font-size:11px">0073cd06a3348afb…</td></tr>
+<tr><td><code>index.html</code></td><td>33.0KB</td><td style="font-family:monospace;font-size:11px">ba1b28f61a5e1d7a…</td></tr>
+<tr><td><code>package-lock.json</code></td><td>145.0KB</td><td style="font-family:monospace;font-size:11px">0ebcc3c94a7fc53f…</td></tr>
+<tr><td><code>package.json</code></td><td>2.5KB</td><td style="font-family:monospace;font-size:11px">3a972f785d85e3c8…</td></tr>
+<tr><td><code>playwright.config.js</code></td><td>0.9KB</td><td style="font-family:monospace;font-size:11px">4d29545359b70606…</td></tr>
+<tr><td><code>server.js</code></td><td>18.3KB</td><td style="font-family:monospace;font-size:11px">101f538a4471882b…</td></tr>
+<tr><td><code>tests/e2e/auth.spec.js</code></td><td>4.5KB</td><td style="font-family:monospace;font-size:11px">1300a51d379b9711…</td></tr>
+<tr><td><code>tests/e2e/canvas.spec.js</code></td><td>3.5KB</td><td style="font-family:monospace;font-size:11px">e314a435367ebfa4…</td></tr>
+<tr><td><code>tests/e2e/content.spec.js</code></td><td>3.7KB</td><td style="font-family:monospace;font-size:11px">be032bee528d55f7…</td></tr>
+<tr><td><code>tests/e2e/export.spec.js</code></td><td>1.9KB</td><td style="font-family:monospace;font-size:11px">27d286308a9b7035…</td></tr>
+<tr><td><code>tests/e2e/failover.spec.js</code></td><td>3.7KB</td><td style="font-family:monospace;font-size:11px">7523b1eddc635358…</td></tr>
+<tr><td><code>tests/e2e/helpers.js</code></td><td>3.9KB</td><td style="font-family:monospace;font-size:11px">1dfcd4e513ffe9ee…</td></tr>
+<tr><td><code>tests/e2e/knowledge-base.spec.js</code></td><td>4.8KB</td><td style="font-family:monospace;font-size:11px">a477a0a8a91b4dc9…</td></tr>
+<tr><td><code>tests/e2e/models.spec.js</code></td><td>3.4KB</td><td style="font-family:monospace;font-size:11px">8033218d8106e904…</td></tr>
+<tr><td><code>tests/e2e/responsive.spec.js</code></td><td>2.7KB</td><td style="font-family:monospace;font-size:11px">14f9761d6e12c791…</td></tr>
+<tr><td><code>tests/e2e/tasks.spec.js</code></td><td>3.9KB</td><td style="font-family:monospace;font-size:11px">bcce5de99dbbe39e…</td></tr>
+<tr><td><code>tests/e2e/fixtures/gen-image.js</code></td><td>2.0KB</td><td style="font-family:monospace;font-size:11px">ed3049a32281c4ee…</td></tr>
+<tr><td><code>tests/e2e/fixtures/test-image.png</code></td><td>0.7KB</td><td style="font-family:monospace;font-size:11px">7becd653ed90f18f…</td></tr>
+</table></div>
+<div class="section"><h2>启动与回滚</h2>
+<p style="font-size:13px;line-height:2">
+<strong>启动:</strong> <code>node server.js 8766</code> → http://127.0.0.1:8766<br>
+<strong>前置:</strong> Node.js >= 18，Ollama（可选）<br>
+<strong>回滚:</strong> <code>git checkout &lt;commit&gt;</code>，备份: 锴利超级AI工作台_v2.14.2验收收口前备份_20261002_011740<br>
+<strong>校验:</strong> <code>shasum -a 256 -c docs/v2.14.2-checksums.sha256</code>
+</p></div>
+<div style="text-align:center;color:#94a3b8;font-size:11px;margin-top:16px">
+v2.14.2 仅交付Web/本地浏览器版，Electron桌面版未验收 · 登录密码未出现在本文档中
+</div>
+</div></body></html>
