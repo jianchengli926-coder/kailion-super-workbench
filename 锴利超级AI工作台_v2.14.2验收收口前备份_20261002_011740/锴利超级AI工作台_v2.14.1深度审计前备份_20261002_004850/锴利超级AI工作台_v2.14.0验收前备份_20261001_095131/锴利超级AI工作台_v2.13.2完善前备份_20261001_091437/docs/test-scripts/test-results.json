@@ -1,0 +1,843 @@
+{
+  "timestamp": "2026-09-23T17:00:00.148Z",
+  "url": "file:///Users/a123/Desktop/锴利超级AI工作台/index.html",
+  "summary": {
+    "total": 115,
+    "pass": 113,
+    "fail": 1,
+    "partial": 1
+  },
+  "consoleErrors": [],
+  "consoleWarnings": [
+    "[I18N] missing key: res.semTitle",
+    "[I18N] missing key: res.semSub",
+    "[I18N] missing key: res.semSearch",
+    "[I18N] missing key: res.semAdd",
+    "[I18N] missing key: res.semEmpty",
+    "[I18N] missing key: res.semTitle",
+    "[I18N] missing key: res.semSub",
+    "[I18N] missing key: res.semSearch",
+    "[I18N] missing key: res.semAdd",
+    "[I18N] missing key: res.semEmpty",
+    "[I18N] missing key: res.semTitle",
+    "[I18N] missing key: res.semSub",
+    "[I18N] missing key: res.semSearch",
+    "[I18N] missing key: res.semAdd",
+    "[I18N] missing key: res.semEmpty"
+  ],
+  "pageErrors": [],
+  "failedRequests": [],
+  "dialogs": [
+    {
+      "type": "prompt",
+      "message": "版本名称（留空自动命名）："
+    }
+  ],
+  "results": [
+    {
+      "category": "加载",
+      "name": "顶部工具栏",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "左侧导航",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "中央画布",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "右侧面板",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "小锴助手",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "工作流名称",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "Console Error",
+      "status": "PASS",
+      "detail": "0 个",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "Console Warning",
+      "status": "PASS",
+      "detail": "0 个",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "JS 运行时异常",
+      "status": "PASS",
+      "detail": "0 个",
+      "screenshot": ""
+    },
+    {
+      "category": "加载",
+      "name": "失败网络请求",
+      "status": "PASS",
+      "detail": "0 个",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "运行",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "保存",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "导出",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "自动布局",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "对齐辅助线",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "网格吸附",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "便签",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "市场",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "批量",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "定时",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "AI诊断",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "放大",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "缩小",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "重置缩放",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "撤销",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "重做",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "设置",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "执行模式下拉",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "停止按钮初始隐藏",
+      "status": "PASS",
+      "detail": "hidden=true",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "导出下拉展开",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "导出菜单项数量(JSON/PNG/ZIP/共享包)",
+      "status": "PASS",
+      "detail": "4 项",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "放大改变缩放",
+      "status": "PASS",
+      "detail": "100%->120%",
+      "screenshot": ""
+    },
+    {
+      "category": "顶部工具栏",
+      "name": "重置缩放",
+      "status": "PASS",
+      "detail": "=100%",
+      "screenshot": ""
+    },
+    {
+      "category": "左侧导航",
+      "name": "导航项总数(含智能+16库+说明书=18)",
+      "status": "PASS",
+      "detail": "18 项",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 canvas",
+      "status": "PASS",
+      "detail": "视图=view-canvas, 内容=2837字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 nodes",
+      "status": "PASS",
+      "detail": "视图=view-nodes, 内容=17478字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 workflow",
+      "status": "PASS",
+      "detail": "视图=view-workflow, 内容=3684字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 material",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=853字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 skill",
+      "status": "PASS",
+      "detail": "视图=view-skills, 内容=1441字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 kb",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=673字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 prompt",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=22004字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 expert",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=23130字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 digital",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=4004字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 topic",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=6070字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 style",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=3460字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 role",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=4906字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 scene",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=3473字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 brand",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=1789字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 product",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=4852字符",
+      "screenshot": ""
+    },
+    {
+      "category": "资源库",
+      "name": "打开 semantic",
+      "status": "PASS",
+      "detail": "视图=view-resource, 内容=705字符",
+      "screenshot": ""
+    },
+    {
+      "category": "节点库",
+      "name": "分类数量(应≥10)",
+      "status": "PASS",
+      "detail": "10 个分类",
+      "screenshot": ""
+    },
+    {
+      "category": "节点库",
+      "name": "可见节点卡片数量",
+      "status": "PASS",
+      "detail": "37 张卡片",
+      "screenshot": ""
+    },
+    {
+      "category": "节点库",
+      "name": "搜索\"LLM\"过滤",
+      "status": "PASS",
+      "detail": "返回 2 张卡片",
+      "screenshot": ""
+    },
+    {
+      "category": "节点库",
+      "name": "节点收藏星标按钮",
+      "status": "PASS",
+      "detail": "37 个星标",
+      "screenshot": ""
+    },
+    {
+      "category": "节点库",
+      "name": "分类折叠/展开",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "画布操作",
+      "name": "双击空白添加节点",
+      "status": "PASS",
+      "detail": "节点数=3",
+      "screenshot": ""
+    },
+    {
+      "category": "画布操作",
+      "name": "Canvas.addNode API",
+      "status": "PASS",
+      "detail": "ok",
+      "screenshot": ""
+    },
+    {
+      "category": "画布操作",
+      "name": "画布节点总数",
+      "status": "PASS",
+      "detail": "4 个",
+      "screenshot": ""
+    },
+    {
+      "category": "画布操作",
+      "name": "便签功能",
+      "status": "PARTIAL",
+      "detail": "触发对话框:0, 便签数:0",
+      "screenshot": ""
+    },
+    {
+      "category": "画布操作",
+      "name": "自动布局",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "运行引擎",
+      "name": "运行前费用警告模态框弹出",
+      "status": "PASS",
+      "detail": "检测到 #gate-cancel",
+      "screenshot": ""
+    },
+    {
+      "category": "运行引擎",
+      "name": "关闭费用警告(取消)",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "运行引擎",
+      "name": "点击运行(带节点)",
+      "status": "PASS",
+      "detail": "停止按钮可见:false, 进度条:false",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "设置面板打开",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "供应商预设组",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "供应商列表",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "名称输入",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "API地址输入",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "API Key输入",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "分类下拉(5类)",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "模型列表容器",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "添加模型按钮",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "从API获取模型",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "CORS代理开关",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "CORS地址",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "MCP服务器列表",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "添加MCP按钮",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "主题选择器",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "语言下拉",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "运行历史容器",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "API日志容器",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "版本历史",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "保存版本按钮",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "数据统计卡片",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "缓存信息",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "导出全部数据",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "导入备份按钮",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "预置供应商数量(≥8)",
+      "status": "PASS",
+      "detail": "13 个",
+      "screenshot": ""
+    },
+    {
+      "category": "全局功能",
+      "name": "切换英文界面",
+      "status": "PASS",
+      "detail": "显示:Untitled Workflow",
+      "screenshot": ""
+    },
+    {
+      "category": "全局功能",
+      "name": "切换浅色主题",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "保存版本快照",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "设置面板",
+      "name": "设置面板关闭",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "全局功能",
+      "name": "Ctrl+K 全局搜索面板",
+      "status": "PASS",
+      "detail": "面板:ljc-search-panel",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "说明书加载",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-start",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-guide",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-recipe",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-nodes",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-api",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-faq",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-v1",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "章节 sec-keys",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "FAQ手风琴展开",
+      "status": "PASS",
+      "detail": "0->1",
+      "screenshot": ""
+    },
+    {
+      "category": "使用说明书",
+      "name": "说明书节点搜索",
+      "status": "PASS",
+      "detail": "返回 3 张卡片",
+      "screenshot": ""
+    },
+    {
+      "category": "AI助手",
+      "name": "小锴助手面板可见",
+      "status": "FAIL",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "AI助手",
+      "name": "欢迎消息",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "AI助手",
+      "name": "输入框",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "AI助手",
+      "name": "发送按钮",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "工作流模板",
+      "name": "模板列表加载",
+      "status": "PASS",
+      "detail": "20 项",
+      "screenshot": ""
+    },
+    {
+      "category": "工作流市场",
+      "name": "市场视图打开",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "工作流市场",
+      "name": "市场示例加载",
+      "status": "PASS",
+      "detail": "25 个",
+      "screenshot": ""
+    },
+    {
+      "category": "快捷键",
+      "name": "Ctrl+Z 撤销",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "快捷键",
+      "name": "Ctrl+Y 重做",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "快捷键",
+      "name": "Delete 删除选中",
+      "status": "PASS",
+      "detail": "",
+      "screenshot": ""
+    },
+    {
+      "category": "导出",
+      "name": "导出JSON",
+      "status": "PASS",
+      "detail": "下载:kaili-workflow-20260923-100000.json",
+      "screenshot": ""
+    }
+  ]
+}

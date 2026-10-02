@@ -1,0 +1,198 @@
+/* ============================================================
+   KaiLionCrafts Creator · 设计令牌 / Design Tokens
+   品牌：锴利匠心 KaiLionCrafts · 阳江五金刀剪
+   ============================================================ */
+
+:root {
+  /* ---- 品牌色 · Brand ---- */
+  --brand-gold-900: #6E5410;
+  --brand-gold-700: #A8842A;
+  --brand-gold-600: #C9A227;
+  --brand-gold-500: #D9B441;
+  --brand-gold-400: #E8CE7A;
+  --brand-gold-200: #F3E4B0;
+  --brand-gold-100: #FAF3DC;
+
+  --brand-graphite-950: #0B0C0F;
+  --brand-graphite-900: #101216;
+  --brand-graphite-850: #14161B;
+  --brand-graphite-800: #191C22;
+  --brand-graphite-750: #1F232A;
+  --brand-graphite-700: #262B33;
+  --brand-graphite-600: #333944;
+  --brand-graphite-500: #4A5260;
+  --brand-graphite-400: #6B7482;
+  --brand-graphite-300: #939CAB;
+  --brand-cream: #F6F2E9;
+
+  /* ---- 语义色 · Semantic ---- */
+  --c-success: #34C77B;
+  --c-warning: #E9A93B;
+  --c-danger: #E5573F;
+  --c-info: #4A9BE8;
+
+  /* ---- 节点分类色 · Node category accents ---- */
+  --cat-input: #5B8DEF;
+  --cat-image: #C9A227;
+  --cat-video: #C4562D;
+  --cat-3d: #7A5AF8;
+  --cat-connector: #17A2A2;
+  --cat-file: #6B7482;
+  --cat-collab: #E0653F;
+  --cat-ecom: #E5326B;
+  --cat-ip: #A855C9;
+  --cat-story: #D99A2B;
+  --cat-supply: #2E9E6B;
+  --cat-office: #3D7EDB;
+  --cat-life: #9C6B3F;
+  --cat-kailion: #C9A227;
+
+  /* ---- 尺寸 · Metrics ---- */
+  --topbar-h: 52px;
+  --sidebar-w: 216px;
+  --inspector-w: 320px;
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --font-cn: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --font-en: "Inter", "SF Pro Display", -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SF Mono", "Consolas", monospace;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,.28);
+  --shadow: 0 6px 20px rgba(0,0,0,.34);
+  --shadow-lg: 0 18px 48px rgba(0,0,0,.46);
+  --shadow-gold: 0 6px 24px rgba(201,162,39,.22);
+
+  --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+/* ============================================================
+   深色主题（默认）· Dark (default)
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  --bg-app: var(--brand-graphite-950);
+  --bg-shell: var(--brand-graphite-900);
+  --bg-surface: var(--brand-graphite-850);
+  --bg-raised: var(--brand-graphite-800);
+  --bg-raised-2: var(--brand-graphite-750);
+  --bg-inset: #0D0F13;
+  --bg-canvas: #0E1014;
+  --bg-overlay: rgba(8,9,12,.78);
+
+  --line: rgba(255,255,255,.08);
+  --line-strong: rgba(255,255,255,.14);
+  --line-gold: rgba(201,162,39,.34);
+
+  --tx-1: #EDEFF3;
+  --tx-2: #A8B0BE;
+  --tx-3: #6E7787;
+  --tx-inv: #14161B;
+
+  --gold: var(--brand-gold-600);
+  --gold-soft: var(--brand-gold-400);
+  --gold-wash: rgba(201,162,39,.12);
+  --gold-wash-2: rgba(201,162,39,.07);
+
+  --canvas-grid: rgba(255,255,255,.045);
+  --canvas-grid-bold: rgba(255,255,255,.075);
+
+  --node-bg: #1B1F26;
+  --node-bg-sel: #232833;
+  --node-head: #232833;
+  --wire: rgba(255,255,255,.22);
+}
+
+/* ============================================================
+   浅色主题 · Light
+   ============================================================ */
+[data-theme="light"] {
+  --bg-app: #EFECE5;
+  --bg-shell: #F7F5F0;
+  --bg-surface: #FFFFFF;
+  --bg-raised: #FFFFFF;
+  --bg-raised-2: #F4F1EA;
+  --bg-inset: #EAE7E0;
+  --bg-canvas: #F2EFE9;
+  --bg-overlay: rgba(28,26,22,.42);
+
+  --line: rgba(28,26,22,.10);
+  --line-strong: rgba(28,26,22,.18);
+  --line-gold: rgba(168,132,42,.36);
+
+  --tx-1: #1D1F24;
+  --tx-2: #5A6068;
+  --tx-3: #8A9099;
+  --tx-inv: #FFFFFF;
+
+  --gold: var(--brand-gold-700);
+  --gold-soft: var(--brand-gold-600);
+  --gold-wash: rgba(201,162,39,.14);
+  --gold-wash-2: rgba(201,162,39,.08);
+
+  --canvas-grid: rgba(28,26,22,.06);
+  --canvas-grid-bold: rgba(28,26,22,.10);
+
+  --node-bg: #FFFFFF;
+  --node-bg-sel: #FFFDF5;
+  --node-head: #F4F1EA;
+  --wire: rgba(28,26,22,.28);
+
+  --shadow: 0 6px 20px rgba(60,54,40,.12);
+  --shadow-lg: 0 18px 48px rgba(60,54,40,.18);
+}
+
+/* ============================================================
+   基础重置 · Reset
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  margin: 0; padding: 0; height: 100%;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-cn);
+  font-size: 13px;
+  line-height: 1.55;
+  background: var(--bg-app);
+  color: var(--tx-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button, input, textarea, select { font: inherit; color: inherit; }
+button { cursor: pointer; border: none; background: none; }
+a { color: var(--gold); text-decoration: none; }
+ul, ol { margin: 0; padding: 0; list-style: none; }
+h1,h2,h3,h4,h5 { margin: 0; font-weight: 600; }
+p { margin: 0; }
+
+/* ---- 滚动条 · Scrollbar ---- */
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--line-strong);
+  border-radius: 9px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--tx-3); background-clip: padding-box; }
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ---- 工具类 · Utilities ---- */
+.hidden { display: none !important; }
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; } .gap-12 { gap: 12px; }
+.grow { flex: 1; min-width: 0; }
+.text-2 { color: var(--tx-2); } .text-3 { color: var(--tx-3); }
+.text-xs { font-size: 11px; } .text-sm { font-size: 12px; }
+.mono { font-family: var(--font-mono); }
+.ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.scroll-y { overflow-y: auto; overflow-x: hidden; }
