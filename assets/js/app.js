@@ -22,8 +22,40 @@
 
   /* ====================== v2.2.0-super：localStorage 配额自愈 ======================
      捕获 QuotaExceededError，自动清理最旧的运行历史 / API 日志 / 节点缓存，
-     再删除 >100KB 的 base64 图片大值，重试写入。 */
+     再删除 >100KB 的 base64 图片大值，最后清理知识库向量缓存，重试写入。 */
   const _origSetItem = localStorage.setItem.bind(localStorage);
+  const _origRemoveItem = localStorage.removeItem.bind(localStorage);
+
+  // 存储诊断：返回各 key 占用大小
+  function getStorageUsage() {
+    const items = [];
+    let total = 0;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (!k) continue;
+        const v = localStorage.getItem(k) || '';
+        const size = v.length;
+        total += size;
+        items.push({ key: k, size: size });
+      }
+    } catch (e) {}
+    items.sort((a, b) => b.size - a.size);
+    return { total: total, items: items.slice(0, 10) };
+  }
+  window.getStorageUsage = getStorageUsage;
+
+  // 清理知识库向量缓存（最大存储占用项）
+  function clearKbEmbeddings() {
+    try {
+      _origRemoveItem('kailion_kb_embeddings');
+      _origRemoveItem('kailion_kb_index_status');
+      _origRemoveItem('kailion_company_kb_embeddings');
+      return true;
+    } catch (e) { return false; }
+  }
+  window.clearKbEmbeddings = clearKbEmbeddings;
+
   function safeSetItem(key, value) {
     try {
       _origSetItem(key, value);
@@ -62,15 +94,26 @@
             const v = localStorage.getItem(k) || '';
             if (v.length > 100 * 1024 && /data:image|base64/i.test(v)) bigKeys.push(k);
           }
-          bigKeys.forEach(k => { try { localStorage.removeItem(k); cleaned++; } catch (e3) {} });
+          bigKeys.forEach(k => { try { _origRemoveItem(k); cleaned++; } catch (e3) {} });
+        } catch (e2) {}
+        // e) 清理知识库向量缓存（586文档×768维通常是最大占用项）
+        try {
+          if (localStorage.getItem('kailion_kb_embeddings') || localStorage.getItem('kailion_company_kb_embeddings')) {
+            clearKbEmbeddings();
+            cleaned++;
+          }
         } catch (e2) {}
         // 重试
         try {
           _origSetItem(key, value);
-          if (window.UI) UI.toast('⚠️ 存储空间不足，已自动清理旧数据（清理 ' + cleaned + ' 项）');
+          if (window.UI) UI.toast('⚠️ 存储空间不足，已自动清理旧数据（清理 ' + cleaned + ' 项，含知识库向量缓存）');
           return true;
         } catch (e3) {
-          if (window.UI) UI.toast('❌ 存储空间严重不足，请手动清理数据');
+          const usage = getStorageUsage();
+          const topItem = usage.items[0];
+          const msg = '❌ 存储空间严重不足！最大占用：' + (topItem ? topItem.key + '（' + Math.round(topItem.size / 1024) + 'KB）' : '未知') +
+            '。请在「设置 → 数据管理」中点击「清理知识库向量缓存」，或在控制台执行 clearKbEmbeddings()';
+          if (window.UI) UI.toast(msg, 8000);
           return false;
         }
       }

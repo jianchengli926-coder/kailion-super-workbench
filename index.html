@@ -437,6 +437,18 @@
             <button id="btn-cache-refresh" class="btn btn-sm" data-i18n="settings.refreshStats">🔄 刷新统计</button>
           </div>
         </div>
+        <!-- 知识库向量缓存（v2.14.2） -->
+        <div class="settings-section">
+          <h3>🧠 知识库向量缓存</h3>
+          <p class="settings-desc">公司知识库 586 个文档的 768 维向量索引，占用 localStorage 空间较大。如遇"存储空间不足"，可清理后重新建立索引。</p>
+          <div class="cache-info" id="kb-cache-info">
+            <span class="cache-stat">向量缓存：<strong id="kb-cache-size">检测中...</strong></span>
+          </div>
+          <div class="backup-row">
+            <button id="btn-kb-cache-clear" class="btn btn-sm btn-danger">🗑 清理知识库向量缓存</button>
+            <button id="btn-kb-cache-refresh" class="btn btn-sm">🔄 刷新大小</button>
+          </div>
+        </div>
         <!-- 数据备份 -->
         <div class="settings-section">
           <h3 data-i18n="settings.backup">数据备份</h3>

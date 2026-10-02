@@ -496,8 +496,17 @@
   async function callImageAPI(node, opts) {
     const prov = resolveProvider(node, 'image');
     const isLocal = /localhost|127\.0\.0\.1/i.test(prov ? prov.baseurl : '');
-    if (!prov || !prov.baseurl || (!prov.key && !isLocal) || !window.API) {
-      throw new Error('未配置图片生成供应商');
+    if (!prov) {
+      throw new Error('未选择图片生成供应商。请在节点右侧面板选择 API 供应商，或在「设置 → 供应商管理」中配置。');
+    }
+    if (!prov.baseurl) {
+      throw new Error('供应商「' + (prov.name || prov.id || '?') + '」缺少 API 地址（baseurl）。请在「设置 → 供应商管理」中检查配置。');
+    }
+    if (!prov.key && !isLocal) {
+      throw new Error('供应商「' + (prov.name || prov.id || '?') + '」未配置 API Key。请在「设置 → 供应商管理」中填入 API Key 后重试。（本地 Ollama 服务可留空）');
+    }
+    if (!window.API) {
+      throw new Error('API 模块未加载，请刷新页面后重试。');
     }
     const p = node.params || {};
     const prompt = collectInputs(node.id) || p.prompt || 'a high-quality image';

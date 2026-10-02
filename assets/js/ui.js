@@ -1903,6 +1903,44 @@
     }
     // 初始化时先渲染一次
     renderCacheStats();
+
+    /* ===== v2.14.2 知识库向量缓存管理 ===== */
+    function renderKbCacheStats() {
+      const el = document.getElementById('kb-cache-size');
+      if (!el) return;
+      try {
+        let total = 0;
+        ['kailion_kb_embeddings', 'kailion_company_kb_embeddings', 'kailion_kb_index_status'].forEach(k => {
+          const v = localStorage.getItem(k);
+          if (v) total += v.length;
+        });
+        if (total === 0) {
+          el.textContent = '未建立（0 KB）';
+        } else {
+          const pct = Math.round(total / (5 * 1024 * 1024) * 100);
+          el.textContent = (total / 1024).toFixed(1) + ' KB（约 localStorage ' + pct + '%）';
+        }
+      } catch (e) {
+        el.textContent = '读取失败';
+      }
+    }
+    const btnKbCacheClear = document.getElementById('btn-kb-cache-clear');
+    const btnKbCacheRefresh = document.getElementById('btn-kb-cache-refresh');
+    if (btnKbCacheClear) {
+      btnKbCacheClear.addEventListener('click', () => {
+        if (!confirm('确定清理知识库向量缓存？清理后需重新建立索引，搜索功能暂时回退到关键词模式。')) return;
+        if (window.clearKbEmbeddings) window.clearKbEmbeddings();
+        renderKbCacheStats();
+        toast('🗑 知识库向量缓存已清理，可在知识库页面重新建立索引');
+      });
+    }
+    if (btnKbCacheRefresh) {
+      btnKbCacheRefresh.addEventListener('click', () => {
+        renderKbCacheStats();
+        toast('🔄 知识库缓存统计已刷新');
+      });
+    }
+    renderKbCacheStats();
   }
 
   /* v0.8.0 渲染版本历史列表 */
