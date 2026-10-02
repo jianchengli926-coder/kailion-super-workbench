@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>锴利匠心 AI 工作台 · KaiLionCreator</title>
+<meta name="description" content="KaiLionCrafts 锴利匠心专属 AI 创作工作台 —— 一个人，就是一支 AI 团队。">
+<link rel="icon" href="./assets/kailion-logo.jpg">
+<link rel="stylesheet" href="./css/theme.css">
+<link rel="stylesheet" href="./css/layout.css">
+<link rel="stylesheet" href="./css/components.css">
+</head>
+<body>
+
+<div id="app">
+  <!-- 启动占位：app.js 会覆盖 -->
+  <div style="display:flex;align-items:center;justify-content:center;height:100vh;gap:14px;flex-direction:column">
+    <img src="./assets/kailion-logo.jpg" alt="KaiLionCrafts"
+         style="width:64px;height:64px;border-radius:14px;border:1px solid rgba(201,162,39,.35)">
+    <div style="font-family:Inter,sans-serif;font-weight:700;letter-spacing:.4px;
+                background:linear-gradient(100deg,#D9B441,#F3E4B0);
+                -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent">
+      KaiLionCreator
+    </div>
+    <div style="color:#6E7787;font-size:12px">正在载入工作台…</div>
+  </div>
+</div>
+
+<!-- AI 助手预留（CanvasView 内部会注入 copilot 挂载点） -->
+<script type="module" src="./js/app.js"></script>
+</body>
+</html>

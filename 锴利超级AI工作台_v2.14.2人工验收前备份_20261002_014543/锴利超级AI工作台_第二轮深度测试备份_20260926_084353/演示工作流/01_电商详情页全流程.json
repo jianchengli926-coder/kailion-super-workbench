@@ -1,0 +1,14 @@
+{
+  "name": "电商详情页全流程",
+  "nodes": [
+    {"id":"n1","type":"promptNode","x":50,"y":200,"params":{"text":"阳江不锈钢厨房刀具套装，外贸出口，高品质，适合家庭和专业厨师使用"}},
+    {"id":"n2","type":"llmContentNode","x":350,"y":100,"params":{"providerId":"builtin_zhipu_relay","model":"glm-4-flash","system":"你是一位资深电商详情页策划专家，请生成吸引人的产品详情页文案，包含卖点、参数、场景描述。","maxTokens":800}},
+    {"id":"n3","type":"contentReviewNode","x":650,"y":200,"params":{"level":"medium"}},
+    {"id":"n4","type":"imageGeneratorProNode","x":950,"y":100,"params":{"providerId":"builtin_zhipu_relay","model":"cogview-3-flash","size":"1024x1024","count":1}}
+  ],
+  "links": [
+    {"from":{"node":"n1","port":"out"},"to":{"node":"n2","port":"in"}},
+    {"from":{"node":"n2","port":"out"},"to":{"node":"n3","port":"in"}},
+    {"from":{"node":"n2","port":"out"},"to":{"node":"n4","port":"in"}}
+  ]
+}

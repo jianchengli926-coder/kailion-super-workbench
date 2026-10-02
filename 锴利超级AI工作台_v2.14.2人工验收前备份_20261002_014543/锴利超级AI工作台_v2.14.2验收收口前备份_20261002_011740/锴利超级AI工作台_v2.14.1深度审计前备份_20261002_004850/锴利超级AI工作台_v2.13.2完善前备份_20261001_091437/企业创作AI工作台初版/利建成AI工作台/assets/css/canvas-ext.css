@@ -1,0 +1,233 @@
+/**
+ * canvas-ext.css - v0.6.0 多选 / 小地图 / 分组高亮样式
+ * 深色主题适配
+ */
+
+/* ====================== 框选选框 ====================== */
+.selection-box {
+  position: absolute;
+  border: 1px solid #6366f1;
+  background: rgba(99, 102, 241, 0.12);
+  pointer-events: none;
+  z-index: 100;
+  border-radius: 2px;
+}
+
+/* ====================== 多选高亮 ====================== */
+.node-card.multi-selected {
+  box-shadow: 0 0 0 2px #818cf8, 0 4px 16px rgba(99, 102, 241, 0.25);
+}
+
+.node-card.multi-selected.selected {
+  box-shadow: 0 0 0 2px #a5b4fc, 0 0 0 4px rgba(129, 140, 248, 0.3), 0 4px 20px rgba(99, 102, 241, 0.35);
+}
+
+/* ====================== 分组高亮（金色） ====================== */
+.node-card.node-grouped {
+  border-color: #fbbf24 !important;
+  box-shadow: 0 0 0 2px rgba(251, 191, 36, 0.6), 0 0 12px rgba(251, 191, 36, 0.3);
+}
+
+.node-card.node-grouped.multi-selected {
+  box-shadow: 0 0 0 2px #fbbf24, 0 0 0 4px rgba(251, 191, 36, 0.25), 0 4px 20px rgba(251, 191, 36, 0.3);
+}
+
+/* ====================== 小地图 ====================== */
+#minimap {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  z-index: 50;
+  font-size: 12px;
+  color: #cbd5e1;
+  user-select: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+#minimap .minimap-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  cursor: pointer;
+  gap: 8px;
+}
+
+#minimap .minimap-title {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+#minimap .minimap-toggle {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 10px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
+#minimap .minimap-toggle:hover {
+  color: #e2e8f0;
+}
+
+#minimap .minimap-body {
+  position: relative;
+  width: 200px;
+  height: 140px;
+}
+
+#minimap.collapsed .minimap-body {
+  display: none;
+}
+
+.minimap-canvas {
+  display: block;
+  width: 200px;
+  height: 140px;
+  cursor: crosshair;
+}
+
+.minimap-viewport {
+  position: absolute;
+  border: 1px solid #fbbf24;
+  background: rgba(251, 191, 36, 0.08);
+  pointer-events: auto;
+  cursor: move;
+  border-radius: 2px;
+}
+
+/* ====================== 多选右侧面板 ====================== */
+.multi-select-panel {
+  padding: 16px;
+}
+
+.multi-select-panel h3 {
+  margin: 0 0 12px;
+  font-size: 15px;
+  color: #e2e8f0;
+}
+
+.multi-select-panel .multi-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.multi-select-panel .hint {
+  font-size: 12px;
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+.multi-select-panel kbd {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+  padding: 1px 5px;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+/* 按钮复用已有 .btn / .btn-sm / .btn-danger，无需额外定义 */
+
+/* ====================== 便签（Sticky Notes，v0.9.0） ====================== */
+.canvas-note {
+  position: absolute;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  color: #1f2937;
+  box-sizing: border-box;
+}
+
+.canvas-note:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.canvas-note-head {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  cursor: move;
+  font-size: 11px;
+  color: rgba(0, 0, 0, 0.55);
+  background: rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+  user-select: none;
+}
+
+.canvas-note-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.canvas-note-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.canvas-note-color-btn,
+.canvas-note-close {
+  cursor: pointer;
+  font-size: 11px;
+  line-height: 1;
+  padding: 1px 4px;
+  border-radius: 3px;
+  opacity: 0.7;
+}
+
+.canvas-note-color-btn:hover,
+.canvas-note-close:hover {
+  opacity: 1;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.canvas-note-text {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  outline: none;
+  word-break: break-word;
+  overflow-y: auto;
+  user-select: text;
+  cursor: text;
+  min-height: 20px;
+}
+
+.canvas-note-text:focus {
+  outline: 2px solid rgba(99, 102, 241, 0.45);
+  outline-offset: -2px;
+}
+
+.canvas-note-resize {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 12px;
+  height: 12px;
+  cursor: nwse-resize;
+  background: linear-gradient(135deg, transparent 50%, rgba(0, 0, 0, 0.25) 50%);
+}
+
+/* 画布空白右键菜单：复用 .ctx-menu 风格，仅做标识 */
+.canvas-ctx-menu {
+  /* 样式与 .ctx-menu 一致，无需重复定义 */
+}

@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>锴利超级AI工作台 · 使用说明书</title>
+<style>
+:root{
+  --bg:#f6f7f9; --panel:#ffffff; --ink:#1c2024; --ink2:#495057; --ink3:#8b949e;
+  --line:#e4e7eb; --brand:#C9A227; --brand2:#A6851E; --brandsoft:#fdf6e3;
+  --ok:#0f7b3f; --oksoft:#e6f5ec; --opt:#9a6200; --optsoft:#fdf3e2; --req:#a3341f; --reqsoft:#fdecea;
+  --radius:12px; --shadow:0 1px 2px rgba(16,24,40,.05),0 6px 20px rgba(16,24,40,.06);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:15px;line-height:1.75;-webkit-font-smoothing:antialiased}
+code{background:#eef1f4;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:.88em;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.layout{display:flex;align-items:flex-start;max-width:1460px;margin:0 auto;gap:26px;padding:0 22px}
+
+/* 侧边目录 */
+.toc{position:sticky;top:0;flex:0 0 268px;height:100vh;overflow-y:auto;padding:24px 0 60px;font-size:13.5px}
+.toc h2{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin:0 0 10px}
+.toc .toc-brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.toc .toc-brand .m{width:34px;height:34px;border-radius:9px;background:var(--brand);color:#fff;
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;letter-spacing:.02em}
+.toc .toc-brand b{display:block;font-size:14px;line-height:1.3}
+.toc .toc-brand i{font-style:normal;font-size:11.5px;color:var(--ink3)}
+.toc a{display:block;color:var(--ink2);text-decoration:none;padding:5px 10px;border-radius:7px;line-height:1.5}
+.toc a:hover{background:var(--brandsoft);color:var(--brand2)}
+.toc .grp{margin-top:14px;font-weight:600;color:var(--ink);padding:4px 10px;font-size:12.5px;
+  letter-spacing:.04em;border-top:1px solid var(--line);padding-top:12px}
+.toc .grp:first-of-type{border-top:none}
+
+/* 主体 */
+.main{flex:1 1 auto;min-width:0;padding:26px 0 90px}
+.hero{background:linear-gradient(150deg,#C9A227 0%,#B8941F 55%,#A6851E 100%);color:#fff;
+  border-radius:18px;padding:40px 38px;box-shadow:var(--shadow);margin-bottom:26px}
+.hero .kicker{font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;opacity:.8;margin-bottom:12px}
+.hero h1{margin:0 0 10px;font-size:31px;line-height:1.25;letter-spacing:-.01em}
+.hero p{margin:0;opacity:.92;max-width:760px;font-size:15px}
+.hero .meta{margin-top:22px;display:flex;flex-wrap:wrap;gap:10px}
+.hero .meta span{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.22);
+  border-radius:999px;padding:5px 13px;font-size:12.5px}
+
+section.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:26px 28px;margin:0 0 20px;box-shadow:var(--shadow)}
+section.card > h2{margin:0 0 6px;font-size:21px;letter-spacing:-.01em}
+section.card > h2 .n{color:var(--brand);margin-right:8px}
+.sub{color:var(--ink3);font-size:13px;margin:0 0 18px}
+h3{font-size:15.5px;margin:22px 0 8px;padding-left:11px;border-left:3px solid var(--brand)}
+ul{margin:8px 0;padding-left:22px}
+li{margin:5px 0}
+p{margin:9px 0}
+.lead{font-size:15.5px;color:var(--ink2)}
+
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13.5px}
+th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+th{background:#f2f4f6;font-weight:600;font-size:13px;white-space:nowrap}
+tbody tr:nth-child(even){background:#fbfcfd}
+
+.badge{display:inline-block;border-radius:6px;padding:2px 9px;font-size:12px;font-weight:600;
+  border:1px solid transparent;white-space:nowrap}
+.badge.ok{background:var(--oksoft);color:var(--ok);border-color:#bfe3cd}
+.badge.opt{background:var(--optsoft);color:var(--opt);border-color:#f0dcb4}
+.badge.req{background:var(--reqsoft);color:var(--req);border-color:#f5cfc9}
+
+.callout{border-radius:10px;padding:14px 16px;margin:14px 0;font-size:14px;border:1px solid}
+.callout.cfg{background:var(--brandsoft);border-color:#e8d9a0}
+.callout.warn{background:var(--optsoft);border-color:#f0dcb4}
+.callout.info{background:#eef4fb;border-color:#cfdff2}
+.callout b.t{display:block;margin-bottom:5px;font-size:13px;letter-spacing:.03em;color:var(--ink)}
+.callout ul{margin:6px 0 0}
+
+/* 节点页面卡 */
+.page{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  margin:0 0 18px;box-shadow:var(--shadow);overflow:hidden;scroll-margin-top:14px}
+.page > .hd{padding:20px 26px 16px;border-bottom:1px solid var(--line);
+  display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#fafbfc}
+.page > .hd .idx{font-size:12px;font-weight:700;color:#fff;background:var(--brand);
+  width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.page > .hd h3{margin:0;padding:0;border:none;font-size:18.5px;flex:1 1 auto;letter-spacing:-.01em}
+.page > .hd .grp-tag{font-size:12px;color:var(--ink3)}
+.page > .bd{padding:20px 26px 24px}
+.purpose{font-size:15px;color:var(--ink2);margin:0 0 4px}
+.node-type{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--ink3);background:#f2f4f6;padding:2px 8px;border-radius:4px}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:1180px){
+  .layout{flex-direction:column;gap:0;padding:0 16px}
+  .toc{position:static;height:auto;flex:none;width:100%;padding:18px 0 0;
+    border-bottom:1px solid var(--line);max-height:none}
+  .toc .toc-links{display:none}
+  .toc.open .toc-links{display:block}
+  .grid2{grid-template-columns:1fr}
+}
+.toc-toggle{display:none;margin:0 0 12px;padding:9px 14px;border:1px solid var(--line);
+  background:#fff;border-radius:8px;font-size:14px;cursor:pointer;width:100%;text-align:left}
+@media(max-width:1180px){.toc-toggle{display:block}}
+
+footer{color:var(--ink3);font-size:12.5px;text-align:center;padding:26px 0 0}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc" id="toc">
+    <div class="toc-brand">
+      <div class="m">KL</div>
+      <div><b>锴利超级AI工作台</b><i>KaiLion Super AI Workbench</i></div>
+    </div>
+    <button class="toc-toggle" onclick="document.getElementById('toc').classList.toggle('open')">☰ 展开 / 收起目录</button>
+    <div class="toc-links">
+      <a href="#start">开始使用</a>
+      <a href="#quickstart">四步上手</a>
+      <a href="#interface">界面导览</a>
+
+      <div class="grp">一、输入节点（4个）</div>
+      <a href="#n-prompt">1. 提示词</a>
+      <a href="#n-image-input">2. 图片</a>
+      <a href="#n-video-input">3. 视频</a>
+      <a href="#n-file">4. 文件</a>
+
+      <div class="grp">二、图片生成（9个）</div>
+      <a href="#n-banana-pro">5. Banana Pro</a>
+      <a href="#n-gpt-image">6. GPT Image</a>
+      <a href="#n-creative">7. 创意灵感</a>
+      <a href="#n-image-gen">8-13. 其他图片生成</a>
+
+      <div class="grp">三、视频生成（8个）</div>
+      <a href="#n-seedance">14. Seedance</a>
+      <a href="#n-video-gen">15-21. 其他视频生成</a>
+
+      <div class="grp">四、3D生成（3个）</div>
+      <a href="#n-3d">22-24. 3D生成节点</a>
+
+      <div class="grp">五、连接器（15个）</div>
+      <a href="#n-llm">25. LLM节点</a>
+      <a href="#n-grok">26. Grok对话</a>
+      <a href="#n-connector">27-39. 其他连接器</a>
+
+      <div class="grp">六、文件处理（7个）</div>
+      <a href="#n-removebg">45. 去背景</a>
+      <a href="#n-fileproc">40-46. 文件处理节点</a>
+
+      <div class="grp">七、协同优化（3个）</div>
+      <a href="#n-collab">47-49. 协同优化</a>
+
+      <div class="grp">八、电商工作流（7个）</div>
+      <a href="#n-detail">50. 详情页生成</a>
+      <a href="#n-ecom">51-56. 电商节点</a>
+
+      <div class="grp">九、IP工作流（3个）</div>
+      <a href="#n-ip">57-59. IP工作流</a>
+
+      <div class="grp">十、视频工作流（6个）</div>
+      <a href="#n-videowf">60-65. 视频工作流</a>
+
+      <div class="grp">十一、供应链（8个）</div>
+      <a href="#n-supply">66-73. 供应链节点</a>
+
+      <div class="grp">十二、办公工作流（6个）</div>
+      <a href="#n-office">74-79. 办公节点</a>
+
+      <div class="grp">十三、生活工具（1个）</div>
+      <a href="#n-life">80. 命理玄学</a>
+
+      <div class="grp">十四、锴利专线（6个）⭐</div>
+      <a href="#n-kl-product">81. 产品图精修</a>
+      <a href="#n-kl-spec">82. 规格参数表</a>
+      <a href="#n-kl-inquiry">83. 询盘邮件生成</a>
+      <a href="#n-kl-cert">84. 出口合规包</a>
+      <a href="#n-kl-site">85. 独立站文案</a>
+      <a href="#n-kl-score">86. 供应商评分</a>
+
+      <div class="grp">十五、抖音运营（6个）</div>
+      <a href="#n-douyin">87-92. 抖音运营节点</a>
+
+      <div class="grp">附录</div>
+      <a href="#resources">资源库</a>
+      <a href="#models">模型配置</a>
+      <a href="#canvas">画布操作</a>
+      <a href="#examples">实战案例</a>
+      <a href="#faq">常见问题</a>
+      <a href="#shortcuts">快捷键</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="hero">
+      <div class="kicker">KaiLionCrafts · 锴利超级AI工作台</div>
+      <h1>工作台使用说明书</h1>
+      <p>这份说明书按「左侧节点库的每一个节点」逐个讲清楚：这个节点是干什么用的、怎么配置参数、运行后能得到什么结果。特别地，凡是<b>需要配置 API 才能见效</b>的功能，都会单独标注清楚，避免买了工具却用不出效果。</p>
+      <div class="meta">
+        <span>共 90 个节点</span><span>15 个节点分类</span>
+        <span>16 个智能体</span><span>324 条提示词</span>
+        <span>21 个技能</span><span>25 个市场模板</span>
+        <span>2026-09 版</span>
+      </div>
+    </div>
+
+    <!-- 开始使用 -->
+    <section class="card" id="start">
+      <h2><span class="n">①</span>开始使用</h2>
+      <p class="sub">5 分钟上手，先跑通「启动 → 登录 → 拖节点 → 出结果」这条最短路径。</p>
+
+      <h3>1. 启动与登录</h3>
+      <p>双击桌面的「启动锴利超级AI工作台.command」，等待服务器启动，浏览器自动打开。输入密码 <code>（请在 assets/js/login.js 中查看或修改）</code> 登录。</p>
+      <table>
+        <thead><tr><th>访问方式</th><th>地址</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>本机使用</td><td><code>http://localhost:8766</code></td><td>服务器所在电脑，启动后自动打开</td></tr>
+          <tr><td>局域网</td><td><code>http://192.168.1.22:8766</code></td><td>公司同事同一WiFi下访问</td></tr>
+          <tr><td>公网</td><td><code>https://creator.kailioncrafts.com</code></td><td>外部人员/出差时访问</td></tr>
+        </tbody>
+      </table>
+
+      <h3>2. 符号说明</h3>
+      <p>
+        <span class="badge ok">开箱即用</span> 不需要任何外部配置，登录就能用。&nbsp;&nbsp;
+        <span class="badge opt">可选增强</span> 不配也能用，配了效果更好。&nbsp;&nbsp;
+        <span class="badge req">需先配置</span> 不配置则功能无法完整工作。
+      </p>
+
+      <div class="callout info"><b class="t">首次使用建议</b>
+        <ul>
+          <li>先用默认的本地 Ollama 模型跑通第一个工作流（免费、不需要Key）。</li>
+          <li>需要更好效果时，在「设置 → 供应商管理」中配置智谱GLM免费模型。</li>
+          <li>重要工作流记得导出为JSON文件备份。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 四步上手 -->
+    <section class="card" id="quickstart">
+      <h2><span class="n">②</span>四步上手，先出一张图</h2>
+      <p class="sub">全程不用写代码，跟着做就能出第一张产品图。</p>
+
+      <h3>第一步：拖入节点</h3>
+      <p>从左侧节点库，把「提示词」节点和「Banana Pro」节点拖到中间画布。</p>
+
+      <h3>第二步：连接节点</h3>
+      <p>从「提示词」节点右边的小圆点，拖到「Banana Pro」节点左边的小圆点，完成连线。</p>
+
+      <h3>第三步：输入提示词</h3>
+      <p>点击「提示词」节点，在右侧面板输入：<code>一把不锈钢厨房剪刀，白色背景，商业摄影，高清细节</code></p>
+
+      <h3>第四步：运行</h3>
+      <p>点击顶部「运行全部」按钮，等待10-30秒，图片就生成了。点击图片节点可查看、下载。</p>
+
+      <div class="callout cfg"><b class="t">好提示词公式</b>
+        好提示词 = 主体 + 场景 + 光线 + 风格。例如：<code>一把不锈钢厨房剪刀，白色背景，柔和顶光，商业摄影风格，高清细节</code>
+      </div>
+    </section>
+
+    <!-- 界面导览 -->
+    <section class="card" id="interface">
+      <h2><span class="n">③</span>界面导览</h2>
+      <p class="sub">了解界面布局，操作更高效。</p>
+      <table>
+        <thead><tr><th>区域</th><th>位置</th><th>功能</th></tr></thead>
+        <tbody>
+          <tr><td>顶部工具栏</td><td>最上方</td><td>运行全部、停止、保存、导出、导入、撤销、重做、自动布局、设置</td></tr>
+          <tr><td>左侧节点库</td><td>左侧</td><td>90个节点按15个分类组织，拖拽到画布使用</td></tr>
+          <tr><td>中间画布</td><td>中间</td><td>工作区，节点在这里排列、连接、运行</td></tr>
+          <tr><td>右侧参数面板</td><td>右侧</td><td>点击节点后显示该节点的所有参数设置</td></tr>
+          <tr><td>底部日志区</td><td>最下方</td><td>显示运行日志、API调用日志、错误信息</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ========== 一、输入节点 ========== -->
+    <section class="card">
+      <h2><span class="n">④</span>节点库全景 · 一、输入节点（4个）</h2>
+      <p class="sub">输入节点是工作流的起点，用来提供数据给下游节点。</p>
+    </section>
+
+    <article class="page" id="n-prompt">
+      <div class="hd"><span class="idx">1</span><h3>提示词节点</h3><span class="grp-tag">输入节点</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">基础文本输入，把提示词传给下游图片/视频/LLM节点，是一切创作的起点。</p>
+        <p><span class="node-type">promptNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th><th>示例</th></tr></thead>
+          <tbody>
+            <tr><td>提示词内容</td><td>你想让AI做什么</td><td>一把不锈钢厨房剪刀，白色背景</td></tr>
+            <tr><td>负面提示词</td><td>不希望出现的内容</td><td>模糊,低质量,变形</td></tr>
+            <tr><td>权重</td><td>提示词的重要程度（0-2）</td><td>1.0（默认）</td></tr>
+          </tbody>
+        </table>
+        <h3>输出效果</h3>
+        <p>文本内容传递给下游节点，控制生成方向。几乎所有工作流都从这个节点开始。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-image-input">
+      <div class="hd"><span class="idx">2</span><h3>图片节点</h3><span class="grp-tag">输入节点</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">上传本地图片作为参考或编辑素材，用于图生图、图像编辑、风格迁移。</p>
+        <p><span class="node-type">imageInputNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>选择图片</td><td>上传PNG/JPG等格式图片</td></tr>
+            <tr><td>预处理</td><td>不处理 / 放大2倍 / 居中裁剪</td></tr>
+          </tbody>
+        </table>
+        <h3>使用场景</h3>
+        <ul>
+          <li>连接「去背景」节点 → 自动抠图</li>
+          <li>连接「图生视频」节点 → 静态图变动态视频</li>
+          <li>连接「产品图精修」节点 → 专业精修</li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="page" id="n-video-input">
+      <div class="hd"><span class="idx">3</span><h3>视频节点</h3><span class="grp-tag">输入节点</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">上传本地视频，用于视频编辑、风格转换、视频内容理解。</p>
+        <p><span class="node-type">videoInputNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>选择视频</td><td>上传MP4等格式视频</td></tr>
+            <tr><td>起始秒</td><td>从第几秒开始</td></tr>
+            <tr><td>结束秒</td><td>到第几秒结束（0=完整视频）</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <article class="page" id="n-file">
+      <div class="hd"><span class="idx">4</span><h3>文件节点</h3><span class="grp-tag">输入节点</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">上传文件供LLM解析，支持图片/PDF/Markdown/音频/视频。</p>
+        <p><span class="node-type">fileUploadNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>上传文件</td><td>支持.pdf/.md/.txt/.png/.jpg/.mp3/.mp4</td></tr>
+            <tr><td>解析方式</td><td>自动识别 / 纯文本 / OCR识别</td></tr>
+          </tbody>
+        </table>
+        <h3>使用场景</h3>
+        <p>连接「LLM」节点，上传PDF/文档，让AI总结、分析、翻译文件内容。</p>
+      </div>
+    </article>
+
+    <!-- ========== 二、图片生成 ========== -->
+    <section class="card">
+      <h2><span class="n">⑤</span>二、图片生成节点（9个）</h2>
+      <p class="sub">各种AI绘画模型，支持文生图、图生图、批量生成。</p>
+    </section>
+
+    <article class="page" id="n-banana-pro">
+      <div class="hd"><span class="idx">5</span><h3>Banana Pro</h3><span class="grp-tag">图片生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">高画质出图，适合产品效果图、商业摄影风格、高质量插画。</p>
+        <p><span class="node-type">imageGeneratorProNode</span></p>
+        <h3>使用方法</h3>
+        <ol>
+          <li>连接上游「提示词」节点</li>
+          <li>在右侧面板选择API供应商和模型</li>
+          <li>设置尺寸和生成数量</li>
+          <li>运行，等待生成</li>
+        </ol>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th><th>可选值</th></tr></thead>
+          <tbody>
+            <tr><td>API供应商</td><td>选择图片API</td><td>在设置中配置</td></tr>
+            <tr><td>模型</td><td>具体模型</td><td>选择供应商后自动加载</td></tr>
+            <tr><td>尺寸</td><td>图片大小</td><td>1024×1024 / 1280×720 / 720×1280 / 2048×2048</td></tr>
+            <tr><td>生成数量</td><td>一次生成几张</td><td>1-8张</td></tr>
+            <tr><td>随机种子</td><td>固定种子可复现</td><td>-1=随机</td></tr>
+            <tr><td>推理步数</td><td>越高越精细</td><td>10-100，默认30</td></tr>
+          </tbody>
+        </table>
+        <h3>输出效果</h3>
+        <p>生成高质量图片，可下载、可放大、可保存到素材库。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-gpt-image">
+      <div class="hd"><span class="idx">6</span><h3>GPT Image</h3><span class="grp-tag">图片生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">多模态出图，支持图文结合创作与图像编辑、风格转换。</p>
+        <p><span class="node-type">gptImageGeneratorNode</span></p>
+        <h3>参数：尺寸（1024×1024/1536×1024/1024×1536）、质量（低/中/高）、风格（鲜明/自然）</h3>
+      </div>
+    </article>
+
+    <article class="page" id="n-creative">
+      <div class="hd"><span class="idx">7</span><h3>创意灵感</h3><span class="grp-tag">图片生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">一句话快速生成多张灵感图，结果可放大、下载、一键收藏进素材库。</p>
+        <p><span class="node-type">creativeInspirationNode</span></p>
+        <h3>参数：灵感主题（如"赛博朋克城市夜景"）、一次生成数量（1-6张，默认4张）</h3>
+        <h3>输出效果</h3>
+        <p>快速生成多张概念图，适合找灵感、定方向。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-image-gen">
+      <div class="hd"><span class="idx">8-13</span><h3>其他图片生成节点</h3><span class="grp-tag">图片生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">6个不同的图像生成线路，各有特色。</p>
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>特色</th></tr></thead>
+          <tbody>
+            <tr><td>Banana快速版</td><td>imageGeneratorFastNode</td><td>响应更快，适合快速原型图</td></tr>
+            <tr><td>SeeDream</td><td>doubaoGeneratorNode</td><td>字节跳动，写实/动漫/油画/3D风格</td></tr>
+            <tr><td>DALL-E</td><td>dalleGeneratorNode</td><td>OpenAI，鲜明/自然风格</td></tr>
+            <tr><td>Flux</td><td>fluxGeneratorNode</td><td>画质优秀，支持引导系数</td></tr>
+            <tr><td>Z-Image</td><td>zImageGeneratorNode</td><td>Gitee AI，写实/插画/国风/赛博朋克</td></tr>
+            <tr><td>Agnes Image</td><td>agnesImageGeneratorNode</td><td>多尺寸多比例</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn"><b class="t">配置说明</b>
+          以上节点都需要在「设置 → 供应商管理」中配置对应的图片API供应商和Key才能使用。默认使用本地模型时可先用智谱的CogView-3-Flash免费模型。
+        </div>
+      </div>
+    </article>
+
+    <!-- ========== 三、视频生成 ========== -->
+    <section class="card">
+      <h2><span class="n">⑥</span>三、视频生成节点（8个）</h2>
+      <p class="sub">文生视频、图生视频，覆盖主流AI视频模型。</p>
+    </section>
+
+    <article class="page" id="n-seedance">
+      <div class="hd"><span class="idx">14</span><h3>Seedance</h3><span class="grp-tag">视频生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">Seedance视频生成，支持文生视频/图生视频/视频编辑三种模式。</p>
+        <p><span class="node-type">seedanceGeneratorNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th><th>可选值</th></tr></thead>
+          <tbody>
+            <tr><td>生成模式</td><td>文生视频/图生视频/视频编辑</td><td>t2v / i2v / edit</td></tr>
+            <tr><td>内置提示词</td><td>视频场景描述</td><td>支持变量引用上游输出</td></tr>
+            <tr><td>时长</td><td>视频长度</td><td>5/10/15秒</td></tr>
+            <tr><td>分辨率</td><td>画面清晰度</td><td>720p / 1080p</td></tr>
+            <tr><td>比例</td><td>画面方向</td><td>16:9横屏 / 9:16竖屏 / 1:1方形</td></tr>
+          </tbody>
+        </table>
+        <h3>输出效果</h3>
+        <p>生成MP4视频文件，可预览、下载。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-video-gen">
+      <div class="hd"><span class="idx">15-21</span><h3>其他视频生成节点</h3><span class="grp-tag">视频生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">7个视频生成线路，覆盖主流模型。</p>
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>时长</th><th>特色</th></tr></thead>
+          <tbody>
+            <tr><td>Omni</td><td>omniGeneratorNode</td><td>8/15秒</td><td>Google Omni</td></tr>
+            <tr><td>MiniMax</td><td>minimaxGeneratorNode</td><td>6/10秒</td><td>720p/1080p</td></tr>
+            <tr><td>Grok Video</td><td>grokGeneratorNode</td><td>5/10秒</td><td>xAI，标准/电影感</td></tr>
+            <tr><td>Sora</td><td>videoGeneratorNode</td><td>5/8/12秒</td><td>OpenAI</td></tr>
+            <tr><td>Veo</td><td>veoGeneratorNode</td><td>4/6/8秒</td><td>Gemini，支持4K</td></tr>
+            <tr><td>Kling</td><td>klingGeneratorNode</td><td>5/10秒</td><td>快手可灵，文生/图生</td></tr>
+            <tr><td>Agnes Video</td><td>agnesVideoGeneratorNode</td><td>5/10/15秒</td><td>多比例</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 四、3D生成 ========== -->
+    <section class="card" id="n-3d">
+      <h2><span class="n">⑦</span>四、3D生成节点（3个）</h2>
+      <p class="sub">AI生成3D模型和空间。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">22-24</span><h3>3D生成节点</h3><span class="grp-tag">3D生成</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>3D网格</td><td>lux3DGeneratorNode</td><td>图生3D/文生3D/四视图/材质重绘，导出GLB/PLY/USDZ/OBJ/FBX</td></tr>
+            <tr><td>AHOLO World</td><td>ahWorldGeneratorNode</td><td>3DGS高斯溅射空间重建与生成</td></tr>
+            <tr><td>3D模型</td><td>model3DGeneratorNode</td><td>上传图片生成可交互Three.js代码，支持旋转/拆解/换色</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 五、连接器 ========== -->
+    <section class="card">
+      <h2><span class="n">⑧</span>五、连接器节点（15个）</h2>
+      <p class="sub">核心功能节点，包括LLM对话、搜索、OCR、API调用等。</p>
+    </section>
+
+    <article class="page" id="n-llm">
+      <div class="hd"><span class="idx">25</span><h3>LLM节点 ⭐核心</h3><span class="grp-tag">连接器</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">通用大语言模型内容生成，支持深度思考、多轮对话、MCP工具调用、RAG检索、知识库引用。这是工作台最常用的节点。</p>
+        <p><span class="node-type">llmContentNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th><th>可选值</th></tr></thead>
+          <tbody>
+            <tr><td>API供应商</td><td>选择LLM API</td><td>Ollama本地 / 智谱 / 豆包等</td></tr>
+            <tr><td>模型</td><td>具体模型</td><td>自动加载可用模型</td></tr>
+            <tr><td>系统提示词</td><td>设定AI角色与行为</td><td>如"你是一个外贸文案专家"</td></tr>
+            <tr><td>对话模式</td><td>单次/多轮/智能体</td><td>单次生成 / 多轮对话 / 智能体模式</td></tr>
+            <tr><td>🧩 MCP&技能</td><td>调用外部工具</td><td>勾选后可调用MCP服务器和技能</td></tr>
+            <tr><td>🔍 检索增强RAG</td><td>从知识库检索</td><td>勾选后检索相关内容增强回答</td></tr>
+            <tr><td>📚 知识库引用</td><td>引用并标注来源</td><td>勾选后回答中标注知识来源</td></tr>
+            <tr><td>🧠 思考模式</td><td>深度推理链</td><td>勾选后先思考再输出（适合复杂问题）</td></tr>
+            <tr><td>温度</td><td>创造性程度</td><td>0-2，0.7默认，越低越稳定</td></tr>
+            <tr><td>最大输出Token</td><td>回答长度上限</td><td>100-8192，默认2048</td></tr>
+          </tbody>
+        </table>
+        <h3>常用场景</h3>
+        <ul>
+          <li>写产品文案 → 系统提示词设为"外贸文案专家"</li>
+          <li>翻译邮件 → 系统提示词设为"专业翻译"</li>
+          <li>分析数据 → 连接文件节点，上传数据文件</li>
+          <li>深度推理 → 开启"思考模式"</li>
+        </ul>
+        <div class="callout cfg"><b class="t">默认模型</b>
+          默认使用本地Ollama的qwen2.5:7b模型，免费、私密、不需要API Key。需要更好效果时可切换到智谱GLM-4-Flash（免费）。
+        </div>
+      </div>
+    </article>
+
+    <article class="page" id="n-grok">
+      <div class="hd"><span class="idx">26</span><h3>Grok对话</h3><span class="grp-tag">连接器</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">xAI Grok模型对话，支持Grok 2/Mini/Vision，流式输出与系统提示词。</p>
+        <p><span class="node-type">grokChatNode</span></p>
+      </div>
+    </article>
+
+    <article class="page" id="n-connector">
+      <div class="hd"><span class="idx">27-39</span><h3>其他连接器节点</h3><span class="grp-tag">连接器</span><span class="badge opt">可选增强</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th><th>状态</th></tr></thead>
+          <tbody>
+            <tr><td>内容审查</td><td>contentReviewNode</td><td>多模态内容合规审查与风险评估</td><td><span class="badge ok">开箱即用</span></td></tr>
+            <tr><td>MCP</td><td>mcpNode</td><td>调用MCP服务器的外部工具</td><td><span class="badge req">需先配置</span></td></tr>
+            <tr><td>CLI</td><td>cliNode</td><td>调用本地命令行工具</td><td><span class="badge opt">可选增强</span></td></tr>
+            <tr><td>GEO优化</td><td>geoOptimizerNode</td><td>生成式引擎优化，让AI更容易检索</td><td><span class="badge ok">开箱即用</span></td></tr>
+            <tr><td>信息检索</td><td>infoRetrievalNode</td><td>多源信息检索+LLM智能处理</td><td><span class="badge opt">可选增强</span></td></tr>
+            <tr><td>飞书消息</td><td>feishuMessageNode</td><td>发送飞书群机器人消息</td><td><span class="badge req">需先配置</span></td></tr>
+            <tr><td>HTTP请求</td><td>httpRequestNode</td><td>调用任意REST API</td><td><span class="badge opt">可选增强</span></td></tr>
+            <tr><td>智能搜索</td><td>smartSearchNode</td><td>7大搜索引擎+AI总结</td><td><span class="badge opt">可选增强</span></td></tr>
+            <tr><td>自动路由</td><td>autoRouterNode</td><td>自动选择最佳AI供应商</td><td><span class="badge ok">开箱即用</span></td></tr>
+            <tr><td>网页搜索</td><td>webSearchNode</td><td>多搜索引擎联网搜索</td><td><span class="badge opt">可选增强</span></td></tr>
+            <tr><td>OCR识别</td><td>ocrNode</td><td>图片文字识别，支持中英文/手写/表格</td><td><span class="badge req">需先配置</span></td></tr>
+            <tr><td>图生视频</td><td>imageToVideoNode</td><td>图片转动态视频</td><td><span class="badge req">需先配置</span></td></tr>
+            <tr><td>文字区域检测</td><td>textRegionDetectNode</td><td>检测图片中文字区域位置/字号/颜色</td><td><span class="badge req">需先配置</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 六、文件处理 ========== -->
+    <section class="card">
+      <h2><span class="n">⑨</span>六、文件处理节点（7个）</h2>
+      <p class="sub">图片、文档、模型格式转换与处理。</p>
+    </section>
+
+    <article class="page" id="n-removebg">
+      <div class="hd"><span class="idx">45</span><h3>去背景 ⭐常用</h3><span class="grp-tag">文件处理</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <p class="purpose">AI智能抠图去背景，支持人像/商品/通用场景，输出透明PNG。</p>
+        <p><span class="node-type">removeBgNode</span></p>
+        <h3>使用方法</h3>
+        <ol>
+          <li>连接上游「图片」节点，上传产品原图</li>
+          <li>选择场景类型（自动识别/人像/商品/汽车/动物/通用）</li>
+          <li>选择输出格式（PNG透明/WebP透明/JPG白色背景）</li>
+          <li>选择输出质量（标准/高清/超清）</li>
+          <li>运行</li>
+        </ol>
+        <h3>输出效果</h3>
+        <p>背景被去掉，得到透明背景的主体图片，适合电商上架。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-fileproc">
+      <div class="hd"><span class="idx">40-46</span><h3>其他文件处理节点</h3><span class="grp-tag">文件处理</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>文档转换</td><td>documentConverterNode</td><td>12种格式双向转换（DOCX/PDF/HTML/MD等）</td></tr>
+            <tr><td>图像转换</td><td>imageConverterNode</td><td>PNG/JPG/WEBP/SVG互转，多图合并PDF</td></tr>
+            <tr><td>模型转换</td><td>modelConverterNode</td><td>GLB/OBJ/STL/3MF互转</td></tr>
+            <tr><td>宫格分割</td><td>imageGridSplitNode</td><td>把一张图按行列分割成多张图</td></tr>
+            <tr><td>水印</td><td>watermarkNode</td><td>给图片添加文字水印，支持位置/字号/透明度/旋转</td></tr>
+            <tr><td>文字移除</td><td>removeTextNode</td><td>AI移除图片中的文字并智能修复背景</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 七、协同优化 ========== -->
+    <section class="card" id="n-collab">
+      <h2><span class="n">⑩</span>七、协同与优化节点（3个）</h2>
+      <p class="sub">多AI专家协作，复杂任务分工处理。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">47-49</span><h3>协同优化节点</h3><span class="grp-tag">协同优化</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th><th>参数</th></tr></thead>
+          <tbody>
+            <tr><td>专家讨论</td><td>expertDiscussionNode</td><td>多位专家围绕同一主题各自出方案并互相讨论</td><td>专家数量(2-6)、讨论主题、讨论轮次(1-5)</td></tr>
+            <tr><td>专家协作</td><td>expertCollaborationNode</td><td>多专家按阶段分工协作完成同一任务</td><td>总任务、阶段数(2-6)</td></tr>
+            <tr><td>数字人协作</td><td>digitalHumanCollaborationNode</td><td>多Agent协作，支持顺序/并行/讨论/混合模式</td><td>协作模式、数字人数量(2-5)</td></tr>
+          </tbody>
+        </table>
+        <h3>输出效果</h3>
+        <p>多位AI专家从不同角度分析问题，互相讨论，给出综合建议。</p>
+      </div>
+    </article>
+
+    <!-- ========== 八、电商工作流 ========== -->
+    <section class="card">
+      <h2><span class="n">⑪</span>八、电商工作流节点（7个）</h2>
+      <p class="sub">电商详情页、带货脚本、图文内容生成。</p>
+    </section>
+
+    <article class="page" id="n-detail">
+      <div class="hd"><span class="idx">50</span><h3>详情页生成 ⭐电商必备</h3><span class="grp-tag">电商工作流</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">电商详情页大纲与配图生成，是详情页链路的主力节点。</p>
+        <p><span class="node-type">detailPageGeneratorNode</span></p>
+        <h3>参数说明</h3>
+        <table>
+          <thead><tr><th>参数</th><th>说明</th></tr></thead>
+          <tbody>
+            <tr><td>产品名称</td><td>如"阳江不锈钢厨房剪刀"</td></tr>
+            <tr><td>所属行业</td><td>厨房用品/户外用品/美妆个护/数码3C/其他</td></tr>
+            <tr><td>详情页数</td><td>3-15页，默认8页</td></tr>
+            <tr><td>设计风格</td><td>简约现代/高端轻奢/国风复古/科技感</td></tr>
+          </tbody>
+        </table>
+        <h3>输出效果</h3>
+        <p>生成完整的详情页结构大纲，每页的文案和配图建议。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-ecom">
+      <div class="hd"><span class="idx">51-56</span><h3>其他电商节点</h3><span class="grp-tag">电商工作流</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>详情页复刻</td><td>detailPageReplicaNode</td><td>给参考图一键复刻同款版式的详情页</td></tr>
+            <tr><td>带货脚本</td><td>salesScriptNode</td><td>商品→卖点矩阵→爆款短视频脚本，自带分镜</td></tr>
+            <tr><td>图文生成</td><td>imageTextNode</td><td>主题→文案+N屏配图，第k段对应第k张图</td></tr>
+            <tr><td>详情页解析</td><td>productParserNode</td><td>粘贴链接智能解析电商详情页数据</td></tr>
+            <tr><td>印刷定制</td><td>productCustomizerNode</td><td>印刷定制效果图生成</td></tr>
+            <tr><td>批量生成</td><td>batchGeneratorNode</td><td>数据源驱动的批量图片生成</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 九、IP工作流 ========== -->
+    <section class="card" id="n-ip">
+      <h2><span class="n">⑫</span>九、IP工作流节点（3个）</h2>
+      <p class="sub">品牌IP、个人IP、选题挖掘。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">57-59</span><h3>IP工作流节点</h3><span class="grp-tag">IP工作流</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>选题挖掘</td><td>topicDiscoveryNode</td><td>跨平台(抖音/小红书/B站/知乎)热点搜索与AI选题推荐</td></tr>
+            <tr><td>品牌IP</td><td>brandIPGeneratorNode</td><td>品牌IP全案：定位、CI VI、多视角形象、表情包、运营规划</td></tr>
+            <tr><td>个人IP</td><td>aipSuperIndividualNode</td><td>个人IP全案：定位→受众画像→内容矩阵→增长闭环</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 十、视频工作流 ========== -->
+    <section class="card" id="n-videowf">
+      <h2><span class="n">⑬</span>十、视频工作流节点（6个）</h2>
+      <p class="sub">视频脚本、分镜、复刻、替换全流程。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">60-65</span><h3>视频工作流节点</h3><span class="grp-tag">视频工作流</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>视频大纲</td><td>storyOutlineNode</td><td>视频/漫剧故事大纲生成，先把结构定下来</td></tr>
+            <tr><td>视频复刻</td><td>videoReplicaNode</td><td>上传视频或粘贴链接，AI解析分镜结构并生成复刻提示词</td></tr>
+            <tr><td>视频替换</td><td>videoReplaceNode</td><td>原视频局部替换：商品/背景/服装/模特</td></tr>
+            <tr><td>视频分镜</td><td>shotGeneratorNode</td><td>视频分镜脚本与画面生成，把每个镜头拆到可执行</td></tr>
+            <tr><td>导演台</td><td>directorConsoleNode</td><td>一站式脚本解析与分镜规划</td></tr>
+            <tr><td>视频组装</td><td>storyAssemblerNode</td><td>预览并导出视频/图片序列成片</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 十一、供应链 ========== -->
+    <section class="card" id="n-supply">
+      <h2><span class="n">⑭</span>十一、供应链工作流节点（8个）</h2>
+      <p class="sub">1688找品、询盘、妙手采集发布、选品榜。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">66-73</span><h3>供应链节点</h3><span class="grp-tag">供应链</span><span class="badge req">需先配置</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th></tr></thead>
+          <tbody>
+            <tr><td>云牛顿·找品</td><td>newtonImageSearchNode</td><td>1688云牛顿采购Agent：文字/链接找品，返回候选商品表格</td></tr>
+            <tr><td>云牛顿·批量询盘</td><td>newtonInquiryNode</td><td>对找品结果批量发起询价/议价/交期询盘</td></tr>
+            <tr><td>云牛顿·询盘结果</td><td>newtonInquiryResultNode</td><td>查询商家回复并生成供应商比价数据</td></tr>
+            <tr><td>妙手·货源采集</td><td>miaoshouCollectSubmitNode</td><td>批量采集货源链接到妙手公共采集箱</td></tr>
+            <tr><td>妙手·采集详情</td><td>miaoshouCollectDetailNode</td><td>拉取采集箱商品的完整数据与主图</td></tr>
+            <tr><td>妙手·编辑详情</td><td>miaoshouWritebackNode</td><td>AI生成的标题/描述/图片回写进妙手草稿</td></tr>
+            <tr><td>妙手·多平台发布</td><td>miaoshouPublishNode</td><td>一键发布到TikTok/Shopee/TEMU/OZON/美客多</td></tr>
+            <tr><td>店雷达·选品榜</td><td>dianLeiDaBillboardNode</td><td>1688商品日/周/月热销榜</td></tr>
+          </tbody>
+        </table>
+        <div class="callout warn"><b class="t">配置说明</b>
+          供应链节点需要配置对应的1688/妙手API或账号才能使用。基础的内容生成节点不需要。
+        </div>
+      </div>
+    </article>
+
+    <!-- ========== 十二、办公工作流 ========== -->
+    <section class="card" id="n-office">
+      <h2><span class="n">⑮</span>十二、办公工作流节点（6个）</h2>
+      <p class="sub">一键生成HTML、Word、Excel、PPT专业文档。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">74-79</span><h3>办公工作流节点</h3><span class="grp-tag">办公工作流</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th><th>输出</th></tr></thead>
+          <tbody>
+            <tr><td>HTML</td><td>htmlGeneratorNode</td><td>生成可运行的HTML网页</td><td>.html文件</td></tr>
+            <tr><td>Word</td><td>wordGeneratorNode</td><td>生成工作报告/合同/方案/信函</td><td>.docx文件</td></tr>
+            <tr><td>Excel</td><td>excelGeneratorNode</td><td>生成普通表格/数据透视表/带图表</td><td>.xlsx文件</td></tr>
+            <tr><td>PPT</td><td>pptGeneratorNode</td><td>5-50页，商务蓝/科技紫/清新绿/国风</td><td>.pptx文件</td></tr>
+            <tr><td>PPT内容</td><td>pptContentNode</td><td>生成PPT大纲与逐页内容</td><td>文本内容</td></tr>
+            <tr><td>PPT组装</td><td>pptAssemblerNode</td><td>预览并导出PPTX与讲稿</td><td>.pptx文件</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 十三、生活工具 ========== -->
+    <section class="card" id="n-life">
+      <h2><span class="n">⑯</span>十三、生活工具节点（1个）</h2>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">80</span><h3>命理玄学</h3><span class="grp-tag">生活工具</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">融合十大命理体系的拟人化命理师节点，支持运势/姻缘/事业/财运等问题咨询。</p>
+        <p><span class="node-type">fortuneMasterNode</span></p>
+      </div>
+    </article>
+
+    <!-- ========== 十四、锴利专线 ========== -->
+    <section class="card">
+      <h2><span class="n">⑰</span>十四、锴利专线节点（6个）⭐专属外贸工具</h2>
+      <p class="sub">锴利公司专属定制，针对刀具/剪刀/厨具/五金行业优化。</p>
+    </section>
+
+    <article class="page" id="n-kl-product">
+      <div class="hd"><span class="idx">81</span><h3>产品图精修 ⭐外贸必备</h3><span class="grp-tag">锴利专线</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">刀具/剪刀/厨具产品图精修：自动去背、统一布光、金属质感还原。</p>
+        <p><span class="node-type">klProductShotNode</span></p>
+        <h3>使用方法</h3>
+        <ol>
+          <li>连接上游「图片」节点，上传产品原图</li>
+          <li>选择产品类型（刀具/剪刀/厨具/五金/自动识别）</li>
+          <li>选择精修风格（电商白底/生活场景/高端质感/极简风）</li>
+          <li>勾选自动去背景和金属质感增强</li>
+          <li>选择输出尺寸（1000×1000/1500×1500/2000×2000）</li>
+          <li>运行</li>
+        </ol>
+        <h3>输出效果</h3>
+        <p>产品图变得专业，背景干净，金属质感突出，适合电商上架。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-kl-spec">
+      <div class="hd"><span class="idx">82</span><h3>规格参数表</h3><span class="grp-tag">锴利专线</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">把口头参数整理成中英双语规格表并存入知识库。</p>
+        <p><span class="node-type">klSpecSheetNode</span></p>
+        <h3>参数：产品类型（刀具/剪刀/厨具/五金）、输出语言（中英双语/中文/英文）、包含材质参数、包含尺寸参数、保存到知识库</h3>
+        <h3>输出效果</h3>
+        <p>生成规范的产品规格表，中英双语，可直接用于报价单和网站。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-kl-inquiry">
+      <div class="hd"><span class="idx">83</span><h3>询盘邮件生成 ⭐外贸必备</h3><span class="grp-tag">锴利专线</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">粘贴买家询盘，自动识别买家类型并生成英文B2B回复。</p>
+        <p><span class="node-type">klInquiryReplyNode</span></p>
+        <h3>使用方法</h3>
+        <ol>
+          <li>把买家的询盘邮件内容粘贴到上游提示词节点</li>
+          <li>连接到本节点</li>
+          <li>选择买家类型（自动识别/经销商/零售商/品牌商/亚马逊卖家）</li>
+          <li>选择语气风格（专业正式/友好亲切/紧迫促销）</li>
+          <li>选择回复语言（英文/中文/自动匹配）</li>
+          <li>勾选包含报价模板和提及认证资质</li>
+          <li>运行，生成专业回复</li>
+        </ol>
+        <h3>输出效果</h3>
+        <p>生成专业的英文询盘回复邮件，可直接发送给买家。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-kl-cert">
+      <div class="hd"><span class="idx">84</span><h3>出口合规包</h3><span class="grp-tag">锴利专线</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">按目标市场跑FDA/LFGB/REACH/Prop 65合规清单与警示语。</p>
+        <p><span class="node-type">klCertPackNode</span></p>
+        <h3>参数：目标市场（美国/欧盟/英国/日本/全球）、产品类型、合规标准、生成警示语、输出格式（清单/报告/标签）</h3>
+        <h3>输出效果</h3>
+        <p>生成目标市场的合规要求清单和警示语，避免出口违规。</p>
+      </div>
+    </article>
+
+    <article class="page" id="n-kl-site">
+      <div class="hd"><span class="idx">85</span><h3>独立站文案</h3><span class="grp-tag">锴利专线</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">生成独立站页面文案，注入SEO与结构化数据。</p>
+        <p><span class="node-type">klSiteCopyNode</span></p>
+        <h3>参数：页面类型（产品详情页/分类页/首页/关于我们/博客）、语言、SEO关键词、包含结构化数据、目标字数（300/500/800/1200）</h3>
+      </div>
+    </article>
+
+    <article class="page" id="n-kl-score">
+      <div class="hd"><span class="idx">86</span><h3>供应商评分</h3><span class="grp-tag">锴利专线</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <p class="purpose">把询盘结果汇总为加权评分表并给出议价建议。</p>
+        <p><span class="node-type">klSupplierScoreNode</span></p>
+        <h3>参数：价格权重(默认30)、质量权重(默认30)、交期权重(默认20)、服务权重(默认20)、包含议价建议</h3>
+        <h3>输出效果</h3>
+        <p>生成供应商对比评分表，帮你选出最优供应商。</p>
+      </div>
+    </article>
+
+    <!-- ========== 十五、抖音运营 ========== -->
+    <section class="card" id="n-douyin">
+      <h2><span class="n">⑱</span>十五、抖音运营节点（6个）</h2>
+      <p class="sub">抖音文案、脚本、数据分析、视频生成全链路。</p>
+    </section>
+
+    <article class="page">
+      <div class="hd"><span class="idx">87-92</span><h3>抖音运营节点</h3><span class="grp-tag">抖音运营</span><span class="badge ok">开箱即用</span></div>
+      <div class="bd">
+        <table>
+          <thead><tr><th>节点</th><th>类型</th><th>用途</th><th>特色</th></tr></thead>
+          <tbody>
+            <tr><td>抖音文案</td><td>douyinCopyNode</td><td>爆款标题/口播/评论/钩子/话题标签</td><td>5种风格，一次生成多条</td></tr>
+            <tr><td>抖音脚本</td><td>douyinScriptNode</td><td>分镜/Vlog/教程/测评/剧情脚本</td><td>含BGM和拍摄建议</td></tr>
+            <tr><td>抖音数据分析</td><td>douyinDataNode</td><td>计算互动率/点赞率/评论率/转发率</td><td>给出优化建议</td></tr>
+            <tr><td>抖音视频下载</td><td>douyinDownloadNode</td><td>解析抖音链接，去水印/MP3/封面</td><td>需后端代理</td></tr>
+            <tr><td>抖音热门话题</td><td>douyinTrendingNode</td><td>10大分类热门话题榜</td><td>含热度值和创作建议</td></tr>
+            <tr><td>抖音视频生成</td><td>douyinVideoNode</td><td>竖版9:16抖音视频专用生成</td><td>6种风格+自动字幕+BGM</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
+
+    <!-- ========== 资源库 ========== -->
+    <section class="card" id="resources">
+      <h2><span class="n">⑲</span>资源库</h2>
+      <p class="sub">智能体、提示词、技能、模板，一键应用。</p>
+
+      <h3>🤖 智能体库（16个）</h3>
+      <p>预设好的AI角色，一键添加到画布，自动配置好系统提示词和节点组合。</p>
+      <table>
+        <thead><tr><th>类型</th><th>数量</th><th>代表智能体</th></tr></thead>
+        <tbody>
+          <tr><td>单智能体</td><td>10个</td><td>一人公司操盘手、增长黑客、谈判专家、全栈工程师、数据分析师</td></tr>
+          <tr><td>团队智能体</td><td>6个</td><td>剧本创作团队、投资研究团队、教育培训团队</td></tr>
+        </tbody>
+      </table>
+
+      <h3>💬 提示词库（324条）</h3>
+      <p>覆盖内容创作、营销文案、代码生成、数据分析、翻译润色、商业分析、外贸专用等分类。</p>
+
+      <h3>🛠️ 技能库（21个）</h3>
+      <p>预设好的工作流模板，一键应用，自动搭建好节点连接。</p>
+      <p>常用技能：一键白底图、A+详情图、产品图精修、AI模特试穿、文生视频、图生视频、图文种草、带货视频、跨境Listing等。</p>
+
+      <h3>📦 市场模板（25个）</h3>
+      <p>预设了25个完整的工作流模板，一键导入，开箱即用。</p>
+      <p>热门模板：电商详情页生成、短视频带货、品牌IP全案、PPT自动生成、图文创作等。</p>
+
+      <div class="callout cfg"><b class="t">使用方法</b>
+        点击左侧对应标签 → 选择需要的资源 → 点击"添加到画布"或"导入" → 自动生成节点组合，修改内容后运行。
+      </div>
+    </section>
+
+    <!-- ========== 模型配置 ========== -->
+    <section class="card" id="models">
+      <h2><span class="n">⑳</span>模型配置说明</h2>
+      <p class="sub">工作台支持3个供应商，17个模型，可自由切换。</p>
+
+      <h3>🤖 Ollama本地模型（默认）<span class="badge ok">推荐</span></h3>
+      <div class="callout info"><b class="t">优点</b>免费、私密、不需要联网、数据不出本机。</div>
+      <table>
+        <thead><tr><th>模型</th><th>用途</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>qwen2.5:7b</td><td>文本生成</td><td>通义千问2.5，中文优秀</td></tr>
+          <tr><td>qwen2.5vl:7b</td><td>视觉理解</td><td>支持图片输入</td></tr>
+          <tr><td>deepseek-r1:7b</td><td>深度推理</td><td>数学/逻辑/代码强</td></tr>
+          <tr><td>nomic-embed-text</td><td>向量嵌入</td><td>知识库用</td></tr>
+        </tbody>
+      </table>
+      <p><strong>添加新模型</strong>：在终端运行 <code>ollama pull 模型名</code></p>
+
+      <h3>🧠 智谱中转站（4个免费模型）<span class="badge ok">推荐</span></h3>
+      <p><strong>API地址</strong>：https://open.bigmodel.cn/api/paas/v4</p>
+      <table>
+        <thead><tr><th>模型</th><th>领域</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td>glm-4-flash</td><td>文本生成</td><td>免费，日常对话/文案</td></tr>
+          <tr><td>glm-4.7-flash</td><td>深度思考</td><td>免费，复杂推理/分析</td></tr>
+          <tr><td>glm-4.6v-flash</td><td>视觉理解</td><td>免费，图片理解</td></tr>
+          <tr><td>cogview-3-flash</td><td>图像生成</td><td>免费，文生图</td></tr>
+        </tbody>
+      </table>
+
+      <h3>🎯 豆包中转站</h3>
+      <p><strong>API地址</strong>：https://ark.cn-beijing.volces.com/api/v3</p>
+      <p>需在火山引擎方舟控制台开通具体模型权限。</p>
+
+      <div class="callout cfg"><b class="t">如何切换模型</b>
+        <ol>
+          <li>点击画布上的LLM节点</li>
+          <li>在右侧参数面板，"API供应商"下拉选择</li>
+          <li>"模型"下拉选择具体模型</li>
+          <li>运行即可使用新模型</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== 画布操作 ========== -->
+    <section class="card" id="canvas">
+      <h2><span class="n">㉑</span>画布操作技巧</h2>
+
+      <h3>基本操作</h3>
+      <table>
+        <thead><tr><th>操作</th><th>方法</th></tr></thead>
+        <tbody>
+          <tr><td>添加节点</td><td>从左侧拖拽到画布，或双击画布搜索</td></tr>
+          <tr><td>连接节点</td><td>从节点右侧圆点拖到下一个节点左侧圆点</td></tr>
+          <tr><td>选中节点</td><td>单击节点</td></tr>
+          <tr><td>多选节点</td><td>按住Shift点击，或框选</td></tr>
+          <tr><td>移动节点</td><td>拖拽节点</td></tr>
+          <tr><td>删除节点</td><td>选中后按Delete键</td></tr>
+          <tr><td>复制/粘贴</td><td>Ctrl+C / Ctrl+V（Mac用Cmd）</td></tr>
+          <tr><td>撤销/重做</td><td>Ctrl+Z / Ctrl+Shift+Z</td></tr>
+          <tr><td>缩放画布</td><td>鼠标滚轮</td></tr>
+          <tr><td>平移画布</td><td>按住空格拖拽，或中键拖拽</td></tr>
+          <tr><td>自动布局</td><td>点击顶部"自动布局"按钮</td></tr>
+        </tbody>
+      </table>
+
+      <h3>分组与便签</h3>
+      <ul>
+        <li><strong>分组</strong>：选中多个节点，右键"创建分组"，可命名、改颜色、折叠</li>
+        <li><strong>便签</strong>：右键画布"添加便签"，可写备注、提醒，不影响运行</li>
+      </ul>
+
+      <h3>保存与导出</h3>
+      <ul>
+        <li><strong>保存</strong>：文件→保存，存入浏览器本地</li>
+        <li><strong>导出</strong>：文件→导出，下载JSON文件</li>
+        <li><strong>导入</strong>：文件→导入，加载之前导出的工作流</li>
+      </ul>
+    </section>
+
+    <!-- ========== 实战案例 ========== -->
+    <section class="card" id="examples">
+      <h2><span class="n">㉒</span>实战案例</h2>
+
+      <div class="callout cfg"><b class="t">案例1：生成产品文案</b>
+        <ol>
+          <li>拖入「提示词」节点，输入产品卖点</li>
+          <li>拖入「LLM」节点，系统提示词设为"外贸文案专家"</li>
+          <li>拖入「文本输出」节点</li>
+          <li>连接：提示词 → LLM → 文本输出</li>
+          <li>运行，查看生成的文案</li>
+        </ol>
+      </div>
+
+      <div class="callout info"><b class="t">案例2：生成产品白底图</b>
+        <ol>
+          <li>拖入「图片」节点，上传产品原图</li>
+          <li>拖入「去背景」节点，场景选"商品"</li>
+          <li>（可选）加「水印」节点</li>
+          <li>连接运行，得到透明背景/白底图</li>
+        </ol>
+      </div>
+
+      <div class="callout warn"><b class="t">案例3：回复买家询盘</b>
+        <ol>
+          <li>拖入「提示词」节点，粘贴买家询盘</li>
+          <li>拖入「询盘邮件生成」节点（锴利专线）</li>
+          <li>拖入「文本输出」节点</li>
+          <li>连接运行，得到专业英文回复</li>
+        </ol>
+      </div>
+
+      <div class="callout cfg"><b class="t">案例4：制作抖音视频</b>
+        <ol>
+          <li>拖入「抖音文案」节点，输入产品卖点</li>
+          <li>拖入「抖音脚本」节点，生成分镜</li>
+          <li>拖入「抖音视频生成」节点，生成视频</li>
+          <li>连接运行，得到完整抖音视频</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ========== 常见问题 ========== -->
+    <section class="card" id="faq">
+      <h2><span class="n">㉓</span>常见问题</h2>
+
+      <h3>Q1：节点运行后没有输出？</h3>
+      <p>A：检查：①节点是否正确连接（从右到左）②上游节点是否有输入内容 ③API供应商是否配置正确 ④查看底部运行日志。</p>
+
+      <h3>Q2：本地模型调用失败？</h3>
+      <p>A：确认Ollama已启动，终端运行 <code>ollama serve</code>，或检查启动器显示的Ollama状态。</p>
+
+      <h3>Q3：同事无法通过局域网访问？</h3>
+      <p>A：确认两台电脑在同一个WiFi，服务器已启动，IP地址正确，检查Mac防火墙设置。</p>
+
+      <h3>Q4：工作流数据会丢失吗？</h3>
+      <p>A：工作流保存在浏览器localStorage中，清除浏览器数据会丢失。建议重要工作流导出为JSON文件备份。</p>
+
+      <h3>Q5：如何添加新的API供应商？</h3>
+      <p>A：设置→供应商管理→添加供应商，填入API地址和Key。</p>
+
+      <h3>Q6：图片/视频生成很慢？</h3>
+      <p>A：AI生成需要时间，图片通常10-30秒，视频30秒-几分钟。可开启缓存加速重复请求。</p>
+
+      <h3>Q7：忘记登录密码？</h3>
+      <p>A：密码是 <code>（请在 assets/js/login.js 中查看或修改）</code>，如需修改，编辑 <code>assets/js/login.js</code> 文件。</p>
+
+      <h3>Q8：如何备份整个工作台？</h3>
+      <p>A：代码已自动备份到GitHub；本地备份在 <code>备份/</code> 文件夹；工作流单独导出JSON。</p>
+    </section>
+
+    <!-- ========== 快捷键 ========== -->
+    <section class="card" id="shortcuts">
+      <h2><span class="n">㉔</span>快捷键大全</h2>
+      <table>
+        <thead><tr><th>快捷键</th><th>功能</th></tr></thead>
+        <tbody>
+          <tr><td>Ctrl/Cmd + Z</td><td>撤销</td></tr>
+          <tr><td>Ctrl/Cmd + Shift + Z</td><td>重做</td></tr>
+          <tr><td>Ctrl/Cmd + C / V</td><td>复制/粘贴节点</td></tr>
+          <tr><td>Ctrl/Cmd + D</td><td>快速复制节点</td></tr>
+          <tr><td>Delete / Backspace</td><td>删除选中节点</td></tr>
+          <tr><td>Ctrl/Cmd + A</td><td>全选节点</td></tr>
+          <tr><td>Ctrl/Cmd + S</td><td>保存工作流</td></tr>
+          <tr><td>空格 + 拖拽</td><td>平移画布</td></tr>
+          <tr><td>鼠标滚轮</td><td>缩放画布</td></tr>
+          <tr><td>Shift + 点击</td><td>多选节点</td></tr>
+          <tr><td>双击画布</td><td>搜索添加节点</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <footer>
+      <p>🦁 <strong>锴利超级AI工作台</strong> | KaiLionCrafts Super AI Workbench</p>
+      <p>阳江市锴利国际贸易有限公司</p>
+      <p>版本 v2.10.29 | 最后更新 2026-09-25</p>
+      <p style="margin-top:15px;">
+        <span class="badge ok">90个节点</span>
+        <span class="badge ok">16个智能体</span>
+        <span class="badge ok">324条提示词</span>
+        <span class="badge ok">21个技能</span>
+        <span class="badge ok">25个模板</span>
+      </p>
+    </footer>
+
+  </main>
+</div>
+</body>
+</html>
