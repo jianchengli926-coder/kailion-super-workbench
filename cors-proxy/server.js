@@ -256,7 +256,11 @@ server.on('error', (e) => {
   throw e;
 });
 
-server.listen(port, () => {
-  console.log('锴利超级AI工作台 CORS 代理已启动 → http://localhost:' + port);
+// 绑定地址：默认仅本机 127.0.0.1，可通过 PROXY_HOST 环境变量覆盖
+const PROXY_HOST = process.env.PROXY_HOST || '127.0.0.1';
+
+server.listen(port, PROXY_HOST, () => {
+  console.log('锴利超级AI工作台 CORS 代理已启动 → http://' + (PROXY_HOST === '127.0.0.1' ? 'localhost' : PROXY_HOST) + ':' + port);
+  console.log('  绑定地址: ' + PROXY_HOST + (PROXY_HOST === '127.0.0.1' ? '（仅本机，安全）' : '（局域网可访问，请确保防火墙配置）'));
   console.log('  用法: /proxy?url=<目标URL>  或  请求头 X-Target-URL: <目标URL>');
 });

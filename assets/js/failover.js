@@ -261,6 +261,12 @@
         }
         return result;
       } catch (err) {
+        // 用户主动取消（点击停止）→ 立即终止故障转移链，不再尝试备用供应商
+        if (opts && opts.signal && opts.signal.aborted) {
+          lastError = err;
+          logFailover(currentProvider.name, '用户已停止，终止故障转移', 'failed');
+          break;
+        }
         lastError = err;
         logFailover(currentProvider.name, (labelVerb || '调用') + '失败: ' + (err.message || err), 'failed');
         continue;

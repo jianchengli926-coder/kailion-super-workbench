@@ -215,6 +215,18 @@
   /**
    * 简单Markdown渲染
    */
+  // URL 协议白名单（防 XSS：禁止 javascript: / data: 文本等危险协议）
+  function sanitizeUrl(url) {
+    if (!url || typeof url !== 'string') return '#';
+    try {
+      var u = new URL(url, window.location.href);
+      if (u.protocol === 'http:' || u.protocol === 'https:' || u.protocol === 'data:') {
+        return url;
+      }
+    } catch (e) {}
+    return '#';
+  }
+
   function renderMarkdown(text) {
     if (!text) return '';
 
@@ -243,11 +255,15 @@
     html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
     html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
 
-    // 链接
-    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    // 链接（URL 协议白名单防 XSS）
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, function(match, linkText, url) {
+      return '<a href="' + sanitizeUrl(url) + '" target="_blank" rel="noopener">' + linkText + '</a>';
+    });
 
-    // 图片
-    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" class="kb-img">');
+    // 图片（URL 协议白名单防 XSS）
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, function(match, alt, url) {
+      return '<img src="' + sanitizeUrl(url) + '" alt="' + alt + '" class="kb-img">';
+    });
 
     // 表格
     html = html.replace(/^\|(.+)\|$/gm, function(match, row) {

@@ -88,7 +88,7 @@
     ['同事无法通过局域网访问？',
      '确认两台电脑在同一个WiFi，服务器已启动，IP地址正确（默认192.168.1.22:8766），检查Mac防火墙设置。'],
     ['忘记登录密码？',
-     '密码是 441723。如需修改，编辑 assets/js/login.js 文件中的 PASSWORD 常量。'],
+     '密码是 （在 login.js 中设置）。如需修改，编辑 assets/js/login.js 文件中的 PASSWORD 常量。'],
     ['智谱GLM-4.6V Flash返回为空？',
      '这是视觉模型，需要上传图片输入才能正常工作。纯文本输入返回为空属正常行为，不是bug。'],
     ['如何备份整个工作台？',
@@ -278,7 +278,7 @@
         <!-- 访问方式 -->
         <section id="sec-access" class="manual-section">
           <h2 class="sec-title">🌐 三种访问方式</h2>
-          <p class="sec-desc">工作台部署在苹果主机服务器，支持本机、局域网、公网三种访问方式，所有方式都需要输入密码 441723 登录。</p>
+          <p class="sec-desc">工作台部署在苹果主机服务器，支持本机、局域网、公网三种访问方式，所有方式都需要输入密码 （在 login.js 中设置） 登录。</p>
           <div class="access-grid">
             ${ACCESS_METHODS.map(a => `
               <div class="access-card">
@@ -289,7 +289,7 @@
               </div>`).join('')}
           </div>
           <div class="api-usage-steps">
-            <p><b>🔐 登录密码：</b>所有访问方式统一密码 <code>441723</code>，5次错误锁定1分钟。</p>
+            <p><b>🔐 登录密码：</b>所有访问方式统一密码 <code>（在 login.js 中设置）</code>，5次错误锁定1分钟。</p>
             <p><b>💡 启动方式：</b>双击桌面「启动企业AI创作工作台.command」，自动检测环境、启动服务器、打开浏览器。</p>
             <p><b>⚠️ 注意：</b>局域网和公网访问需要服务器电脑保持开机且工作台服务器正在运行。</p>
           </div>
@@ -299,7 +299,7 @@
         <section id="sec-start" class="manual-section">
           <h2 class="sec-title">${tr('🚀 四步快速上手')}</h2>
           <div class="manual-steps">
-            <div class="mstep"><div class="mstep-num">1</div><div class="mstep-body"><b>启动并登录</b><p>双击桌面启动器，等待服务器启动，输入密码 441723 登录。默认使用本地Ollama模型，免费无需配置。</p></div></div>
+            <div class="mstep"><div class="mstep-num">1</div><div class="mstep-body"><b>启动并登录</b><p>双击桌面启动器，等待服务器启动，输入密码 （在 login.js 中设置） 登录。默认使用本地Ollama模型，免费无需配置。</p></div></div>
             <div class="mstep"><div class="mstep-num">2</div><div class="mstep-body"><b>拖拽节点</b><p>从左侧「节点库」把节点拖到画布，或双击卡片快速添加。90个节点按15个分类组织。</p></div></div>
             <div class="mstep"><div class="mstep-num">3</div><div class="mstep-body"><b>连线串联</b><p>拖动节点右侧圆点到下一节点左侧圆点，建立数据流向。</p></div></div>
             <div class="mstep"><div class="mstep-num">4</div><div class="mstep-body"><b>运行出结果</b><p>点顶部「运行全部」，按连线顺序调度节点并产出结果。图片/视频/文本都可在节点上预览下载。</p></div></div>

@@ -418,9 +418,12 @@ const server = http.createServer((req, res) => {
           headers[key] = req.headers[key];
         }
       }
+      // 使用原域名作为 Host 头（虚拟主机/CDN 路由需要）
+      headers['host'] = target.hostname + ((targetPort !== 80 && targetPort !== 443) ? ':' + targetPort : '');
 
       const proxyReq = client.request({
-        hostname: target.hostname,
+        hostname: validation.resolvedIP,
+        servername: target.hostname,
         port: targetPort,
         path: target.pathname + target.search,
         method: req.method,
