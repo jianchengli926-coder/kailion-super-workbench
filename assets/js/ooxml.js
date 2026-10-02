@@ -380,6 +380,19 @@ const EMU = { w: 12192000, h: 6858000 };  // 16:9
  * @param {Array<{title:string, bullets?:string[], note?:string, layout?:'cover'|'content'}>} slides
  */
 function buildPptx(slides, opts = {}) {
+  // v2.14.2: 自动检测blocks格式并转换为slides
+  var isBlocks = Array.isArray(slides) && slides.length > 0 &&
+    (slides[0].t || slides[0].type);
+  if (isBlocks) {
+    // 统一内部格式 t:'h1'/'h2'/'p'/'ul'
+    var normalized = slides.map(function(b) {
+      var t = b.t || (b.type === 'heading' ? 'h' + (b.level || 1) :
+        b.type === 'paragraph' ? 'p' : b.type === 'list' ? 'ul' :
+        b.type === 'table' ? 'table' : b.type);
+      return { t: t, text: b.text, items: b.items, rows: b.rows, header: b.header, level: b.level };
+    });
+    slides = blocksToSlides(normalized, opts.totalSlides);
+  }
   const list = slides.length ? slides : [{ title: opts.title || '锴利超级AI工作台', bullets: [] }];
   const title = opts.title || list[0]?.title || '锴利超级AI工作台 演示文稿';
 

@@ -312,6 +312,19 @@
    * 渲染公司知识库主视图
    */
   function renderCompanyKB(root) {
+    // v2.14.2: 兼容无参数调用——自动查找或创建容器
+    if (!root) {
+      root = document.getElementById('company-kb-container')
+        || document.querySelector('.res-content.active')
+        || document.getElementById('res-content');
+    }
+    if (!root) {
+      root = document.createElement('div');
+      root.id = 'company-kb-container';
+      root.className = 'res-content active';
+      var main = document.querySelector('.main-content') || document.body;
+      main.appendChild(root);
+    }
     root.innerHTML = `
       <div class="res-wrap">
         <div class="res-header">
