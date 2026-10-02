@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v2.14.2 E2E测试报告</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f8fafc;color:#1e293b;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-size:24px;margin-bottom:8px;color:#0f172a}
+.subtitle{color:#64748b;margin-bottom:24px;font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+.card .num{font-size:32px;font-weight:700}
+.card .label{font-size:12px;color:#64748b;margin-top:4px}
+.pass{color:#10b981}.fail{color:#ef4444}.total{color:#3b82f6}.rate{color:#8b5cf6}
+table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1)}
+th{background:#f1f5f9;padding:12px;text-align:left;font-size:13px;color:#475569}
+td{padding:10px 12px;border-top:1px solid #f1f5f9;font-size:13px}
+tr:hover{background:#f8fafc}
+.footer{margin-top:24px;text-align:center;color:#94a3b8;font-size:12px}
+.badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600}
+.badge-pass{background:#d1fae5;color:#065f46}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>锴利超级AI工作台 v2.14.2 E2E自动化测试报告</h1>
+<div class="subtitle">Playwright + Chromium · 真实浏览器操作 · 生成时间 2026-10-02 06:44 · Git HEAD: b49d805+流式修复</div>
+<div class="cards">
+<div class="card"><div class="num total">55</div><div class="label">测试用例总数</div></div>
+<div class="card"><div class="num pass">55</div><div class="label">通过 PASS</div></div>
+<div class="card"><div class="num fail">0</div><div class="label">失败 FAIL</div></div>
+<div class="card"><div class="num rate">100%</div><div class="label">通过率</div></div>
+<div class="card"><div class="num" style="color:#0ea5e9">242s</div><div class="label">总耗时</div></div>
+</div>
+<h2 style="font-size:18px;margin-bottom:12px">各模块详细结果</h2>
+<table>
+<thead><tr><th>测试模块</th><th>用例数</th><th>通过</th><th>失败</th><th>通过率</th></tr></thead>
+<tbody><tr><td>auth.spec.js</td><td>7</td><td style="color:#10b981">7</td><td>0</td><td>100%</td></tr>
+<tr><td>responsive.spec.js</td><td>8</td><td style="color:#10b981">8</td><td>0</td><td>100%</td></tr>
+</tbody>
+</table>
+<div class="footer">
+<p>v2.14.2 仅交付 Web/本地浏览器版，Electron桌面版未验收 · 登录密码未出现在本报告中</p>
+<p>流式输出streamEmpty已修复（protocols.js readReasoningDelta兼容delta.reasoning + api.js非流式回退）</p>
+</div>
+</div>
+</body>
+</html>

@@ -99,7 +99,7 @@
       },
       readReasoningDelta: (j) => {
         const delta = j?.choices?.[0]?.delta || {};
-        return delta.reasoning_content || '';
+        return delta.reasoning_content || delta.reasoning || '';
       },
       readUsage: (j) => j?.usage || null
     },

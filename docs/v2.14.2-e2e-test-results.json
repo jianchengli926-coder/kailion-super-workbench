@@ -3,7 +3,8 @@
     "argv": [
       "/Users/a123/Library/Application Support/Doubao/sandbox_runtime/bases/98670218a5f0d8bc9b9ebf3f70881304/bin/node",
       "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/node_modules/.bin/playwright",
-      "test"
+      "test",
+      "--reporter=json"
     ],
     "configFile": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/playwright.config.js",
     "rootDir": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e",
@@ -41,14 +42,7 @@
     "quiet": false,
     "reporter": [
       [
-        "list",
-        null
-      ],
-      [
-        "json",
-        {
-          "outputFile": "docs/v2.14.2-e2e-test-results.json"
-        }
+        "json"
       ]
     ],
     "reportSlowTests": {
@@ -93,12 +87,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 410,
+                      "duration": 658,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:12:07.681Z",
+                      "startTime": "2026-10-02T13:40:05.631Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -135,12 +129,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2824,
+                      "duration": 2882,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:12:08.175Z",
+                      "startTime": "2026-10-02T13:40:06.631Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -169,12 +163,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2796,
+                      "duration": 2866,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:12:11.005Z",
+                      "startTime": "2026-10-02T13:40:09.520Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -211,12 +205,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 3383,
+                      "duration": 3000,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:12:13.806Z",
+                      "startTime": "2026-10-02T13:40:12.392Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -245,12 +239,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 65378,
+                      "duration": 65372,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:12:17.193Z",
+                      "startTime": "2026-10-02T13:40:15.396Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -287,12 +281,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2805,
+                      "duration": 2879,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:13:22.577Z",
+                      "startTime": "2026-10-02T13:41:20.775Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -321,12 +315,12 @@
                       "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2952,
+                      "duration": 2909,
                       "errors": [],
                       "stdout": [],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:13:25.390Z",
+                      "startTime": "2026-10-02T13:41:23.660Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -365,12 +359,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2781,
+                  "duration": 2822,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:28.352Z",
+                  "startTime": "2026-10-02T13:41:26.581Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -399,12 +393,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2792,
+                  "duration": 2766,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:31.138Z",
+                  "startTime": "2026-10-02T13:41:29.407Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -433,12 +427,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2778,
+                  "duration": 2772,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:33.938Z",
+                  "startTime": "2026-10-02T13:41:32.181Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -467,12 +461,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2765,
+                  "duration": 2832,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:36.721Z",
+                  "startTime": "2026-10-02T13:41:34.957Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -501,12 +495,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2998,
+                  "duration": 2945,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:39.490Z",
+                  "startTime": "2026-10-02T13:41:37.794Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -535,12 +529,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2801,
+                  "duration": 2783,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:42.492Z",
+                  "startTime": "2026-10-02T13:41:40.743Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -577,12 +571,12 @@
                   "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 15304,
+                  "duration": 7941,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:13:45.300Z",
+                  "startTime": "2026-10-02T13:41:43.536Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -597,7 +591,7 @@
         },
         {
           "title": "流式输出逐段到达（onStreamChunk 被多次调用）",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -610,104 +604,18 @@
                 {
                   "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 7228,
-                  "error": {
-                    "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30",
-                    "stack": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)",
-                    "location": {
-                      "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
-                      "column": 13,
-                      "line": 279
-                    }
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
-                        "column": 13,
-                        "line": 279
-                      },
-                      "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 8248,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:00.609Z",
+                  "startTime": "2026-10-02T13:41:51.482Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium/error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
-                    "column": 13,
-                    "line": 279
-                  }
-                },
-                {
-                  "workerIndex": 1,
-                  "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 6599,
-                  "error": {
-                    "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30",
-                    "stack": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)",
-                    "location": {
-                      "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
-                      "column": 13,
-                      "line": 279
-                    }
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
-                        "column": 13,
-                        "line": 279
-                      },
-                      "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)"
-                    }
-                  ],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 1,
-                  "startTime": "2026-10-02T10:14:08.135Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium-retry1/test-failed-1.png"
-                    },
-                    {
-                      "name": "video",
-                      "contentType": "video/webm",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium-retry1/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium-retry1/error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
-                    "column": 13,
-                    "line": 279
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "be7ddb83b817fe742a09-08a593b013595c235a92",
@@ -717,7 +625,7 @@
         },
         {
           "title": "reasoning 与 content 通过不同回调分离（onReasoning vs onStreamChunk）",
-          "ok": false,
+          "ok": true,
           "tags": [],
           "tests": [
             {
@@ -728,108 +636,20 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 2,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 15585,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)",
-                    "location": {
-                      "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
-                      "column": 27,
-                      "line": 68
-                    },
-                    "snippet": "  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
-                        "column": 27,
-                        "line": 68
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n\n  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)"
-                    }
-                  ],
+                  "status": "passed",
+                  "duration": 15111,
+                  "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:15.099Z",
+                  "startTime": "2026-10-02T13:41:59.735Z",
                   "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium/test-failed-1.png"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium/error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
-                    "column": 27,
-                    "line": 68
-                  }
-                },
-                {
-                  "workerIndex": 3,
-                  "parallelIndex": 0,
-                  "status": "failed",
-                  "duration": 15910,
-                  "error": {
-                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m",
-                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)",
-                    "location": {
-                      "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
-                      "column": 27,
-                      "line": 68
-                    },
-                    "snippet": "  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');"
-                  },
-                  "errors": [
-                    {
-                      "location": {
-                        "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
-                        "column": 27,
-                        "line": 68
-                      },
-                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n\n  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)"
-                    }
-                  ],
-                  "stdout": [],
-                  "stderr": [],
-                  "retry": 1,
-                  "startTime": "2026-10-02T10:14:30.989Z",
-                  "annotations": [],
-                  "attachments": [
-                    {
-                      "name": "screenshot",
-                      "contentType": "image/png",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium-retry1/test-failed-1.png"
-                    },
-                    {
-                      "name": "video",
-                      "contentType": "video/webm",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium-retry1/video.webm"
-                    },
-                    {
-                      "name": "error-context",
-                      "contentType": "text/markdown",
-                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium-retry1/error-context.md"
-                    }
-                  ],
-                  "errorLocation": {
-                    "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
-                    "column": 27,
-                    "line": 68
-                  }
+                  "attachments": []
                 }
               ],
-              "status": "unexpected"
+              "status": "expected"
             }
           ],
           "id": "be7ddb83b817fe742a09-b340aceb2e19e612a429",
@@ -850,15 +670,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3049,
+                  "duration": 3165,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:47.372Z",
+                  "startTime": "2026-10-02T13:42:14.851Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -868,7 +688,7 @@
           ],
           "id": "be7ddb83b817fe742a09-fdc530a33260d91af4ca",
           "file": "content.spec.js",
-          "line": 75,
+          "line": 79,
           "column": 1
         }
       ]
@@ -892,15 +712,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2867,
+                  "duration": 2816,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:50.653Z",
+                  "startTime": "2026-10-02T13:42:18.025Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -926,15 +746,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2863,
+                  "duration": 2790,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:53.534Z",
+                  "startTime": "2026-10-02T13:42:20.845Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -960,15 +780,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2839,
+                  "duration": 2727,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:56.407Z",
+                  "startTime": "2026-10-02T13:42:23.639Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -994,15 +814,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2864,
+                  "duration": 2803,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:14:59.258Z",
+                  "startTime": "2026-10-02T13:42:26.370Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1028,15 +848,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2841,
+                  "duration": 2775,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:02.129Z",
+                  "startTime": "2026-10-02T13:42:29.177Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1062,15 +882,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2380,
+                  "duration": 2806,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:04.978Z",
+                  "startTime": "2026-10-02T13:42:31.955Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1104,15 +924,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2883,
+                  "duration": 2801,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:07.368Z",
+                  "startTime": "2026-10-02T13:42:34.770Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1138,15 +958,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2794,
+                  "duration": 2806,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:10.256Z",
+                  "startTime": "2026-10-02T13:42:37.577Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1172,15 +992,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2953,
+                  "duration": 2783,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:13.057Z",
+                  "startTime": "2026-10-02T13:42:40.387Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1206,15 +1026,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 4477,
+                  "duration": 4431,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:16.027Z",
+                  "startTime": "2026-10-02T13:42:43.174Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1240,15 +1060,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3369,
+                  "duration": 3312,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:20.509Z",
+                  "startTime": "2026-10-02T13:42:47.610Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1282,15 +1102,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3018,
+                  "duration": 2970,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:23.888Z",
+                  "startTime": "2026-10-02T13:42:50.934Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1316,15 +1136,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3070,
+                  "duration": 2773,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:26.912Z",
+                  "startTime": "2026-10-02T13:42:53.907Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1350,15 +1170,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2925,
+                  "duration": 2898,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:29.989Z",
+                  "startTime": "2026-10-02T13:42:56.687Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1384,15 +1204,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2900,
+                  "duration": 2844,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:32.920Z",
+                  "startTime": "2026-10-02T13:42:59.596Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1418,15 +1238,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2885,
+                  "duration": 2849,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:35.825Z",
+                  "startTime": "2026-10-02T13:43:02.445Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1452,15 +1272,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2880,
+                  "duration": 2834,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:38.717Z",
+                  "startTime": "2026-10-02T13:43:05.297Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1486,15 +1306,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2991,
+                  "duration": 2901,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:41.602Z",
+                  "startTime": "2026-10-02T13:43:08.136Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1528,15 +1348,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2865,
+                  "duration": 2780,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:44.606Z",
+                  "startTime": "2026-10-02T13:43:11.045Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1562,15 +1382,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2855,
+                  "duration": 2801,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:47.477Z",
+                  "startTime": "2026-10-02T13:43:13.829Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1596,15 +1416,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2828,
+                  "duration": 2783,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:50.337Z",
+                  "startTime": "2026-10-02T13:43:16.633Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1630,15 +1450,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2845,
+                  "duration": 2802,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:53.170Z",
+                  "startTime": "2026-10-02T13:43:19.420Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1664,15 +1484,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2884,
+                  "duration": 2817,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:56.020Z",
+                  "startTime": "2026-10-02T13:43:22.226Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1698,15 +1518,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2845,
+                  "duration": 2773,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:15:58.911Z",
+                  "startTime": "2026-10-02T13:43:25.047Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1732,15 +1552,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2797,
+                  "duration": 2814,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:16:01.761Z",
+                  "startTime": "2026-10-02T13:43:27.825Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1763,13 +1583,13 @@
       "specs": [],
       "suites": [
         {
-          "title": "移动端 375x812",
+          "title": "手机-375 (375x812)",
           "file": "responsive.spec.js",
-          "line": 16,
-          "column": 6,
+          "line": 48,
+          "column": 8,
           "specs": [
             {
-              "title": "无横向溢出，画布可见",
+              "title": "无横向溢出，关键元素可见",
               "ok": true,
               "tags": [],
               "tests": [
@@ -1781,15 +1601,19 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2746,
+                      "duration": 2730,
                       "errors": [],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "[手机-375] toolbar: 4/61 visible, 57 hidden, overflow=0px\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:16:04.568Z",
+                      "startTime": "2026-10-02T13:43:30.647Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1797,21 +1621,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "68833bfb7a01a66a4f98-ff45f3576b06465d494c",
+              "id": "68833bfb7a01a66a4f98-abe0f305a88d13fbe9d6",
               "file": "responsive.spec.js",
-              "line": 18,
-              "column": 3
+              "line": 50,
+              "column": 5
             }
           ]
         },
         {
-          "title": "平板 768x1024",
+          "title": "手机横-598 (598x360)",
           "file": "responsive.spec.js",
-          "line": 26,
-          "column": 6,
+          "line": 48,
+          "column": 8,
           "specs": [
             {
-              "title": "无横向溢出，工具栏与画布可见",
+              "title": "无横向溢出，关键元素可见",
               "ok": true,
               "tags": [],
               "tests": [
@@ -1823,15 +1647,19 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2829,
+                      "duration": 2752,
                       "errors": [],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "[手机横-598] toolbar: 7/61 visible, 54 hidden, overflow=0px\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:16:07.319Z",
+                      "startTime": "2026-10-02T13:43:33.382Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1839,21 +1667,21 @@
                   "status": "expected"
                 }
               ],
-              "id": "68833bfb7a01a66a4f98-553205b0a9438410fa92",
+              "id": "68833bfb7a01a66a4f98-f54d31cefbb15b56e5fe",
               "file": "responsive.spec.js",
-              "line": 28,
-              "column": 3
+              "line": 50,
+              "column": 5
             }
           ]
         },
         {
-          "title": "桌面 1920x1080",
+          "title": "平板竖-768 (768x1024)",
           "file": "responsive.spec.js",
-          "line": 36,
-          "column": 6,
+          "line": 48,
+          "column": 8,
           "specs": [
             {
-              "title": "无横向溢出，画布可见",
+              "title": "无横向溢出，关键元素可见",
               "ok": true,
               "tags": [],
               "tests": [
@@ -1865,15 +1693,19 @@
                   "projectName": "chromium",
                   "results": [
                     {
-                      "workerIndex": 4,
+                      "workerIndex": 0,
                       "parallelIndex": 0,
                       "status": "passed",
-                      "duration": 2875,
+                      "duration": 2885,
                       "errors": [],
-                      "stdout": [],
+                      "stdout": [
+                        {
+                          "text": "[平板竖-768] toolbar: 12/61 visible, 49 hidden, overflow=0px\n"
+                        }
+                      ],
                       "stderr": [],
                       "retry": 0,
-                      "startTime": "2026-10-02T10:16:10.152Z",
+                      "startTime": "2026-10-02T13:43:36.139Z",
                       "annotations": [],
                       "attachments": []
                     }
@@ -1881,10 +1713,240 @@
                   "status": "expected"
                 }
               ],
-              "id": "68833bfb7a01a66a4f98-adf3444ff471e2c14f92",
+              "id": "68833bfb7a01a66a4f98-45efd7690edcb7a81da7",
               "file": "responsive.spec.js",
-              "line": 38,
-              "column": 3
+              "line": 50,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "平板横-820 (820x1180)",
+          "file": "responsive.spec.js",
+          "line": 48,
+          "column": 8,
+          "specs": [
+            {
+              "title": "无横向溢出，关键元素可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2817,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[平板横-820] toolbar: 7/61 visible, 54 hidden, overflow=0px\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T13:43:39.033Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-7d980d3d2bcd2c39e6a1",
+              "file": "responsive.spec.js",
+              "line": 50,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "小桌面-1024 (1024x768)",
+          "file": "responsive.spec.js",
+          "line": 48,
+          "column": 8,
+          "specs": [
+            {
+              "title": "无横向溢出，关键元素可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2780,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[小桌面-1024] toolbar: 14/61 visible, 47 hidden, overflow=0px\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T13:43:41.855Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-500dc090d82c1d852bb9",
+              "file": "responsive.spec.js",
+              "line": 50,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "标准-1280 (1280x800)",
+          "file": "responsive.spec.js",
+          "line": 48,
+          "column": 8,
+          "specs": [
+            {
+              "title": "无横向溢出，关键元素可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2842,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[标准-1280] toolbar: 22/61 visible, 39 hidden, overflow=0px\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T13:43:44.639Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-64c470e76f6d282e6a6d",
+              "file": "responsive.spec.js",
+              "line": 50,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "大桌面-1440 (1440x900)",
+          "file": "responsive.spec.js",
+          "line": 48,
+          "column": 8,
+          "specs": [
+            {
+              "title": "无横向溢出，关键元素可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2826,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[大桌面-1440] toolbar: 25/61 visible, 36 hidden, overflow=0px\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T13:43:47.487Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-ec83fc531debcbb0b1e6",
+              "file": "responsive.spec.js",
+              "line": 50,
+              "column": 5
+            }
+          ]
+        },
+        {
+          "title": "全高清-1920 (1920x1080)",
+          "file": "responsive.spec.js",
+          "line": 48,
+          "column": 8,
+          "specs": [
+            {
+              "title": "无横向溢出，关键元素可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2423,
+                      "errors": [],
+                      "stdout": [
+                        {
+                          "text": "[全高清-1920] toolbar: 28/61 visible, 33 hidden, overflow=0px\n"
+                        }
+                      ],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T13:43:50.319Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-429f7ddfccef2de153f2",
+              "file": "responsive.spec.js",
+              "line": 50,
+              "column": 5
             }
           ]
         }
@@ -1909,15 +1971,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2802,
+                  "duration": 2797,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:16:13.036Z",
+                  "startTime": "2026-10-02T13:43:52.750Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1943,15 +2005,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2852,
+                  "duration": 2772,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:16:15.844Z",
+                  "startTime": "2026-10-02T13:43:55.552Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -1977,15 +2039,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 3447,
+                  "duration": 3456,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:16:18.704Z",
+                  "startTime": "2026-10-02T13:43:58.327Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2011,15 +2073,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2767,
+                  "duration": 2840,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:16:22.156Z",
+                  "startTime": "2026-10-02T13:44:01.787Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2045,15 +2107,15 @@
               "projectName": "chromium",
               "results": [
                 {
-                  "workerIndex": 4,
+                  "workerIndex": 0,
                   "parallelIndex": 0,
                   "status": "passed",
-                  "duration": 2795,
+                  "duration": 2793,
                   "errors": [],
                   "stdout": [],
                   "stderr": [],
                   "retry": 0,
-                  "startTime": "2026-10-02T10:16:24.926Z",
+                  "startTime": "2026-10-02T13:44:04.632Z",
                   "annotations": [],
                   "attachments": []
                 }
@@ -2071,11 +2133,11 @@
   ],
   "errors": [],
   "stats": {
-    "startTime": "2026-10-02T10:12:07.482Z",
-    "duration": 260299.351,
-    "expected": 48,
+    "startTime": "2026-10-02T13:40:05.425Z",
+    "duration": 242067.975,
+    "expected": 55,
     "skipped": 0,
-    "unexpected": 2,
+    "unexpected": 0,
     "flaky": 0
   }
 }

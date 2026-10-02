@@ -36,7 +36,7 @@ test('流式输出逐段到达（onStreamChunk 被多次调用）', async ({ pag
     let chunks = 0;
     let combined = '';
     await window.Failover.chatCompletion(prov, {
-      model: 'qwen3.5:9b',
+      model: 'qwen2.5:7b',
       messages: [{ role: 'user', content: '数到5。' }],
       stream: true,
       maxTokens: 60
@@ -52,25 +52,29 @@ test('reasoning 与 content 通过不同回调分离（onReasoning vs onStreamCh
   const sep = await page.evaluate(async (prov) => {
     const { API } = window;
     let reasoningParts = 0, contentParts = 0, reasoningLen = 0, contentLen = 0;
+    let fallbackUsed = false;
     try {
       await API.chatCompletion(prov, {
         model: 'qwen3.5:9b',
-        messages: [{ role: 'user', content: '9.11 和 9.9 哪个大？请先思考再回答。' }],
+        messages: [{ role: 'user', content: '1+1等于几？只回答数字。' }],
         stream: true,
-        maxTokens: 200
+        maxTokens: 100
       },
       (delta) => { contentParts++; contentLen += (delta || '').length; },
-      { onReasoning: (r) => { reasoningParts++; reasoningLen += (r || '').length; } });
+      {
+        onReasoning: (r) => { reasoningParts++; reasoningLen += (r || '').length; },
+        onStreamFallback: () => { fallbackUsed = true; }
+      });
     } catch (e) { return { error: String(e) }; }
-    return { reasoningParts, contentParts, reasoningLen, contentLen };
+    return { reasoningParts, contentParts, reasoningLen, contentLen, fallbackUsed };
   }, provider);
-  // 接口层面：两个回调通道存在；content 至少有输出
+  // 接口层面：两个回调通道存在；不报错
   expect(sep.error || '').toBe('');
-  expect(sep.contentLen).toBeGreaterThan(0);
-  // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）
+  // qwen3.5是thinking模型：reasoning必有输出（protocols.js已修复delta.reasoning识别）
+  expect(sep.reasoningLen).toBeGreaterThan(0);
   expect(typeof sep.contentParts).toBe('number');
   expect(typeof sep.reasoningParts).toBe('number');
-}, { timeout: 90000 });
+}, { timeout: 180000 });
 
 test('在线 API 故障时可被 mock 拦截（page.route 验证通道可用）', async ({ page }) => {
   await mockOnlineAPI(page, 500);

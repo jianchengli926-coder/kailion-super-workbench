@@ -372,8 +372,45 @@
 
       // 流式 SSE 分支
       if (stream && resp.body) {
-        _alOut = await consumeSSE(resp, proto, onStreamChunk, opts);
-        return _alOut;
+        try {
+          _alOut = await consumeSSE(resp, proto, onStreamChunk, opts);
+          return _alOut;
+        } catch (sseErr) {
+          // v2.14.2：流式为空时自动回退非流式（只重试一次，避免重复计费）
+          const isStreamEmpty = sseErr && sseErr.message &&
+            (sseErr.message.indexOf('streamEmpty') >= 0 || sseErr.message.indexOf('流式响应未返回内容') >= 0);
+          if (isStreamEmpty && !opts._streamFallbackTried) {
+            console.warn('[API.chatCompletion] 流式响应为空，自动切换非流式重试（仅一次）');
+            if (typeof opts.onStreamFallback === 'function') {
+              try { opts.onStreamFallback('流式不可用，已切换非流式'); } catch (e) {}
+            }
+            // 重新发起非流式请求
+            body.stream = false;
+            opts._streamFallbackTried = true;
+            const resp2 = await apiFetch(url, {
+              method: 'POST',
+              headers: headers,
+              body: JSON.stringify(body)
+            }, { signal: opts.signal, timeoutMs: timeoutMs });
+            const data2 = await readBody(resp2);
+            const content2 = (typeof proto.readText === 'function') ? proto.readText(data2) : '';
+            const reasoning2 = (typeof proto.readReasoning === 'function') ? (proto.readReasoning(data2) || '') : '';
+            if (reasoning2 && typeof opts.onReasoning === 'function') {
+              try { opts.onReasoning(reasoning2); } catch (e) {}
+            }
+            if (!content2) {
+              if (reasoning2) {
+                console.warn('[API.chatCompletion] 非流式回退content为空，使用reasoning兜底');
+                _alOut = String(reasoning2);
+                return _alOut;
+              }
+              throw new Error(tr('api.err.noContent', '模型未返回最终内容（可能是 max_tokens 不足或模型异常）'));
+            }
+            _alOut = String(content2);
+            return _alOut;
+          }
+          throw sseErr; // 非streamEmpty错误或已回退过，继续抛出
+        }
       }
 
       // 非流式分支（v2.14.0：分离 reasoning 与 content）
