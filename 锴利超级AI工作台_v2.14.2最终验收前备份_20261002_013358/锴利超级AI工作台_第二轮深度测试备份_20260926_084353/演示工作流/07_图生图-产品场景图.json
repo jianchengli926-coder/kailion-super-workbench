@@ -1,0 +1,13 @@
+{
+  "name": "图生图-产品场景图生成",
+  "desc": "上传产品白底图，生成厨房场景图",
+  "nodes": [
+    {"id":"n1","type":"imageInputNode","x":50,"y":100,"params":{"resize":"none"}},
+    {"id":"n2","type":"promptNode","x":50,"y":300,"params":{"text":"这把厨师刀放在现代厨房的木质砧板上，旁边有新鲜蔬菜和橄榄油，温暖的自然光，专业美食摄影风格，浅景深，高清细节"}},
+    {"id":"n3","type":"imageGeneratorProNode","x":400,"y":200,"params":{"providerId":"builtin_zhipu_relay","model":"cogview-3-flash","size":"1280x720","count":1,"negativePrompt":"模糊,低质量,变形,水印,文字,边框,噪点,过曝,产品变形"}}
+  ],
+  "links": [
+    {"from":{"node":"n1","port":"out"},"to":{"node":"n3","port":"in"}},
+    {"from":{"node":"n2","port":"out"},"to":{"node":"n3","port":"in"}}
+  ]
+}

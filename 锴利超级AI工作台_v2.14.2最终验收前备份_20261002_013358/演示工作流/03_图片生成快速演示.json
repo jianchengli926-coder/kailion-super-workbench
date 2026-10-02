@@ -1,0 +1,10 @@
+{
+  "name": "图片生成快速演示",
+  "nodes": [
+    {"id":"n1","type":"promptNode","x":50,"y":200,"params":{"text":"一只可爱的橘猫在阳光下打盹，高清摄影风格，温暖色调"}},
+    {"id":"n2","type":"imageGeneratorProNode","x":400,"y":200,"params":{"providerId":"builtin_zhipu_relay","model":"cogview-3-flash","size":"1024x1024","count":1}}
+  ],
+  "links": [
+    {"from":{"node":"n1","port":"out"},"to":{"node":"n2","port":"in"}}
+  ]
+}

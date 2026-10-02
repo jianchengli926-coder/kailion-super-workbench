@@ -1,0 +1,24 @@
+#!/bin/bash
+# KaiLionCrafts AI工作台 - Mac App启动器
+# 此文件位于 .app/Contents/MacOS/launcher
+
+# 获取.app包所在目录（上三级：MacOS -> Contents -> .app -> 父目录）
+APP_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../../.." && pwd )"
+
+# 工作台HTML文件路径（与.app在同一目录）
+HTML_FILE="$APP_DIR/KaiLionCrafts工作台.html"
+
+# 如果同目录没有，尝试.app内部Resources目录
+if [ ! -f "$HTML_FILE" ]; then
+    HTML_FILE="$( cd "$( dirname "${BASH_SOURCE[0]}" )/../Resources" && pwd )/KaiLionCrafts工作台.html"
+fi
+
+# 检查文件是否存在
+if [ -f "$HTML_FILE" ]; then
+    # 用默认浏览器打开
+    open "$HTML_FILE"
+else
+    osascript -e 'display dialog "未找到工作台文件：KaiLionCrafts工作台.html\n\n请确保工作台HTML文件与 KaiLionCrafts工作台.app 在同一文件夹中。" buttons {"确定"} default button 1 with title "KaiLionCrafts AI工作台" with icon stop'
+fi
+
+exit 0
