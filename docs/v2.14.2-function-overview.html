@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>锴利超级AI工作台 v2.14.2 功能概览</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;background:#f0f4f8;color:#1e293b;padding:20px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-size:26px;margin-bottom:4px;color:#0f172a}
+.subtitle{color:#64748b;margin-bottom:24px;font-size:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:24px}
+.card{background:#fff;border-radius:12px;padding:16px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.card .num{font-size:28px;font-weight:700}
+.card .label{font-size:12px;color:#64748b;margin-top:4px}
+.section{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.section h2{font-size:18px;margin-bottom:16px;color:#0f172a;border-left:4px solid #d4af37;padding-left:12px}
+table{width:100%;border-collapse:collapse}
+th{background:#f8fafc;padding:10px;text-align:left;font-size:13px;color:#475569;border-bottom:2px solid #e2e8f0}
+td{padding:9px 10px;border-bottom:1px solid #f1f5f9;font-size:13px}
+tr:hover{background:#f8fafc}
+.logic-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.logic-item{background:#f8fafc;border-radius:10px;padding:16px;border-left:3px solid #d4af37}
+.logic-item h3{font-size:14px;margin-bottom:8px;color:#0f172a}
+.logic-item p{font-size:13px;color:#475569;line-height:1.7}
+.badge{display:inline-block;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:600;margin-right:4px}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-orange{background:#fef3c7;color:#92400e}
+.badge-blue{background:#dbeafe;color:#1e40af}
+.badge-purple{background:#ede9fe;color:#5b21b6}
+.badge-red{background:#fee2e2;color:#991b1b}
+.footer{text-align:center;color:#94a3b8;font-size:12px;margin-top:24px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>锴利超级AI工作台 v2.14.2 功能概览</h1>
+<div class="subtitle">企业级 AI 内容创作平台 · 生成时间 2026-10-02 07:59 · Git HEAD: 1412335+登录页增强</div>
+
+<div class="cards">
+<div class="card"><div class="num" style="color:#3b82f6">337</div><div class="label">功能条目总数</div></div>
+<div class="card"><div class="num" style="color:#10b981">335</div><div class="label">浏览器支持</div></div>
+<div class="card"><div class="num" style="color:#8b5cf6">138</div><div class="label">移动端支持</div></div>
+<div class="card"><div class="num" style="color:#0ea5e9">337</div><div class="label">代码已验证</div></div>
+<div class="card"><div class="num" style="color:#f59e0b">217</div><div class="label">需API Key</div></div>
+<div class="card"><div class="num" style="color:#ec4899">2</div><div class="label">需Ollama</div></div>
+</div>
+
+<div class="section">
+<h2>模型使用逻辑</h2>
+<div class="logic-grid">
+<div class="logic-item">
+<h3>🔄 默认优先级</h3>
+<p>在线 GLM 免费 → 其他在线供应商 → Ollama 本地文本 → Ollama 本地视觉。在线全部失败时自动回退到本地 Ollama。</p>
+</div>
+<div class="logic-item">
+<h3>👆 用户手动选择</h3>
+<p>用户手动选择的供应商/模型优先使用，仅在失败时才触发故障转移。通过 <code>onProviderUsed</code> 回调显示实际使用的模型，不静默换模型。</p>
+</div>
+<div class="logic-item">
+<h3>🛡️ 类型保护</h3>
+<p>embedding 不用于聊天、纯文本不用于视觉、文本不用于图片、图片不用于 embedding。<code>getModelForType</code> 按能力匹配，无同类型模型时跳过该备用供应商。</p>
+</div>
+<div class="logic-item">
+<h3>⏹️ 停止中断</h3>
+<p>用户点击停止后，<code>AbortController</code> 立即终止当前请求，故障转移链检测到 <code>signal.aborted</code> 后不再尝试备用模型。</p>
+</div>
+<div class="logic-item">
+<h3>🔁 故障转移配置</h3>
+<p>支持开关、顺序配置、单次重试上限、失败原因记录、主备模型自动替换。qwen3.5 仅在 Ollama 环境使用，不切换到不支持它的供应商。</p>
+</div>
+<div class="logic-item">
+<h3>📊 实际模型显示</h3>
+<p>每次调用后通过 <code>onProviderUsed(providerName, modelId)</code> 报告实际使用的供应商和模型，UI 可展示"已切换到备用模型"提示。</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>知识库功能（586 文档 · 14 分类）</h2>
+<div class="logic-grid">
+<div class="logic-item">
+<h3>🔍 混合检索</h3>
+<p>关键词搜索 + 向量搜索（nomic-embed-text:latest，768维）合并去重，按相似度排序。向量不可用时自动回退关键词检索。</p>
+</div>
+<div class="logic-item">
+<h3>📄 资料展示</h3>
+<p>搜索结果显示资料标题、分类、来源路径、更新时间、相似度百分比。无命中时明确提示"未找到相关资料"，不编造。</p>
+</div>
+<div class="logic-item">
+<h3>💉 LLM 注入</h3>
+<p>生成内容时自动注入相关资料片段，附"不得编造参数/认证/案例"约束。生成后进行事实核对，提取数字与引用资料比对。</p>
+</div>
+<div class="logic-item">
+<h3>🔄 索引管理</h3>
+<p>页面加载自动增量索引新文档，支持手动重建索引（带进度条）。向量缓存到 localStorage，索引状态持久化。</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>登录保护</h2>
+<div class="logic-grid">
+<div class="logic-item">
+<h3>🔐 界面锁屏</h3>
+<p>前端密码验证为本地界面锁屏机制，<strong>不是企业级认证</strong>。sessionStorage 持久化登录状态，关闭浏览器后失效。公网/局域网部署必须启用服务端 ACCESS_TOKEN。</p>
+</div>
+<div class="logic-item">
+<h3>🚫 5次锁定</h3>
+<p>连续5次密码错误后锁定1分钟，锁定状态持久化到 sessionStorage（跨刷新有效）。锁定期间实时倒计时显示，到期自动解锁。</p>
+</div>
+<div class="logic-item">
+<h3>👁 密码显示切换</h3>
+<p>密码输入框 type=password，支持显示/隐藏切换按钮。错误提示不泄露正确密码，登录成功后清理敏感输入，退出登录清理会话。</p>
+</div>
+<div class="logic-item">
+<h3>🛡️ 防重复提交</h3>
+<p>提交中按钮显示加载动画，isSubmitting 标志防止重复点击。未登录不能通过内部 URL 绕过（登录遮罩层高 z-index 覆盖全部内容）。</p>
+</div>
+</div>
+</div>
+
+<div class="section">
+<h2>功能模块分布（31 个模块）</h2>
+<table>
+<thead><tr><th>模块</th><th>功能数</th><th>浏览器支持</th><th>移动端支持</th><th>已验证</th></tr></thead>
+<tbody><tr>
+<td><strong>专家库</strong></td>
+<td>41</td>
+<td>41</td>
+<td>41</td>
+<td style="color:#10b981">41 (100%)</td>
+</tr>
+<tr>
+<td><strong>工作流市场</strong></td>
+<td>25</td>
+<td>25</td>
+<td>0</td>
+<td style="color:#10b981">25 (100%)</td>
+</tr>
+<tr>
+<td><strong>技能库</strong></td>
+<td>21</td>
+<td>21</td>
+<td>0</td>
+<td style="color:#10b981">21 (100%)</td>
+</tr>
+<tr>
+<td><strong>API供应商</strong></td>
+<td>21</td>
+<td>21</td>
+<td>21</td>
+<td style="color:#10b981">21 (100%)</td>
+</tr>
+<tr>
+<td><strong>工作流模板库</strong></td>
+<td>20</td>
+<td>20</td>
+<td>0</td>
+<td style="color:#10b981">20 (100%)</td>
+</tr>
+<tr>
+<td><strong>导航视图</strong></td>
+<td>19</td>
+<td>19</td>
+<td>19</td>
+<td style="color:#10b981">19 (100%)</td>
+</tr>
+<tr>
+<td><strong>资源库</strong></td>
+<td>17</td>
+<td>17</td>
+<td>17</td>
+<td style="color:#10b981">17 (100%)</td>
+</tr>
+<tr>
+<td><strong>智能体</strong></td>
+<td>16</td>
+<td>16</td>
+<td>0</td>
+<td style="color:#10b981">16 (100%)</td>
+</tr>
+<tr>
+<td><strong>提示词库</strong></td>
+<td>16</td>
+<td>16</td>
+<td>16</td>
+<td style="color:#10b981">16 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 连接器</strong></td>
+<td>15</td>
+<td>13</td>
+<td>0</td>
+<td style="color:#10b981">15 (100%)</td>
+</tr>
+<tr>
+<td><strong>设置面板</strong></td>
+<td>13</td>
+<td>13</td>
+<td>13</td>
+<td style="color:#10b981">13 (100%)</td>
+</tr>
+<tr>
+<td><strong>导入导出</strong></td>
+<td>10</td>
+<td>10</td>
+<td>10</td>
+<td style="color:#10b981">10 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 图片生成</strong></td>
+<td>9</td>
+<td>9</td>
+<td>0</td>
+<td style="color:#10b981">9 (100%)</td>
+</tr>
+<tr>
+<td><strong>批量任务</strong></td>
+<td>9</td>
+<td>9</td>
+<td>0</td>
+<td style="color:#10b981">9 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 视频生成</strong></td>
+<td>8</td>
+<td>8</td>
+<td>0</td>
+<td style="color:#10b981">8 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 供应链工作流</strong></td>
+<td>8</td>
+<td>8</td>
+<td>0</td>
+<td style="color:#10b981">8 (100%)</td>
+</tr>
+<tr>
+<td><strong>演示工作流目录</strong></td>
+<td>8</td>
+<td>8</td>
+<td>0</td>
+<td style="color:#10b981">8 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 文件处理</strong></td>
+<td>7</td>
+<td>7</td>
+<td>0</td>
+<td style="color:#10b981">7 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 电商工作流</strong></td>
+<td>7</td>
+<td>7</td>
+<td>0</td>
+<td style="color:#10b981">7 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 视频工作流</strong></td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td style="color:#10b981">6 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 办公工作流</strong></td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td style="color:#10b981">6 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 锴利专线</strong></td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td style="color:#10b981">6 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 抖音运营</strong></td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+<td style="color:#10b981">6 (100%)</td>
+</tr>
+<tr>
+<td><strong>定时任务</strong></td>
+<td>5</td>
+<td>5</td>
+<td>0</td>
+<td style="color:#10b981">5 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 输入</strong></td>
+<td>4</td>
+<td>4</td>
+<td>0</td>
+<td style="color:#10b981">4 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 3D 生成</strong></td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td style="color:#10b981">3 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 协同与优化</strong></td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td style="color:#10b981">3 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · IP 工作流</strong></td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td style="color:#10b981">3 (100%)</td>
+</tr>
+<tr>
+<td><strong>Office 输出</strong></td>
+<td>3</td>
+<td>3</td>
+<td>0</td>
+<td style="color:#10b981">3 (100%)</td>
+</tr>
+<tr>
+<td><strong>节点 · 生活工具</strong></td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td style="color:#10b981">1 (100%)</td>
+</tr>
+<tr>
+<td><strong>知识库</strong></td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td style="color:#10b981">1 (100%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<div class="section">
+<h2>运行状态说明</h2>
+<p style="font-size:13px;color:#475569;line-height:2">
+<span class="badge badge-green">已验证</span> E2E 自动化测试或代码审查通过的功能<br>
+<span class="badge badge-orange">需API Key</span> 依赖在线供应商 API Key，未配置时标记为 BLOCKED/N/A，非 FAIL<br>
+<span class="badge badge-blue">需Ollama</span> 依赖本地 Ollama 模型（qwen3.5/qwen2.5/nomic/flux2-klein）<br>
+<span class="badge badge-purple">需Electron</span> 仅在 Electron 桌面环境可用，当前仅交付 Web/本地浏览器版<br>
+<span class="badge badge-red">实验性</span> Flux 图片生成等当前接口不支持的功能，不伪造结果
+</p>
+</div>
+
+<div class="footer">
+<p>v2.14.2 仅交付 Web/本地浏览器版，Electron 桌面版未验收 · 登录密码未出现在本文档中</p>
+<p>未新增 CRM/客户管理/销售系统 · 未伪造 Flux 图片结果 · 未编造业务事实</p>
+</div>
+</div>
+</body>
+</html>
