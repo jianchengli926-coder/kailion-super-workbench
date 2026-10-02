@@ -1,0 +1,202 @@
+/* ============================================================
+   results.css - 节点结果预览区样式 (v0.6.0)
+   适配深色主题
+   ============================================================ */
+
+/* ---------- 通用结果盒 ---------- */
+.result-box {
+  margin-top: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+  font-size: 12px;
+  color: #cbd5e1;
+}
+
+.result-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+.result-head:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+.result-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+}
+.result-toggle {
+  font-size: 10px;
+  color: #64748b;
+  transition: transform 0.2s;
+}
+.result-box.collapsed .result-toggle {
+  transform: rotate(-90deg);
+}
+.result-box.collapsed .result-body {
+  display: none;
+}
+.result-body {
+  padding: 8px 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ---------- 文本类结果 ---------- */
+.result-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+.result-meta {
+  font-size: 10px;
+  color: #64748b;
+}
+.result-text {
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #e2e8f0;
+}
+
+/* ---------- 按钮 ---------- */
+.result-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 3px 8px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.result-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+/* ---------- 图片类结果 ---------- */
+.result-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 6px;
+}
+.result-image-card {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.3);
+  aspect-ratio: 1;
+}
+.result-image-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  cursor: zoom-in;
+}
+.result-image-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.result-image-card:hover .result-image-overlay {
+  opacity: 1;
+}
+.result-image-overlay .result-btn {
+  padding: 2px 6px;
+  font-size: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.result-image-overlay .result-btn:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ---------- 灯箱（Lightbox） ---------- */
+.result-lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  cursor: zoom-out;
+}
+.result-lightbox img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- 文件类结果 ---------- */
+.result-file {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 0;
+}
+.result-file-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+.result-file-info {
+  min-width: 0;
+}
+.result-file-name {
+  font-size: 12px;
+  color: #e2e8f0;
+  word-break: break-all;
+}
+.result-file-size {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 2px;
+}
+.result-file-status {
+  font-size: 11px;
+  color: #4ade80;
+  margin-top: 4px;
+}
+
+/* ---------- 错误状态 ---------- */
+.result-error {
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  padding: 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+.result-error .result-btn {
+  margin-top: 6px;
+  color: #fca5a5;
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+.result-error .result-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #fecaca;
+}
