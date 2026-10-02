@@ -1,0 +1,2081 @@
+{
+  "config": {
+    "argv": [
+      "/Users/a123/Library/Application Support/Doubao/sandbox_runtime/bases/98670218a5f0d8bc9b9ebf3f70881304/bin/node",
+      "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/node_modules/.bin/playwright",
+      "test"
+    ],
+    "configFile": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/playwright.config.js",
+    "rootDir": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results",
+        "repeatEach": 1,
+        "retries": 1,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "json",
+        {
+          "outputFile": "docs/v2.14.2-e2e-test-results.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.63.0",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "auth.spec.js",
+      "file": "auth.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "登录页展示",
+          "file": "auth.spec.js",
+          "line": 25,
+          "column": 6,
+          "specs": [
+            {
+              "title": "登录遮罩默认显示，密码框为 type=password",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 410,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:12:07.681Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-da8fdafb09a6fca7f24b",
+              "file": "auth.spec.js",
+              "line": 26,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "密码校验",
+          "file": "auth.spec.js",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "错误密码提示剩余次数",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2824,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:12:08.175Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-b0e50754e5a89c6fa8b7",
+              "file": "auth.spec.js",
+              "line": 37,
+              "column": 3
+            },
+            {
+              "title": "正确密码进入工作台",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2796,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:12:11.005Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-f8618750ab5eb135fe56",
+              "file": "auth.spec.js",
+              "line": 46,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "失败锁定",
+          "file": "auth.spec.js",
+          "line": 57,
+          "column": 6,
+          "specs": [
+            {
+              "title": "连续5次失败后锁定，期间提交被拒",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3383,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:12:13.806Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-018dbf8f61f1d4957331",
+              "file": "auth.spec.js",
+              "line": 58,
+              "column": 3
+            },
+            {
+              "title": "锁定约1分钟后自动解锁，可用正确密码进入",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 95000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 65378,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:12:17.193Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-b7880f237d6ee4755943",
+              "file": "auth.spec.js",
+              "line": 74,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "退出与会话",
+          "file": "auth.spec.js",
+          "line": 91,
+          "column": 6,
+          "specs": [
+            {
+              "title": "退出登录后回到登录页",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2805,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:13:22.577Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-f09e1e6fa201a76133c3",
+              "file": "auth.spec.js",
+              "line": 92,
+              "column": 3
+            },
+            {
+              "title": "登录状态在刷新后保持（sessionStorage 会话级）",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2952,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:13:25.390Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "d5ed79a6b333c2ba7209-0a6ae43a69bf1117ba60",
+              "file": "auth.spec.js",
+              "line": 102,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "canvas.spec.js",
+      "file": "canvas.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "添加节点后状态中节点数为1",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2781,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:28.352Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "62e928dfa96c92c6b88f-9c167af24fc49d8969d1",
+          "file": "canvas.spec.js",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "拖拽移动节点后坐标变化",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2792,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:31.138Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "62e928dfa96c92c6b88f-d06f4584edde5197fc63",
+          "file": "canvas.spec.js",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "title": "从输出端口连到输入端口后产生连线",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2778,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:33.938Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "62e928dfa96c92c6b88f-aa205de1ba3cb0427680",
+          "file": "canvas.spec.js",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "选中节点按 Delete 删除",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2765,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:36.721Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "62e928dfa96c92c6b88f-0ed3cb27a8587791f6fd",
+          "file": "canvas.spec.js",
+          "line": 43,
+          "column": 1
+        },
+        {
+          "title": "保存工作流状态并在重新加载后还原（getState/setState 序列化往返）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2998,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:39.490Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "62e928dfa96c92c6b88f-de809da97f51aa01c802",
+          "file": "canvas.spec.js",
+          "line": 55,
+          "column": 1
+        },
+        {
+          "title": "撤销/重做可回退与恢复节点添加",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2801,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:42.492Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "62e928dfa96c92c6b88f-957ce18548c55988482b",
+          "file": "canvas.spec.js",
+          "line": 79,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "content.spec.js",
+      "file": "content.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "普通文案生成（Ollama qwen3.5:9b，非 thinking）返回非空文本",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 15304,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:13:45.300Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7ddb83b817fe742a09-ab167559024a0b5ba98e",
+          "file": "content.spec.js",
+          "line": 18,
+          "column": 1
+        },
+        {
+          "title": "流式输出逐段到达（onStreamChunk 被多次调用）",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 7228,
+                  "error": {
+                    "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30",
+                    "stack": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)",
+                    "location": {
+                      "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
+                      "column": 13,
+                      "line": 279
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
+                        "column": 13,
+                        "line": 279
+                      },
+                      "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:00.609Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
+                    "column": 13,
+                    "line": 279
+                  }
+                },
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 6599,
+                  "error": {
+                    "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30",
+                    "stack": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)",
+                    "location": {
+                      "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
+                      "column": 13,
+                      "line": 279
+                    }
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
+                        "column": 13,
+                        "line": 279
+                      },
+                      "message": "Error: page.evaluate: Error: 主供应商失败且未配置可用的备用供应商。错误: api.err.streamEmpty\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at runWithFailover (http://127.0.0.1:8766/assets/js/failover.js?v2.14.1:279:13)\n    at async eval (eval at evaluate (:311:30), <anonymous>:4:5)\n    at async <anonymous>:337:30\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:35:28)"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-02T10:14:08.135Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium-retry1/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium-retry1/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-流式输出逐段到达（onStreamChunk-被多次调用）-chromium-retry1/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "http://127.0.0.1:8766/assets/js/failover.js?v2.14.1",
+                    "column": 13,
+                    "line": 279
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "be7ddb83b817fe742a09-08a593b013595c235a92",
+          "file": "content.spec.js",
+          "line": 33,
+          "column": 1
+        },
+        {
+          "title": "reasoning 与 content 通过不同回调分离（onReasoning vs onStreamChunk）",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15585,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)",
+                    "location": {
+                      "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
+                      "column": 27,
+                      "line": 68
+                    },
+                    "snippet": "  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
+                        "column": 27,
+                        "line": 68
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n\n  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:15.099Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium/test-failed-1.png"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
+                    "column": 27,
+                    "line": 68
+                  }
+                },
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 0,
+                  "status": "failed",
+                  "duration": 15910,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)",
+                    "location": {
+                      "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
+                      "column": 27,
+                      "line": 68
+                    },
+                    "snippet": "  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
+                        "column": 27,
+                        "line": 68
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoBe\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // Object.is equality\u001b[22m\n\nExpected: \u001b[32m\"\"\u001b[39m\nReceived: \u001b[31m\"Error: api.err.streamEmpty\"\u001b[39m\n\n  66 |   }, provider);\n  67 |   // 接口层面：两个回调通道存在；content 至少有输出\n> 68 |   expect(sep.error || '').toBe('');\n     |                           ^\n  69 |   expect(sep.contentLen).toBeGreaterThan(0);\n  70 |   // reasoning 通道独立于 content（即使本次模型未输出 thinking，两通道也不混用）\n  71 |   expect(typeof sep.contentParts).toBe('number');\n    at test.timeout (/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js:68:27)"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 1,
+                  "startTime": "2026-10-02T10:14:30.989Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium-retry1/test-failed-1.png"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium-retry1/video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/test-results/content-reasoning-与-conten-23349-Reasoning-vs-onStreamChunk）-chromium-retry1/error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "/Volumes/Kingston 1TB NV1 40Gbps/豆包独立站SEO项目/锴利超级AI工作台/tests/e2e/content.spec.js",
+                    "column": 27,
+                    "line": 68
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "be7ddb83b817fe742a09-b340aceb2e19e612a429",
+          "file": "content.spec.js",
+          "line": 50,
+          "column": 1
+        },
+        {
+          "title": "在线 API 故障时可被 mock 拦截（page.route 验证通道可用）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3049,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:47.372Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "be7ddb83b817fe742a09-fdc530a33260d91af4ca",
+          "file": "content.spec.js",
+          "line": 75,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "export.spec.js",
+      "file": "export.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "导出 DOCX 文件非空",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2867,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:50.653Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5d53b089fdfe9adefb4-c94633062b721badaa1e",
+          "file": "export.spec.js",
+          "line": 35,
+          "column": 3
+        },
+        {
+          "title": "导出 XLSX 文件非空",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2863,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:53.534Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5d53b089fdfe9adefb4-bdb4ed0331dce44b3301",
+          "file": "export.spec.js",
+          "line": 35,
+          "column": 3
+        },
+        {
+          "title": "导出 PPTX 文件非空",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2839,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:56.407Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5d53b089fdfe9adefb4-67e996417110797aee0e",
+          "file": "export.spec.js",
+          "line": 35,
+          "column": 3
+        },
+        {
+          "title": "导出 HTML 文件非空",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2864,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:14:59.258Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5d53b089fdfe9adefb4-be61955317d3c573d41e",
+          "file": "export.spec.js",
+          "line": 35,
+          "column": 3
+        },
+        {
+          "title": "导出 CSV 文件非空",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2841,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:02.129Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5d53b089fdfe9adefb4-98a4f628cc80dc2c61ad",
+          "file": "export.spec.js",
+          "line": 35,
+          "column": 3
+        },
+        {
+          "title": "导出 JSON 文件非空",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2380,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:04.978Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "f5d53b089fdfe9adefb4-04c1678a3409c1ff9323",
+          "file": "export.spec.js",
+          "line": 35,
+          "column": 3
+        }
+      ]
+    },
+    {
+      "title": "failover.spec.js",
+      "file": "failover.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "vision 任务选 vision 模型，不落到纯文本/embedding 模型",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2883,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:07.368Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9926a9c0bac39bcfce74-905d5aa4b15691ac3c68",
+          "file": "failover.spec.js",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "embedding 任务不切到聊天（chat）模型",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2794,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:10.256Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9926a9c0bac39bcfce74-7e9ccbfab02193493a0d",
+          "file": "failover.spec.js",
+          "line": 30,
+          "column": 1
+        },
+        {
+          "title": "image 任务选图片模型，不切到文本模型",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2953,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:13.057Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9926a9c0bac39bcfce74-03af17f71a35d371f068",
+          "file": "failover.spec.js",
+          "line": 39,
+          "column": 1
+        },
+        {
+          "title": "主模型（在线）返回 500 时，本地 Ollama 仍可独立成功",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 4477,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:16.027Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9926a9c0bac39bcfce74-ddce9e9b44b84904aabb",
+          "file": "failover.spec.js",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "title": "停止（abort）后不再发起新的补全请求",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3369,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:20.509Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "9926a9c0bac39bcfce74-966a6eeddc54ceb87383",
+          "file": "failover.spec.js",
+          "line": 71,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "knowledge-base.spec.js",
+      "file": "knowledge-base.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "知识库渲染后显示文档总数与14个分类",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3018,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:23.888Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-d0cdf20e6d476fc7b63d",
+          "file": "knowledge-base.spec.js",
+          "line": 12,
+          "column": 1
+        },
+        {
+          "title": "点击分类标签自动渲染该分类文档",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3070,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:26.912Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-5ef9f62b1c437484c948",
+          "file": "knowledge-base.spec.js",
+          "line": 36,
+          "column": 1
+        },
+        {
+          "title": "关键词搜索返回结果且含标题/分类/来源字段",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2925,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:29.989Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-1046346862e4abb010c0",
+          "file": "knowledge-base.spec.js",
+          "line": 54,
+          "column": 1
+        },
+        {
+          "title": "向量搜索接口可调用（依赖 embedding 模型）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2900,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:32.920Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-cf0d7df7889bb8f3f880",
+          "file": "knowledge-base.spec.js",
+          "line": 67,
+          "column": 1
+        },
+        {
+          "title": "混合搜索接口可调用",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2885,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:35.825Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-02bb510063b6af8300d7",
+          "file": "knowledge-base.spec.js",
+          "line": 83,
+          "column": 1
+        },
+        {
+          "title": "无命中关键词时返回空数组（不崩溃）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2880,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:38.717Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-6b966efdb1429617b79d",
+          "file": "knowledge-base.spec.js",
+          "line": 95,
+          "column": 1
+        },
+        {
+          "title": "重建索引按钮可触发（rebuildIndex 存在且可调）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2991,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:41.602Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "fa3af9614638d5be75af-260892e902af8e1674b7",
+          "file": "knowledge-base.spec.js",
+          "line": 105,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "models.spec.js",
+      "file": "models.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "供应商配置中存在 Ollama 本地供应商且指向 11434",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2865,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:44.606Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-e04ec378a1792b117ec9",
+          "file": "models.spec.js",
+          "line": 15,
+          "column": 1
+        },
+        {
+          "title": "Ollama 模型列表包含 qwen3.5:9b 等预置模型",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2855,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:47.477Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-6dafb478bd2559700641",
+          "file": "models.spec.js",
+          "line": 22,
+          "column": 1
+        },
+        {
+          "title": "模型能力标签正确（text/vision/thinking/embedding/image）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2828,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:50.337Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-2c8fe02c05c983f8d342",
+          "file": "models.spec.js",
+          "line": 29,
+          "column": 1
+        },
+        {
+          "title": "未安装模型被标记 installed=false",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:53.170Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-ea602fb5fcd7e7629ac4",
+          "file": "models.spec.js",
+          "line": 41,
+          "column": 1
+        },
+        {
+          "title": "添加模型后出现在列表中，删除后消失",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2884,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:56.020Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-71274278d5d9bec83a3b",
+          "file": "models.spec.js",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "title": "默认模型设置：Ollama 标记为默认供应商",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2845,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:15:58.911Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-ae9d96c2c3cb6f03abf3",
+          "file": "models.spec.js",
+          "line": 69,
+          "column": 1
+        },
+        {
+          "title": "ProviderStore.getDefault 返回 Ollama",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2797,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:16:01.761Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "957a7ce3e26fb564bbd1-9f4ac12f47a7d271cec3",
+          "file": "models.spec.js",
+          "line": 78,
+          "column": 1
+        }
+      ]
+    },
+    {
+      "title": "responsive.spec.js",
+      "file": "responsive.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "移动端 375x812",
+          "file": "responsive.spec.js",
+          "line": 16,
+          "column": 6,
+          "specs": [
+            {
+              "title": "无横向溢出，画布可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2746,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:16:04.568Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-ff45f3576b06465d494c",
+              "file": "responsive.spec.js",
+              "line": 18,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "平板 768x1024",
+          "file": "responsive.spec.js",
+          "line": 26,
+          "column": 6,
+          "specs": [
+            {
+              "title": "无横向溢出，工具栏与画布可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2829,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:16:07.319Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-553205b0a9438410fa92",
+              "file": "responsive.spec.js",
+              "line": 28,
+              "column": 3
+            }
+          ]
+        },
+        {
+          "title": "桌面 1920x1080",
+          "file": "responsive.spec.js",
+          "line": 36,
+          "column": 6,
+          "specs": [
+            {
+              "title": "无横向溢出，画布可见",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 2875,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-10-02T10:16:10.152Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "68833bfb7a01a66a4f98-adf3444ff471e2c14f92",
+              "file": "responsive.spec.js",
+              "line": 38,
+              "column": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "tasks.spec.js",
+      "file": "tasks.spec.js",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "定时任务 cron 解析与下次运行时间",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2802,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:16:13.036Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "40021642a52d97e48aeb-3770eeec0b25db0970a1",
+          "file": "tasks.spec.js",
+          "line": 13,
+          "column": 1
+        },
+        {
+          "title": "创建批量任务→串行模式→批量数据持久化（同用例内闭环）",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2852,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:16:15.844Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "40021642a52d97e48aeb-a8bc7314791e04b5063f",
+          "file": "tasks.spec.js",
+          "line": 24,
+          "column": 1
+        },
+        {
+          "title": "刷新页面后批量任务状态从 localStorage 恢复",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 3447,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:16:18.704Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "40021642a52d97e48aeb-c8737b19157d893e7bf3",
+          "file": "tasks.spec.js",
+          "line": 49,
+          "column": 1
+        },
+        {
+          "title": "定时任务可预设工作流并持久化",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2767,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:16:22.156Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "40021642a52d97e48aeb-680292163aa328d8a8f8",
+          "file": "tasks.spec.js",
+          "line": 66,
+          "column": 1
+        },
+        {
+          "title": "清理 E2E 测试任务数据",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 4,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 2795,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2026-10-02T10:16:24.926Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "40021642a52d97e48aeb-04c79afad24f7b011b31",
+          "file": "tasks.spec.js",
+          "line": 87,
+          "column": 1
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-10-02T10:12:07.482Z",
+    "duration": 260299.351,
+    "expected": 48,
+    "skipped": 0,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

@@ -42,3 +42,4 @@ release/
 备份/
 *.log
 .DS_Store
+test-results/

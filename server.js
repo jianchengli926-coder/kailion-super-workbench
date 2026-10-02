@@ -316,12 +316,14 @@ function proxyRequest(req, res, targetHost, targetPort, targetPath, options = {}
 
   proxyReq.on('error', (err) => {
     console.error(`[Proxy Error] ${targetHost}:${targetPort}${targetPath}:`, err.message);
+    if (res.headersSent) { try { res.end(); } catch (e) {} return; }
     res.writeHead(502, Object.assign({ 'Content-Type': 'application/json' }, SECURITY_HEADERS));
     res.end(JSON.stringify({ error: 'Proxy error', message: err.message }));
   });
 
   proxyReq.on('timeout', () => {
     proxyReq.destroy();
+    if (res.headersSent) { try { res.end(); } catch (e) {} return; }
     res.writeHead(504, Object.assign({ 'Content-Type': 'application/json' }, SECURITY_HEADERS));
     res.end(JSON.stringify({ error: 'Gateway timeout' }));
   });
