@@ -78,7 +78,11 @@ const SECURITY_HEADERS = {
 // 安全的路径解析，防止目录遍历
 function safeJoin(root, targetPath) {
   const resolved = path.resolve(root, '.' + targetPath);
-  if (!resolved.startsWith(root)) {
+  // A plain startsWith(root) check is unsafe when a sibling path shares the
+  // same prefix (for example /workbench-evil). Require the resolved path to
+  // be the root itself or a real descendant of it.
+  const relative = path.relative(root, resolved);
+  if (relative.startsWith('..' + path.sep) || relative === '..' || path.isAbsolute(relative)) {
     return null;
   }
   return resolved;

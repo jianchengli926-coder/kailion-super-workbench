@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>锴利超级AI工作台 v2.14.2 深度审计报告</title>
+  <style>
+    :root{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#1f2937;background:#f4f6f8;line-height:1.6}
+    body{max-width:1180px;margin:0 auto;padding:28px}
+    h1{margin:0 0 6px;color:#111827} h2{margin-top:32px;color:#0f3d56}
+    .muted{color:#667085}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+    .metric,.panel{background:#fff;border:1px solid #dbe2e8;border-radius:8px;padding:16px;box-shadow:0 2px 8px #102a4308}
+    .metric strong{display:block;font-size:30px;color:#0f766e}.metric span{font-size:13px;color:#667085}
+    table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #dbe2e8}th,td{padding:9px 10px;border-bottom:1px solid #e7ebef;text-align:left;vertical-align:top}th{background:#eef4f7;color:#0f3d56}
+    .ok{color:#087f5b;font-weight:600}.warn{color:#b45309;font-weight:600}.bad{color:#b42318;font-weight:600}.tag{display:inline-block;padding:2px 7px;border-radius:12px;background:#e7f6ef;color:#087f5b;font-size:12px}
+    code{background:#eef2f6;padding:2px 5px;border-radius:4px}a{color:#075985}
+    @media(max-width:700px){body{padding:14px}table{font-size:13px;display:block;overflow:auto;white-space:normal}}
+  </style>
+</head>
+<body>
+  <h1>锴利超级AI工作台 v2.14.2 深度审计报告</h1>
+  <p class="muted">审计日期：2026-10-02（本地时间） · 目标：本地 Node 服务 + 原生 HTML/CSS/JS 前端 + Electron 壳 + 公司知识库</p>
+
+  <div class="grid">
+    <div class="metric"><strong>55/55</strong><span>现有 Playwright E2E 通过</span></div>
+    <div class="metric"><strong>19/19</strong><span>主导航真实浏览器可打开</span></div>
+    <div class="metric"><strong>586</strong><span>公司知识库文档</span></div>
+    <div class="metric"><strong>14</strong><span>公司知识库分类</span></div>
+    <div class="metric"><strong>200</strong><span>健康检查 HTTP</span></div>
+    <div class="metric"><strong>403</strong><span>目录遍历探测结果</span></div>
+  </div>
+
+  <h2>结论</h2>
+  <div class="panel">
+    <p class="ok">核心工作流当前可运行。</p>
+    <p>后端语法检查、前端脚本语法检查、登录锁定、画布编辑、导出、模型筛选、故障转移、公司知识库检索、任务持久化和 8 档响应式检查均已通过。Ollama 本地模型与向量嵌入服务在本机可用，因此本次知识库向量/混合检索测试也通过。</p>
+    <p class="warn">在线 GLM/豆包/其他第三方供应商未进行真实计费请求。</p>
+    <p>原因是当前浏览器本地配置没有将在线 API 作为可验证的测试凭据；报告不把“未配置”误判为功能故障。</p>
+  </div>
+
+  <h2>功能清单与验证结果</h2>
+  <table>
+    <thead><tr><th>功能</th><th>验证方式</th><th>结果</th><th>说明</th></tr></thead>
+    <tbody>
+      <tr><td>登录密码页（441723）</td><td>E2E：密码类型、错误提示、正确登录</td><td class="ok">通过</td><td>sessionStorage 会话锁；错误 5 次锁定约 60 秒</td></tr>
+      <tr><td>登录/退出/刷新会话</td><td>E2E</td><td class="ok">通过</td><td>退出后回到登录页，刷新保持当前会话</td></tr>
+      <tr><td>智能工作台</td><td>真实浏览器导航</td><td class="ok">通过</td><td>快速入口与最近使用区正常渲染</td></tr>
+      <tr><td>智能体库</td><td>真实浏览器导航</td><td class="ok">通过</td><td>预设智能体与团队可见</td></tr>
+      <tr><td>画布/节点/连线/撤销重做</td><td>E2E + 真实浏览器</td><td class="ok">通过</td><td>节点增删、拖拽、连线、序列化往返通过</td></tr>
+      <tr><td>工作流模板</td><td>真实浏览器导航</td><td class="ok">通过</td><td>20 个分类可渲染；模板加载入口可见</td></tr>
+      <tr><td>素材库</td><td>真实浏览器导航</td><td class="ok">通过</td><td>上传入口和分类筛选可见</td></tr>
+      <tr><td>技能库</td><td>真实浏览器导航</td><td class="ok">通过</td><td>预设技能、导入和保存入口可见</td></tr>
+      <tr><td>个人知识库</td><td>真实浏览器导航</td><td class="ok">通过</td><td>上传文档、导入链接、拓扑入口可见</td></tr>
+      <tr><td>公司知识库</td><td>真实浏览器点击公司标签</td><td class="ok">通过</td><td>586 文档、14 分类、关键词检索可用</td></tr>
+      <tr><td>提示词/专家/数字人/选题/风格/角色/场景</td><td>真实浏览器导航</td><td class="ok">通过</td><td>数据列表和新增/应用入口可见</td></tr>
+      <tr><td>品牌资产/商品库/语义库</td><td>真实浏览器导航</td><td class="ok">通过</td><td>本地保存型功能入口可见</td></tr>
+      <tr><td>模型供应商与能力筛选</td><td>E2E</td><td class="ok">通过</td><td>Ollama 默认供应商、文本/视觉/嵌入/图片能力筛选通过</td></tr>
+      <tr><td>模型故障转移</td><td>E2E mock 在线失败 + 本地 Ollama</td><td class="ok">通过</td><td>按任务类型选择备用模型；abort 后不继续补全</td></tr>
+      <tr><td>真实文本/流式/思考输出</td><td>E2E + Ollama</td><td class="ok">通过</td><td>非空响应、流式回调、reasoning/content 分离通过</td></tr>
+      <tr><td>Office/HTML/CSV/JSON 导出</td><td>E2E 文件字节校验</td><td class="ok">通过</td><td>DOCX/XLSX/PPTX/HTML/CSV/JSON 均非空</td></tr>
+      <tr><td>批量任务/定时任务</td><td>E2E</td><td class="ok">通过</td><td>cron 解析、串行任务持久化、刷新恢复通过</td></tr>
+      <tr><td>响应式布局</td><td>E2E 8 档视口</td><td class="ok">通过</td><td>横向溢出 0px，弹窗未越界</td></tr>
+      <tr><td>在线第三方供应商</td><td>未执行真实计费请求</td><td class="warn">待手动验证</td><td>需在设置中配置有效 API Key 后逐供应商测试连接</td></tr>
+    </tbody>
+  </table>
+
+  <h2>后端代码审计</h2>
+  <div class="panel">
+    <ul>
+      <li class="ok"><code>server.js</code>、<code>electron/*.js</code>、<code>assets/js/*.js</code> 均通过 <code>node --check</code>。</li>
+      <li class="ok">健康检查、静态服务、Ollama 代理、通用代理、body 大小限制、访问令牌校验均可运行。</li>
+      <li class="ok">已修复静态路径校验的前缀边界问题：由 <code>startsWith(root)</code> 改为 <code>path.relative</code> 目录后代判断。</li>
+      <li class="warn">运行时仍会出现 Node 的 <code>url.parse()</code> 弃用警告；不影响当前功能，但后续应迁移到 WHATWG <code>URL</code> API。</li>
+    </ul>
+  </div>
+
+  <h2>安全与运行风险</h2>
+  <table>
+    <thead><tr><th>风险</th><th>影响</th><th>当前状态</th><th>建议</th></tr></thead>
+    <tbody>
+      <tr><td>前端密码出现在 <code>assets/js/login.js</code></td><td>中</td><td class="warn">界面锁屏，不是认证</td><td>公网/局域网必须设置服务端 <code>ACCESS_TOKEN</code>，并通过 HTTPS/Cloudflare Tunnel 访问</td></tr>
+      <tr><td>当前本地服务 ACCESS_TOKEN 未启用</td><td>中</td><td class="warn">健康检查显示 false</td><td>共享或公网使用前，在启动环境设置随机长令牌并让前端请求携带令牌</td></tr>
+      <tr><td>在线供应商凭据</td><td>高</td><td class="ok">未写入仓库</td><td>继续只保存在浏览器本地，不要写入代码或报告</td></tr>
+      <tr><td>知识库敏感资料</td><td>高</td><td class="warn">静态文件随服务提供</td><td>公网部署前增加服务端鉴权、最小权限和访问审计</td></tr>
+      <tr><td>版本文档漂移</td><td>低</td><td class="warn">README/说明书含旧版本号</td><td>统一更新到 v2.14.2，避免运维误判</td></tr>
+    </tbody>
+  </table>
+
+  <h2>复测命令</h2>
+  <div class="panel"><code>npm run server</code><br><code>npx playwright test --reporter=line</code><br><code>node --check server.js</code></div>
+
+  <p class="muted">本报告为本地审计结果。未执行 GitHub push、生产部署、在线付费 API 调用或外部消息发送。</p>
+</body>
+</html>
