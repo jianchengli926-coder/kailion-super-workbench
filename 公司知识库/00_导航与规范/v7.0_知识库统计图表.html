@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v7.0 知识库统计图表 — KaiLionCrafts</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #0f172a; --card: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+  --green: #4ade80; --yellow: #facc15; --red: #f87171;
+  --orange: #fb923c; --purple: #c084fc;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; padding: 24px; }
+h1 { text-align:center; font-size: 1.6rem; margin-bottom: 6px; }
+.subtitle { text-align:center; color: var(--muted); font-size: 0.85rem; margin-bottom: 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+.card h3 { font-size: 0.95rem; margin-bottom: 14px; color: var(--accent); }
+.chart-wrap { position: relative; height: 280px; }
+.card-full { grid-column: 1 / -1; }
+.flow-diagram { padding: 10px 0; }
+.flow-layer { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin: 10px 0; }
+.flow-box { background: #0f172a; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; text-align: center; font-size: 0.8rem; min-width: 120px; }
+.flow-box.highlight { border-color: var(--accent); color: var(--accent); }
+.flow-box.confidential { border-color: var(--red); color: var(--red); }
+.flow-box.public { border-color: var(--green); color: var(--green); }
+.flow-arrow { text-align: center; color: var(--muted); font-size: 1.2rem; margin: 4px 0; }
+.route-node { background: #0f172a; border: 1px solid var(--accent); border-radius: 8px; padding: 12px; margin: 8px 0; font-size: 0.82rem; }
+.route-node .scenario { color: var(--accent); font-weight: 600; }
+.route-node .desc { color: var(--muted); margin-top: 4px; }
+.legend-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 10px; font-size: 0.75rem; color: var(--muted); }
+.stat-badge { display: inline-block; background: #0f172a; border-radius: 6px; padding: 2px 8px; margin: 2px; font-size: 0.75rem; }
+</style>
+</head>
+<body>
+
+<h1>v7.0 知识库统计图表</h1>
+<p class="subtitle">KaiLionCrafts 公司知识库 AI 可读版 · 全库扫描 2026-09-28 · 共 538 个 Markdown 文件</p>
+
+<div class="grid">
+
+  <!-- Chart 1: 各分类文件数量柱状图 -->
+  <div class="card">
+    <h3>1. 各一级分类文件数量</h3>
+    <div class="chart-wrap"><canvas id="c1"></canvas></div>
+  </div>
+
+  <!-- Chart 2: sensitivity饼图 -->
+  <div class="card">
+    <h3>2. Sensitivity 三层分布</h3>
+    <div class="chart-wrap"><canvas id="c2"></canvas></div>
+  </div>
+
+  <!-- Chart 3: confidence饼图 -->
+  <div class="card">
+    <h3>3. Confidence 置信度分布</h3>
+    <div class="chart-wrap"><canvas id="c3"></canvas></div>
+  </div>
+
+  <!-- Chart 4: SKU状态饼图 -->
+  <div class="card">
+    <h3>4. SKU 状态分布（181行待入库清单）</h3>
+    <div class="chart-wrap"><canvas id="c4"></canvas></div>
+  </div>
+
+  <!-- Chart 5: SKU字段缺失率柱状图 -->
+  <div class="card">
+    <h3>5. SKU 各字段缺失率（291个XLSX工作表）</h3>
+    <div class="chart-wrap"><canvas id="c5"></canvas></div>
+  </div>
+
+  <!-- Chart 6: P0/P1/P2柱状图 -->
+  <div class="card">
+    <h3>6. 问题优先级分布 vs 已通过项</h3>
+    <div class="chart-wrap"><canvas id="c6"></canvas></div>
+  </div>
+
+  <!-- Chart 7: 四层关联图 -->
+  <div class="card card-full">
+    <h3>7. 知识库四层架构关联图</h3>
+    <div class="flow-diagram">
+      <div class="flow-layer">
+        <div class="flow-box highlight" style="border-color:var(--purple);color:var(--purple)">
+          <strong>公司事实层</strong><br>
+          <span style="color:var(--muted)">01_公司与品牌 (48文件)<br>00_导航与规范 (36文件)</span>
+        </div>
+        <div class="flow-box public">
+          <strong>产品层</strong><br>
+          <span style="color:var(--muted)">02_产品知识库 (94文件)<br>含SKU正式库20个</span>
+        </div>
+        <div class="flow-box highlight" style="border-color:var(--yellow);color:var(--yellow)">
+          <strong>外部知识层</strong><br>
+          <span style="color:var(--muted)">13_外部知识层 (17文件)<br>关税/法规/竞品/长尾词</span>
+        </div>
+        <div class="flow-box confidential" style="border-color:var(--orange);color:var(--orange)">
+          <strong>应用层</strong><br>
+          <span style="color:var(--muted)">03客户开发 43 / 05独立站SEO 39<br>07营销社媒 71 / 11订单财务 25</span>
+        </div>
+      </div>
+      <div class="flow-arrow">▼ 事实层 → 产品层 → 外部知识层 → 应用层（决策/执行）▼</div>
+      <div class="flow-layer">
+        <div class="flow-box" style="min-width:200px">🔒 8个confidential文件<br><span style="color:var(--muted)">成本/利润/合同/股权/提成</span></div>
+        <div class="flow-box" style="min-width:200px">🔓 284个public文件<br><span style="color:var(--muted)">可对外/可喂外部AI</span></div>
+        <div class="flow-box" style="min-width:200px">🏠 216个internal文件<br><span style="color:var(--muted)">内部参考，不对外</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart 8: 场景路由图 -->
+  <div class="card card-full">
+    <h3>8. 业务场景路由图</h3>
+    <div class="flow-diagram">
+      <div class="route-node">
+        <span class="scenario">📧 客户开发场景</span>
+        <div class="desc">入口：03_客户开发与CRM → 邮件模板/01首次开发信 → 02跟进序列Day0-30 → 09_展会参展指南 → 07_LinkedIn全案 → 触发：RFQ inquiry → 路由到 11_订单与财务/05_付款条款</div>
+      </div>
+      <div class="route-node">
+        <span class="scenario">💰 报价场景</span>
+        <div class="desc">入口：客户RFQ → 02_产品知识库/SKU正式库（查参数/MOQ） → 11/报价与付款条款 → 06/03_物流报价 → 11/07_PI模板 → ⚠️价格字段confidential，AI不得自动报价</div>
+      </div>
+      <div class="route-node">
+        <span class="scenario">🔍 SEO内容场景</span>
+        <div class="desc">入口：13/09_长尾关键词 → 13/10_选题库优先级 → 05/独立站SEO元数据 → 05/Schema.org方案 → 07_营销社媒视觉资产库 → ⚠️管制/仿牌SKU不得生成SEO文案</div>
+      </div>
+      <div class="route-node">
+        <span class="scenario">📦 订单执行场景</span>
+        <div class="desc">入口：11/01_订单处理SOP → 06/05_出口流程单证 → 06/02_美国仓现货 → 06/11_尾程渠道 → 06/06_售后索赔 → 06/07_质保</div>
+      </div>
+      <div class="route-node">
+        <span class="scenario">🛡️ 合规安全场景</span>
+        <div class="desc">入口：客户问管制刀型 → 13/07_管制刀型清单 → README安全规则 → 转人工（不得自动回答） → 13/04_各国法规 → 13/02_HS编码 → 13/01_物流限制</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const colorPalette = ['#38bdf8','#4ade80','#facc15','#fb923c','#f87171','#c084fc','#f472b6','#a3e635','#22d3ee','#94a3b8','#fb7185','#e879f9','#818cf8','#2dd4bf','#fbbf24'];
+
+// Chart 1: 分类文件数
+new Chart(document.getElementById('c1'), {
+  type: 'bar',
+  data: {
+    labels: ['00导航','01公司品牌','02产品知识','03客户CRM','04国家指南','05独立站SEO','06海外仓物流','07营销社媒','08AI工作流','09行业培训','10路演政府','11订单财务','13外部知识','99索引归档'],
+    datasets: [{
+      data: [36,48,94,43,65,39,16,71,27,35,17,25,17,4],
+      backgroundColor: colorPalette
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: { y: { ticks: { color:'#94a3b8' }, grid: { color:'#334155' } }, x: { ticks: { color:'#94a3b8', maxRotation:45 }, grid: { display:false } } }
+  }
+});
+
+// Chart 2: sensitivity
+new Chart(document.getElementById('c2'), {
+  type: 'doughnut',
+  data: {
+    labels: ['public (284)','internal (216)','confidential (7)','缺失标签 (31)'],
+    datasets: [{ data: [284,216,7,31], backgroundColor: ['#4ade80','#38bdf8','#f87171','#94a3b8'] }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:'bottom', labels:{color:'#e2e8f0', font:{size:11}} } } }
+});
+
+// Chart 3: confidence
+new Chart(document.getElementById('c3'), {
+  type: 'doughnut',
+  data: {
+    labels: ['中 (463)','高 (26)','低 (19)','混合 (3)','未标注 (27)'],
+    datasets: [{ data: [463,26,19,3,27], backgroundColor: ['#38bdf8','#4ade80','#f87171','#c084fc','#94a3b8'] }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:'bottom', labels:{color:'#e2e8f0', font:{size:11}} } } }
+});
+
+// Chart 4: SKU状态
+new Chart(document.getElementById('c4'), {
+  type: 'doughnut',
+  data: {
+    labels: ['已入正式库 (20)','READY待入库 (141)','管制刀型 (13)','仿牌风险 (6)','INCOMPLETE (1)'],
+    datasets: [{ data: [20,141,13,6,1], backgroundColor: ['#4ade80','#38bdf8','#f87171','#fb923c','#facc15'] }]
+  },
+  options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position:'bottom', labels:{color:'#e2e8f0', font:{size:11}} } } }
+});
+
+// Chart 5: SKU字段缺失率
+new Chart(document.getElementById('c5'), {
+  type: 'bar',
+  data: {
+    labels: ['中文名称','MOQ','英文名称','刀身材质','尺寸','柄材','主体材质','辅助材质','规格尺寸','核心功能','认证资质','包装建议'],
+    datasets: [{
+      label: '缺失率%',
+      data: [0.3, 9.6, 10.0, 21.6, 21.6, 31.3, 78.4, 78.4, 78.4, 78.4, 78.4, 78.4],
+      backgroundColor: function(ctx) {
+        const v = ctx.parsed.y;
+        if (v > 60) return '#f87171';
+        if (v > 20) return '#facc15';
+        return '#4ade80';
+      }
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+    plugins: { legend: { display:false } },
+    scales: { x: { max:100, ticks:{color:'#94a3b8', callback:v=>v+'%'}, grid:{color:'#334155'} }, y: { ticks:{color:'#94a3b8', font:{size:10}}, grid:{display:false} } }
+  }
+});
+
+// Chart 6: P0/P1/P2 vs passed
+new Chart(document.getElementById('c6'), {
+  type: 'bar',
+  data: {
+    labels: ['P0 必须立即修复','P1 交付前修复','P2 后续维护','✅ 已通过关键项'],
+    datasets: [{
+      data: [7, 11, 11, 15],
+      backgroundColor: ['#f87171','#facc15','#38bdf8','#4ade80']
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display:false } },
+    scales: { y: { ticks:{color:'#94a3b8'}, grid:{color:'#334155'} }, x: { ticks:{color:'#e2e8f0'}, grid:{display:false} } }
+  }
+});
+</script>
+</body>
+</html>

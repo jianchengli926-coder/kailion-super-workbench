@@ -1,0 +1,165 @@
+{
+  "version": "v7.1",
+  "generated_at": "2026-09-28",
+  "scan_root": "公司知识库/",
+  "contains_confidential": "是（统计含confidential文件计数；公开HTML仅引用计数，不含正文）",
+  "files": {
+    "total_all_files": 569,
+    "markdown": 550,
+    "html": 5,
+    "csv": 2,
+    "json": 5,
+    "py": 7,
+    "pdf": 0,
+    "xlsx": 0,
+    "ppt": 0,
+    "total_size_mb": 9.61
+  },
+  "markdown_by_sensitivity": {
+    "public": 186,
+    "internal": 290,
+    "confidential": 74
+  },
+  "categories": [
+    {
+      "category": "02_产品知识库",
+      "total": 94,
+      "public": 32,
+      "internal": 26,
+      "confidential": 36
+    },
+    {
+      "category": "07_营销与社媒",
+      "total": 71,
+      "public": 21,
+      "internal": 24,
+      "confidential": 26
+    },
+    {
+      "category": "04_国家地区开发指南",
+      "total": 65,
+      "public": 65,
+      "internal": 0,
+      "confidential": 0
+    },
+    {
+      "category": "00_导航与规范",
+      "total": 48,
+      "public": 0,
+      "internal": 48,
+      "confidential": 0
+    },
+    {
+      "category": "01_公司与品牌",
+      "total": 48,
+      "public": 13,
+      "internal": 32,
+      "confidential": 3
+    },
+    {
+      "category": "03_客户开发与CRM",
+      "total": 43,
+      "public": 0,
+      "internal": 43,
+      "confidential": 0
+    },
+    {
+      "category": "05_独立站与SEO",
+      "total": 39,
+      "public": 17,
+      "internal": 17,
+      "confidential": 5
+    },
+    {
+      "category": "09_行业知识与培训",
+      "total": 35,
+      "public": 21,
+      "internal": 14,
+      "confidential": 0
+    },
+    {
+      "category": "08_AI工作流与工具",
+      "total": 27,
+      "public": 0,
+      "internal": 27,
+      "confidential": 0
+    },
+    {
+      "category": "11_订单与财务",
+      "total": 25,
+      "public": 0,
+      "internal": 21,
+      "confidential": 4
+    },
+    {
+      "category": "13_外部知识层",
+      "total": 17,
+      "public": 0,
+      "internal": 17,
+      "confidential": 0
+    },
+    {
+      "category": "10_项目路演与政府材料",
+      "total": 17,
+      "public": 15,
+      "internal": 2,
+      "confidential": 0
+    },
+    {
+      "category": "06_海外仓与订单物流",
+      "total": 16,
+      "public": 0,
+      "internal": 16,
+      "confidential": 0
+    },
+    {
+      "category": "99_原始资料索引与映射",
+      "total": 3,
+      "public": 0,
+      "internal": 3,
+      "confidential": 0
+    },
+    {
+      "category": "知识库完整框架说明.md",
+      "total": 1,
+      "public": 1,
+      "internal": 0,
+      "confidential": 0
+    },
+    {
+      "category": "99_归档",
+      "total": 1,
+      "public": 1,
+      "internal": 0,
+      "confidential": 0
+    }
+  ],
+  "sku_status": {
+    "已入库": 20,
+    "READY": 141,
+    "管制REGULATED": 13,
+    "仿牌PRIVATE_LABEL_RISK": 6,
+    "INCOMPLETE": 1,
+    "合计": 181
+  },
+  "sku_field_missing_rate": {
+    "missing_skus": 1,
+    "total": 181,
+    "rate_pct": 0.55,
+    "pilot_pending_field_rows": 49,
+    "pilot_pending_skus": 20
+  },
+  "issues_p0_p1_p2": {
+    "P0": 7,
+    "P1": 11,
+    "P2": 0
+  },
+  "external_source_levels": {
+    "S": 2,
+    "A": 4,
+    "A/B": 1,
+    "B": 3
+  },
+  "public_file_count": 186,
+  "v71_note": "本轮新发现并修复1个误标public的文件(20个SKU试点入库清单.md->internal)，public由187修正为186"
+}

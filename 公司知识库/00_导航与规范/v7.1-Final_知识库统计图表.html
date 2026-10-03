@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>KaiLionCrafts KB v7.1-Final 统计图表</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<style>
+body { font-family: -apple-system, "Microsoft YaHei", sans-serif; max-width: 1200px; margin: 20px auto; padding: 0 20px; background: #fafaf8; }
+h1 { color: #B91C1C; }
+.meta { background: #fef3c7; padding: 10px 15px; border-radius: 6px; margin-bottom: 20px; font-size: 14px; }
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+canvas { max-height: 300px; }
+</style>
+</head>
+<body>
+<h1>KaiLionCrafts KB v7.1-Final 统计图表</h1>
+<div class="meta">
+版本: v7.1-Final ｜ 日期: 2026-09-28 ｜ 实扫数据 ｜ 不包含confidential内容数据
+</div>
+<div class="grid">
+<div class="card"><h3>敏感等级分布</h3><canvas id="sensChart"></canvas></div>
+<div class="card"><h3>文件格式分布</h3><canvas id="extChart"></canvas></div>
+<div class="card"><h3>各分类文件数（堆叠）</h3><canvas id="catChart"></canvas></div>
+<div class="card"><h3>SKU状态统计</h3><canvas id="skuChart"></canvas></div>
+</div>
+<script>
+new Chart(document.getElementById('sensChart'), {
+  type: 'doughnut',
+  data: { labels: ['public','internal','confidential'], datasets: [{ data: [198,303,75], backgroundColor: ['#059669','#2563eb','#dc2626'] }] }
+});
+new Chart(document.getElementById('extChart'), {
+  type: 'bar',
+  data: { labels: ["md", "html", "csv", "json", "py"], datasets: [{ label: '文件数', data: [576, 5, 8, 5, 7], backgroundColor: '#B91C1C' }] }
+});
+new Chart(document.getElementById('catChart'), {
+  type: 'bar',
+  data: {
+    labels: ["(root_file)", "00_\u5bfc\u822a\u4e0e\u89c4\u8303", "01_\u516c\u53f8\u4e0e\u54c1\u724c", "02_\u4ea7\u54c1\u77e5\u8bc6\u5e93", "03_\u5ba2\u6237\u5f00\u53d1\u4e0eCRM", "04_\u56fd\u5bb6\u5730\u533a\u5f00\u53d1\u6307\u5357", "05_\u72ec\u7acb\u7ad9\u4e0eSEO", "06_\u6d77\u5916\u4ed3\u4e0e\u8ba2\u5355\u7269\u6d41", "07_\u8425\u9500\u4e0e\u793e\u5a92", "08_AI\u5de5\u4f5c\u6d41\u4e0e\u5de5\u5177", "09_\u884c\u4e1a\u77e5\u8bc6\u4e0e\u57f9\u8bad", "10_\u9879\u76ee\u8def\u6f14\u4e0e\u653f\u5e9c\u6750\u6599", "11_\u8ba2\u5355\u4e0e\u8d22\u52a1", "13_\u5916\u90e8\u77e5\u8bc6\u5c42", "99_\u539f\u59cb\u8d44\u6599\u7d22\u5f15\u4e0e\u6620\u5c04", "99_\u5f52\u6863"],
+    datasets: [
+      { label: 'public', data: [1, 0, 13, 37, 0, 65, 17, 0, 21, 0, 21, 15, 0, 7, 0, 1], backgroundColor: '#059669' },
+      { label: 'internal', data: [0, 67, 32, 26, 43, 0, 17, 16, 24, 27, 14, 2, 21, 11, 3, 0], backgroundColor: '#2563eb' },
+      { label: 'confidential', data: [0, 0, 3, 36, 0, 0, 5, 0, 26, 0, 0, 0, 4, 1, 0, 0], backgroundColor: '#dc2626' }
+    ]
+  },
+  options: { scales: { x: { stacked: true }, y: { stacked: true } } }
+});
+new Chart(document.getElementById('skuChart'), {
+  type: 'bar',
+  data: { labels: ['已入库','READY','管制','仿牌','INCOMPLETE'], datasets: [{ label: 'SKU数', data: [20,141,13,6,1], backgroundColor: ['#059669','#2563eb','#f59e0b','#dc2626','#6b7280'] }] }
+});
+</script>
+</body></html>

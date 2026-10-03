@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>v7.0 知识库最终思维导图 — KaiLionCrafts</title>
+<style>
+:root {
+  --bg: #0f172a; --card: #1e293b; --border: #334155;
+  --text: #e2e8f0; --muted: #94a3b8; --accent: #38bdf8;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; padding: 24px; }
+h1 { text-align:center; font-size:1.5rem; margin-bottom:4px; }
+.subtitle { text-align:center; color:var(--muted); font-size:0.82rem; margin-bottom:24px; }
+.tree { max-width: 1100px; margin: 0 auto; }
+details { border-left: 2px solid var(--border); margin-left: 16px; padding-left: 14px; margin-top: 6px; }
+details[open] { border-left-color: var(--accent); }
+summary { cursor: pointer; padding: 6px 10px; border-radius: 6px; font-size: 0.9rem; user-select: none; list-style: none; }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: "▶ "; font-size: 0.7rem; color: var(--muted); transition: transform 0.2s; display: inline-block; }
+details[open] > summary::before { transform: rotate(90deg); }
+summary:hover { background: rgba(56,189,248,0.08); }
+.root > summary { font-size: 1.15rem; font-weight: 700; color: var(--accent); border-left: none; margin-left: 0; padding-left: 0; }
+.cat { display: inline-block; background: #0f172a; border: 1px solid var(--border); border-radius: 4px; padding: 1px 7px; font-size: 0.72rem; color: var(--muted); margin-left: 8px; }
+.file-item { padding: 3px 10px 3px 24px; font-size: 0.8rem; color: var(--muted); }
+.file-item.key { color: var(--accent); }
+.file-item.warn { color: #facc15; }
+.file-item.danger { color: #f87171; }
+.badge { display:inline-block; font-size:0.65rem; padding:1px 5px; border-radius:3px; margin-left:6px; vertical-align:middle; }
+.badge.pub { background:#14532d; color:#4ade80; }
+.badge.int { background:#1e3a5f; color:#38bdf8; }
+.badge.con { background:#7f1d1d; color:#f87171; }
+.legend { max-width:1100px; margin:0 auto 20px; text-align:center; font-size:0.75rem; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<h1>v7.0 知识库最终思维导图</h1>
+<p class="subtitle">KaiLionCrafts 公司知识库 AI 可读版 · 538个md文件 · 14个一级分类（12缺失） · 点击展开/折叠</p>
+<div class="legend">
+  <span class="badge pub">public</span> 可对外 &nbsp;|&nbsp;
+  <span class="badge int">internal</span> 内部 &nbsp;|&nbsp;
+  <span class="badge con">confidential</span> 机密 &nbsp;|&nbsp;
+  <span style="color:var(--accent)">蓝色=关键文件</span> &nbsp;|&nbsp;
+  <span style="color:#facc15">黄色=待确认</span> &nbsp;|&nbsp;
+  <span style="color:#f87171">红色=P0风险</span>
+</div>
+
+<div class="tree">
+
+<details class="root" open>
+<summary>🏠 KaiLionCrafts 公司知识库 v7.0 <span class="cat">538 files</span></summary>
+
+  <!-- 00 -->
+  <details open>
+  <summary>📋 00_导航与规范 <span class="cat">36 files</span></summary>
+    <div class="file-item key">📄 00_README_知识库总导航.md <span class="badge int">internal</span></div>
+    <div class="file-item key">📄 02_公司核心事实速查表.md <span class="badge int">internal</span></div>
+    <div class="file-item key">📄 术语表_中英对照与禁用词.md <span class="badge int">internal</span></div>
+    <div class="file-item key">📄 标准问答库.md <span class="badge int">internal</span></div>
+    <div class="file-item key">📄 场景路由表.md <span class="badge int">internal</span></div>
+    <div class="file-item key">📄 06_AI工作台接入指南.md <span class="badge con">confidential</span></div>
+    <div class="file-item">📄 07_知识库维护与更新规范.md</div>
+    <div class="file-item">📄 知识库使用手册_Leo版.md</div>
+    <div class="file-item warn">⚠️ Leo待确认清单_v5.7.md</div>
+    <div class="file-item warn">⚠️ 需要Leo提供的资料清单.md</div>
+    <div class="file-item">📄 外部知识过期日历.md / 知识库维护日历.md</div>
+    <div class="file-item">📁 历史审计报告 (v5.0/v5.4/v5.7/v3.6等 约14个) <span style="color:#f87171">← 建议归档</span></div>
+  </details>
+
+  <!-- 01 -->
+  <details>
+  <summary>🏢 01_公司与品牌 <span class="cat">48 files</span></summary>
+    <div class="file-item key">📄 01_公司简介权威版.md</div>
+    <div class="file-item key">📄 02_创始人简介_利建成.md</div>
+    <div class="file-item">📁 工厂与供应链/ (成本拆解confidential, 股权合作confidential)</div>
+    <div class="file-item">📁 知识产权与合规/</div>
+    <div class="file-item">📁 资质认证/</div>
+    <div class="file-item warn">⚠️ 06_版本冲突 (Julia Zhong身份矛盾)</div>
+    <div class="file-item warn">⚠️ 05a_对外材料最新版数据 (出口国家数两版)</div>
+  </details>
+
+  <!-- 02 -->
+  <details open>
+  <summary>🔪 02_产品知识库 <span class="cat">94 files · 最大目录</span></summary>
+    <div class="file-item key">📁 SKU正式库/ (5文件: 总览+4品类, 20个SKU) <span class="badge pub">public</span></div>
+    <div class="file-item key">📁 线上产品全量清单/ (4品类md, 122 SKU) <span class="badge pub">public</span></div>
+    <div class="file-item">📁 厨房刀具/ (参数表+详情集) <span class="badge pub">public</span></div>
+    <div class="file-item">📁 专业剪刀/ (参数表+详情集) <span class="badge pub">public</span></div>
+    <div class="file-item danger">🔴 户外刀具/ (含管制/仿牌SKU泄露到public) <span class="badge pub">public</span></div>
+    <div class="file-item">📁 厨房用品/ (参数表+详情集) <span class="badge pub">public</span></div>
+    <div class="file-item">📁 产品选购指南/ (4品类) <span class="badge pub">public</span></div>
+    <div class="file-item">📁 产品视频脚本库/ (7脚本)</div>
+    <div class="file-item">📁 产品FAQ库/</div>
+    <div class="file-item warn">📁 SKU数据提取/ (10个报告, 无frontmatter)</div>
+    <div class="file-item warn">📁 SKU试点入库_待审批/ (5文件, 无frontmatter)</div>
+  </details>
+
+  <!-- 03 -->
+  <details>
+  <summary>📧 03_客户开发与CRM <span class="cat">43 files</span></summary>
+    <div class="file-item key">📁 邮件模板/ (首次开发信+跟进序列)</div>
+    <div class="file-item">📁 客户异议处理话术库/</div>
+    <div class="file-item">📁 48账号矩阵清单 (internal)</div>
+    <div class="file-item">✅ 全目录无public文件，无客户名单泄露</div>
+  </details>
+
+  <!-- 04 -->
+  <details>
+  <summary>🌍 04_国家地区开发指南 <span class="cat">65 files</span></summary>
+    <div class="file-item">📁 按区域分：北美/欧洲/东南亚/中东/拉美等</div>
+    <div class="file-item">📁 户外刀法规专项/</div>
+  </details>
+
+  <!-- 05 -->
+  <details>
+  <summary>🌐 05_独立站与SEO <span class="cat">39 files</span></summary>
+    <div class="file-item danger">🔴 01_网站架构与技术栈.md (P0: 残留SPA旧表述无免责声明)</div>
+    <div class="file-item key">📄 07_网站页面清单与结构.md (已正确标注WordPress多页面)</div>
+    <div class="file-item">📁 SEO修复方案/ (产品SEO元数据表, Schema方案)</div>
+    <div class="file-item danger">🔴 独立站产品数据汇总.md (无sensitivity标签, 含价格)</div>
+    <div class="file-item">📁 10_网站性能优化 / 12_Google Analytics</div>
+  </details>
+
+  <!-- 06 -->
+  <details>
+  <summary>📦 06_海外仓与订单物流 <span class="cat">16 files</span></summary>
+    <div class="file-item key">📄 02_美国仓现货体系 / 08_SKU库存清单</div>
+    <div class="file-item">📄 05_出口流程单证 / 06_售后索赔 / 07_质保</div>
+    <div class="file-item">📄 11_尾程渠道对比 / 12_库存周转</div>
+  </details>
+
+  <!-- 07 -->
+  <details>
+  <summary>📱 07_营销与社媒 <span class="cat">71 files</span></summary>
+    <div class="file-item">📁 平台运营全案/ (LinkedIn/Instagram/TikTok等)</div>
+    <div class="file-item">📁 视觉资产库/ (图片描述库)</div>
+    <div class="file-item danger">🔴 07_工厂宣传片拍摄方法论_V2.0.md (public但含供应商真名)</div>
+    <div class="file-item">📁 执行与防封/ (全部internal ✅)</div>
+  </details>
+
+  <!-- 08 -->
+  <details>
+  <summary>🤖 08_AI工作流与工具 <span class="cat">27 files</span></summary>
+    <div class="file-item key">📄 03_锴利超级AI工作台_v2.13.md</div>
+    <div class="file-item">📄 06_工作台部署运维手册_V75.1</div>
+  </details>
+
+  <!-- 09 -->
+  <details>
+  <summary>🎓 09_行业知识与培训 <span class="cat">35 files</span></summary>
+    <div class="file-item">📁 协会课程/ (8文件, 未入文件全清单)</div>
+    <div class="file-item key">📄 展会参展全流程指南v4.1 (主版本)</div>
+    <div class="file-item danger">🔴 06_培训课程体系.md (public, 含"江西犀瑞刀片"真名)</div>
+  </details>
+
+  <!-- 10 -->
+  <details>
+  <summary>🏆 10_项目路演与政府材料 <span class="cat">17 files</span></summary>
+    <div class="file-item key">📄 02_创业大赛荣誉 (百千万工程二等奖)</div>
+    <div class="file-item">📁 政府/协会PPT材料</div>
+  </details>
+
+  <!-- 11 -->
+  <details>
+  <summary>💰 11_订单与财务 <span class="cat">25 files</span></summary>
+    <div class="file-item">📄 01_订单处理SOP / 05_付款条款详解</div>
+    <div class="file-item">📄 07_PI形式发票模板 / 外贸单证模板库</div>
+    <div class="file-item key">🔒 02_订单财务中心方案 (confidential)</div>
+    <div class="file-item key">🔒 03_禁止反跳单协议 (confidential)</div>
+    <div class="file-item key">🔒 08_销售合同模板 (confidential)</div>
+    <div class="file-item key">🔒 利润分析与定价模型 (confidential)</div>
+    <div class="file-item">📄 汇率风险管理实操</div>
+  </details>
+
+  <!-- 12 -->
+  <details>
+  <summary>❌ 12_（编号断档）<span class="cat">0 files</span></summary>
+    <div class="file-item warn">⚠️ P2: 无12_目录，直接从11跳到13，待Leo决定预留/并入</div>
+  </details>
+
+  <!-- 13 -->
+  <details open>
+  <summary>🌍 13_外部知识层 <span class="cat">17 files</span></summary>
+    <div class="file-item key">📄 01_刀具跨境物流限制与承运商政策 (UPS/FedEx/DHL来源)</div>
+    <div class="file-item key">📄 02_刀剪HS编码归类与关税指南 (USITC/TARIC来源)</div>
+    <div class="file-item key">📄 03_阳江刀剪出口数据_2023-2025 (海关/政府来源)</div>
+    <div class="file-item key">📄 04_户外刀具各国法规权威来源汇编 (gov.uk等)</div>
+    <div class="file-item warn">⚠️ 05_内外冲突清单_v6.0阶段2</div>
+    <div class="file-item danger">🔴 07_管制刀型疑似SKU清单</div>
+    <div class="file-item key">📄 08_刀剪专业知识深度素材</div>
+    <div class="file-item key">📄 09_刀剪买家问题与长尾关键词 (Reddit/Alibaba来源)</div>
+    <div class="file-item key">📄 10_内容选题库_搜索意图优先级</div>
+    <div class="file-item">📄 11_主要竞品品牌分析 / 12_价格带 / 13_竞品结构</div>
+    <div class="file-item">📄 对外模板敏感词检查清单 / 户外刀敏感词对照表</div>
+  </details>
+
+  <!-- 99 -->
+  <details>
+  <summary>🗄️ 99_索引与归档 <span class="cat">4 files</span></summary>
+    <div class="file-item key">📄 01_知识库文件全清单.md <span style="color:#facc15">(落后实际67文件)</span></div>
+    <div class="file-item key">📄 02_原始资料→知识库映射表.md</div>
+    <div class="file-item">📄 03_敏感信息与待补充清单.md</div>
+    <div class="file-item">📁 99_归档/ (展会参展指南已归档)</div>
+  </details>
+
+</details>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>v7.1 知识库统计图表</title>
+<!--
+版本: v7.1
+生成日期: 2026-09-28
+数据扫描范围: 公司知识库/ 全量递归扫描（含全部550个Markdown + html/csv/json/py）
+数据文件路径: 00_导航与规范/v7.1_知识库统计数据.json / .csv
+是否包含confidential数据: 不包含confidential数据（本图仅展示文件计数与分布比例，不含任何confidential文件正文/价格/供应商信息）
+-->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+body{font-family:-apple-system,"PingFang SC",Microsoft YaHei,sans-serif;margin:0;background:#f5f6f8;color:#222;}
+.banner{background:#1f3a5f;color:#fff;padding:18px 28px;}
+.banner h1{margin:0;font-size:22px;}
+.banner .meta{font-size:12px;opacity:.85;margin-top:8px;line-height:1.7;}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:18px;padding:24px;max-width:1400px;margin:0 auto;}
+.card{background:#fff;border-radius:10px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+.card h2{font-size:15px;margin:0 0 12px;color:#1f3a5f;}
+.kpis{display:flex;gap:14px;flex-wrap:wrap;padding:24px;max-width:1400px;margin:0 auto;}
+.kpi{flex:1;min-width:150px;background:#fff;border-radius:10px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.08);text-align:center;}
+.kpi .n{font-size:30px;font-weight:700;color:#1f3a5f;}
+.kpi .l{font-size:12px;color:#666;margin-top:4px;}
+canvas{max-height:340px;}
+</style></head><body>
+<div class="banner"><h1>KaiLionCrafts 知识库 · v7.1 统计图表</h1>
+<div class="meta">版本 v7.1 ｜ 生成日期 2026-09-28 ｜ 扫描范围：公司知识库/ 全量<br>
+数据源：v7.1_知识库统计数据.json / .csv ｜ 本图<b>不包含confidential数据</b>（仅计数，不含正文）</div></div>
+<div class="kpis">
+<div class="kpi"><div class="n">550</div><div class="l">Markdown 文件</div></div>
+<div class="kpi"><div class="n">186</div><div class="l">public 对外可读</div></div>
+<div class="kpi"><div class="n">290</div><div class="l">internal 仅内部</div></div>
+<div class="kpi"><div class="n">74</div><div class="l">confidential 机密</div></div>
+<div class="kpi"><div class="n">9.54MB</div><div class="l">知识库总大小</div></div>
+</div>
+<div class="grid">
+<div class="card"><h2>① 敏感等级分布（public / internal / confidential）</h2><canvas id="c1"></canvas></div>
+<div class="card"><h2>② 文件格式构成</h2><canvas id="c2"></canvas></div>
+<div class="card"><h2>③ 各一级分类文件数（堆叠：public/internal/confidential）</h2><canvas id="c3"></canvas></div>
+<div class="card"><h2>④ SKU 状态分布（共181个待处理SKU）</h2><canvas id="c4"></canvas></div>
+<div class="card"><h2>⑤ P0 / P1 / P2 问题与外部知识来源等级</h2><canvas id="c5"></canvas></div>
+<div class="card"><h2>⑥ 产品层 / 事实层 / 外部知识层 / 应用层关系</h2><canvas id="c6"></canvas></div>
+</div>
+<script>
+const labels=["02_产品知识库", "07_营销与社媒", "04_国家地区开发指南", "00_导航与规范", "01_公司与品牌", "03_客户开发与CRM", "05_独立站与SEO", "09_行业知识与培训", "08_AI工作流与工具", "11_订单与财务", "13_外部知识层", "10_项目路演与政府材料", "06_海外仓与订单物流", "99_原始资料索引与映射", "知识库完整框架说明.md", "99_归档"];
+new Chart(document.getElementById('c1'),{type:'doughnut',data:{labels:['public','internal','confidential'],datasets:[{data:[186,290,74],backgroundColor:['#2e7d32','#f9a825','#c62828']}]},options:{plugins:{legend:{position:'bottom'}}}});
+new Chart(document.getElementById('c2'),{type:'bar',data:{labels:['Markdown','HTML','CSV','JSON','Python'],datasets:[{label:'文件数',data:[550,3,1,4,7],backgroundColor:['#1f3a5f','#5b8dbf','#8fb8e0','#b8d0ea','#dce7f3']}]},options:{plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('c3'),{type:'bar',data:{labels:labels,datasets:[
+ {label:'public',data:[33, 21, 65, 0, 13, 0, 17, 21, 0, 0, 0, 15, 0, 0, 1, 1],backgroundColor:'#2e7d32'},
+ {label:'internal',data:[25, 24, 0, 48, 32, 43, 17, 14, 27, 21, 17, 2, 16, 3, 0, 0],backgroundColor:'#f9a825'},
+ {label:'confidential',data:[36, 26, 0, 0, 3, 0, 5, 0, 0, 4, 0, 0, 0, 0, 0, 0],backgroundColor:'#c62828'}
+]},options:{indexAxis:'y',scales:{x:{stacked:true},y:{stacked:true}},plugins:{legend:{position:'bottom'}}}});
+new Chart(document.getElementById('c4'),{type:'doughnut',data:{labels:['已入库20','READY141','管制13','仿牌6','INCOMPLETE1'],datasets:[{data:[20,141,13,6,1],backgroundColor:['#2e7d32','#5b8dbf','#c62828','#8e24aa','#757575']}]},options:{plugins:{legend:{position:'bottom'}}}});
+new Chart(document.getElementById('c5'),{type:'bar',data:{labels:['P0','P1','P2','来源S','来源A','来源A/B','来源B'],datasets:[{label:'数量',data:[7,11,0,2,4,1,3],backgroundColor:['#c62828','#ef6c00','#9e9e9e','#1f3a5f','#2e5a8f','#5b8dbf','#8fb8e0']}]},options:{plugins:{legend:{display:false}}}});
+new Chart(document.getElementById('c6'),{type:'bar',data:{labels:['产品层(02)','事实层(01/03/11)','外部知识层(13)','应用层(05/07/10)'],datasets:[{label:'文件数',data:[94,116,17,127],backgroundColor:['#1f3a5f','#2e7d32','#f9a825','#5b8dbf']}]},options:{plugins:{legend:{display:false}}}});
+</script></body></html>
