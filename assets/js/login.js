@@ -1,38 +1,38 @@
 /**
- * 锴利超级AI工作台 - 登录验证（增强版）
- * KaiLionCrafts 品牌登录系统
+ * 锴利超级AI工作台 - 登录验证（旗舰版 v3.0）
+ * KaiLionCrafts Premium Login System
  *
  * 功能：
- *   - 密码验证（密码在 CONFIG.password 中设置）
- *   - 登录状态存储（sessionStorage，关闭浏览器后失效）
- *   - 5次失败锁定，锁定状态持久化到sessionStorage（跨刷新）
- *   - 锁定倒计时实时显示
- *   - 密码显示/隐藏切换
- *   - 防重复提交（提交中按钮禁用）
- *   - 前端密码仅为界面锁屏机制，不是企业级认证
- *
- * 安全声明：本登录页为本地界面锁屏，公网/局域网部署必须使用服务端 ACCESS_TOKEN。
+ *   - 6位数字 PIN 键盘输入（密码 441723）
+ *   - 动态粒子背景 + 玻璃拟态卡片
+ *   - 5次失败锁定60秒，锁定状态跨刷新持久化
+ *   - 会话超时自动登出（默认30分钟无操作）
+ *   - 密码输入点阵可视化
+ *   - 防重复提交、防暴力破解
+ *   - 前端密码仅为界面锁屏，公网部署需启用 ACCESS_TOKEN
  */
 
 (function() {
   'use strict';
 
-  // 配置
   const CONFIG = {
     password: '441723',
     storageKey: 'kailion_workbench_logged_in',
     lockKey: 'kailion_workbench_lockout',
     attemptsKey: 'kailion_workbench_attempts',
+    lastActivityKey: 'kailion_workbench_last_activity',
     maxAttempts: 5,
-    lockoutTime: 60000 // 锁定1分钟
+    lockoutTime: 60000,
+    sessionTimeout: 30 * 60 * 1000,
+    pinLength: 6
   };
 
   let lockCountdownTimer = null;
   let isSubmitting = false;
+  let currentPin = '';
+  let activityTimer = null;
 
-  /**
-   * 安全读取 sessionStorage
-   */
+  /* ---------- Storage helpers ---------- */
   function ssGet(key) {
     try { return sessionStorage.getItem(key); } catch (e) { return null; }
   }
@@ -43,71 +43,98 @@
     try { sessionStorage.removeItem(key); } catch (e) {}
   }
 
-  /**
-   * 检查是否已登录
-   */
+  /* ---------- Auth state ---------- */
   function isLoggedIn() {
     return ssGet(CONFIG.storageKey) === 'true';
   }
-
-  /**
-   * 设置登录状态
-   */
   function setLoggedIn() {
     ssSet(CONFIG.storageKey, 'true');
+    updateLastActivity();
+    startActivityMonitor();
   }
-
-  /**
-   * 清除登录状态（退出登录）
-   */
   function logout() {
     ssRemove(CONFIG.storageKey);
+    stopActivityMonitor();
+    currentPin = '';
     showLogin();
   }
 
-  /**
-   * 验证密码（常量比对，不输出到控制台）
-   */
+  /* ---------- Session timeout ---------- */
+  function updateLastActivity() {
+    ssSet(CONFIG.lastActivityKey, String(Date.now()));
+  }
+  function checkSessionTimeout() {
+    const last = parseInt(ssGet(CONFIG.lastActivityKey) || '0', 10);
+    if (last && Date.now() - last > CONFIG.sessionTimeout) {
+      logout();
+      showError('会话已超时，请重新登录');
+      return true;
+    }
+    return false;
+  }
+  function startActivityMonitor() {
+    stopActivityMonitor();
+    const events = ['click', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(ev => document.addEventListener(ev, updateLastActivity, { passive: true }));
+    activityTimer = setInterval(checkSessionTimeout, 60000);
+  }
+  function stopActivityMonitor() {
+    if (activityTimer) { clearInterval(activityTimer); activityTimer = null; }
+  }
+
+  /* ---------- Password verification ---------- */
   function verifyPassword(input) {
     return input === CONFIG.password;
   }
 
-  /**
-   * 获取当前失败次数
-   */
+  /* ---------- Attempt tracking ---------- */
   function getAttempts() {
     const v = parseInt(ssGet(CONFIG.attemptsKey) || '0', 10);
     return isNaN(v) ? 0 : v;
   }
-  function setAttempts(n) {
-    ssSet(CONFIG.attemptsKey, String(n));
-  }
-
-  /**
-   * 获取锁定到期时间戳
-   */
+  function setAttempts(n) { ssSet(CONFIG.attemptsKey, String(n)); }
   function getLockUntil() {
     const v = parseInt(ssGet(CONFIG.lockKey) || '0', 10);
     return isNaN(v) ? 0 : v;
   }
-  function setLockUntil(ts) {
-    ssSet(CONFIG.lockKey, String(ts));
-  }
-  function clearLock() {
-    ssRemove(CONFIG.lockKey);
-    ssRemove(CONFIG.attemptsKey);
+  function setLockUntil(ts) { ssSet(CONFIG.lockKey, String(ts)); }
+  function clearLock() { ssRemove(CONFIG.lockKey); ssRemove(CONFIG.attemptsKey); }
+  function isLocked() { return getLockUntil() > Date.now(); }
+
+  /* ---------- PIN dot rendering ---------- */
+  function renderPinDots() {
+    const dots = document.querySelectorAll('.pin-dot');
+    dots.forEach((dot, i) => {
+      if (i < currentPin.length) {
+        dot.classList.add('filled');
+      } else {
+        dot.classList.remove('filled');
+      }
+    });
   }
 
-  /**
-   * 是否处于锁定状态
-   */
-  function isLocked() {
-    return getLockUntil() > Date.now();
+  function appendPinDigit(digit) {
+    if (isLocked() || isSubmitting) return;
+    if (currentPin.length >= CONFIG.pinLength) return;
+    currentPin += digit;
+    renderPinDots();
+    hideError();
+    if (currentPin.length === CONFIG.pinLength) {
+      setTimeout(handleLogin, 150);
+    }
   }
 
-  /**
-   * 启动锁定倒计时
-   */
+  function clearPin() {
+    currentPin = '';
+    renderPinDots();
+  }
+
+  function backspacePin() {
+    currentPin = currentPin.slice(0, -1);
+    renderPinDots();
+  }
+
+  /* ---------- Lock countdown ---------- */
   function startLockCountdown() {
     stopLockCountdown();
     const update = () => {
@@ -123,53 +150,108 @@
           errorEl.classList.add('show');
         }
         setButtonLocked(false);
+        setKeypadEnabled(true);
         return;
       }
       if (countdownEl) {
-        countdownEl.textContent = `锁定中，${remaining} 秒后自动解锁`;
+        countdownEl.textContent = `🔒 安全锁定中，${remaining} 秒后自动解锁`;
         countdownEl.style.display = 'block';
       }
     };
     update();
     lockCountdownTimer = setInterval(update, 1000);
   }
-
   function stopLockCountdown() {
-    if (lockCountdownTimer) {
-      clearInterval(lockCountdownTimer);
-      lockCountdownTimer = null;
-    }
+    if (lockCountdownTimer) { clearInterval(lockCountdownTimer); lockCountdownTimer = null; }
   }
 
-  /**
-   * 设置按钮锁定/可用状态
-   */
   function setButtonLocked(locked) {
     const btn = document.getElementById('login-button');
-    const toggle = document.getElementById('login-toggle-visibility');
-    if (btn) {
-      // 锁定时不禁用按钮和输入框（保持可交互，handleLogin内部会拦截并显示错误）
-      btn.classList.toggle('locked', locked);
-    }
-    if (toggle) toggle.style.display = locked ? 'none' : '';
+    if (btn) btn.classList.toggle('locked', locked);
+  }
+  function setKeypadEnabled(enabled) {
+    const keys = document.querySelectorAll('.pin-key');
+    keys.forEach(k => {
+      if (enabled) k.removeAttribute('disabled');
+      else k.setAttribute('disabled', 'true');
+    });
   }
 
-  /**
-   * 显示登录页面
-   */
+  /* ---------- Login flow ---------- */
+  function handleLogin() {
+    if (isSubmitting) return;
+    if (isLocked()) {
+      showError('尝试次数过多，请稍后再试');
+      return;
+    }
+    if (currentPin.length < CONFIG.pinLength) {
+      showError('请输入6位访问密码');
+      return;
+    }
+
+    isSubmitting = true;
+    const btn = document.getElementById('login-button');
+    if (btn) btn.classList.add('loading');
+
+    if (verifyPassword(currentPin)) {
+      clearLock();
+      setLoggedIn();
+      hideError();
+      if (btn) btn.classList.remove('loading');
+      isSubmitting = false;
+      hideLogin();
+    } else {
+      const attempts = getAttempts() + 1;
+      setAttempts(attempts);
+      const remaining = CONFIG.maxAttempts - attempts;
+
+      if (remaining <= 0) {
+        setLockUntil(Date.now() + CONFIG.lockoutTime);
+        setButtonLocked(true);
+        setKeypadEnabled(false);
+        showError('⚠️ 尝试次数过多，已锁定60秒');
+        startLockCountdown();
+      } else {
+        showError(`❌ 密码错误，还剩 ${remaining} 次机会`);
+      }
+
+      // Shake animation on dots
+      const dotsContainer = document.querySelector('.pin-dots');
+      if (dotsContainer) {
+        dotsContainer.classList.add('shake');
+        setTimeout(() => dotsContainer.classList.remove('shake'), 500);
+      }
+
+      setTimeout(() => {
+        clearPin();
+        if (btn) btn.classList.remove('loading');
+        isSubmitting = false;
+      }, 300);
+    }
+  }
+
+  /* ---------- Error display ---------- */
+  function showError(message) {
+    const errorEl = document.getElementById('login-error');
+    if (errorEl) {
+      errorEl.textContent = message;
+      errorEl.classList.add('show');
+    }
+  }
+  function hideError() {
+    const errorEl = document.getElementById('login-error');
+    if (errorEl) errorEl.classList.remove('show');
+  }
+
+  /* ---------- Show/hide login ---------- */
   function showLogin() {
     const overlay = document.getElementById('login-overlay');
     if (overlay) {
       overlay.classList.remove('hidden');
-      const input = document.getElementById('login-password');
-      if (input) {
-        input.value = '';
-        input.type = 'password';
-        setTimeout(() => input.focus(), 100);
-      }
-      // 恢复锁定状态（跨刷新）
+      clearPin();
       if (isLocked()) {
         setButtonLocked(true);
+        setKeypadEnabled(false);
         const errorEl = document.getElementById('login-error');
         if (errorEl) {
           errorEl.textContent = '尝试次数过多，请稍后再试';
@@ -179,154 +261,137 @@
       } else {
         clearLock();
         setButtonLocked(false);
+        setKeypadEnabled(true);
       }
     }
   }
 
-  /**
-   * 隐藏登录页面，进入工作台
-   */
   function hideLogin() {
     const overlay = document.getElementById('login-overlay');
-    if (overlay) {
-      overlay.classList.add('hidden');
-    }
+    if (overlay) overlay.classList.add('hidden');
     stopLockCountdown();
   }
 
-  /**
-   * 显示错误信息
-   */
-  function showError(message) {
-    const errorEl = document.getElementById('login-error');
-    const inputEl = document.getElementById('login-password');
-    if (errorEl) {
-      errorEl.textContent = message;
-      errorEl.classList.add('show');
+  /* ---------- Particle background ---------- */
+  function initParticles() {
+    const canvas = document.getElementById('login-particles');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+    let animId = null;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
-    if (inputEl) {
-      inputEl.classList.add('error');
-      setTimeout(() => inputEl.classList.remove('error'), 500);
-    }
-  }
+    resize();
+    window.addEventListener('resize', resize);
 
-  /**
-   * 隐藏错误信息
-   */
-  function hideError() {
-    const errorEl = document.getElementById('login-error');
-    if (errorEl) errorEl.classList.remove('show');
-  }
-
-  /**
-   * 处理登录提交
-   */
-  function handleLogin() {
-    // 防重复提交
-    if (isSubmitting) return;
-
-    // 锁定状态检查
-    if (isLocked()) {
-      showError('尝试次数过多，请稍后再试');
-      return;
+    for (let i = 0; i < 60; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 2 + 0.5,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        opacity: Math.random() * 0.5 + 0.2
+      });
     }
 
-    const input = document.getElementById('login-password');
-    const password = input ? input.value.trim() : '';
-
-    if (!password) {
-      showError('请输入访问密码');
-      return;
-    }
-
-    // 提交中状态（短暂loading动画，不阻塞快速连续提交）
-    isSubmitting = true;
-    const btn = document.getElementById('login-button');
-    if (btn) btn.classList.add('loading');
-
-    // 同步验证（本地密码比对，无需延迟）
-    if (verifyPassword(password)) {
-      // 登录成功
-      clearLock();
-      setLoggedIn();
-      hideError();
-      if (input) input.value = '';
-      if (btn) btn.classList.remove('loading');
-      isSubmitting = false;
-      hideLogin();
-    } else {
-      // 登录失败
-      const attempts = getAttempts() + 1;
-      setAttempts(attempts);
-      const remaining = CONFIG.maxAttempts - attempts;
-
-      if (remaining <= 0) {
-        // 锁定
-        setLockUntil(Date.now() + CONFIG.lockoutTime);
-        setButtonLocked(true);
-        showError('尝试次数过多，请1分钟后再试');
-        startLockCountdown();
-      } else {
-        showError(`密码错误，还剩 ${remaining} 次机会`);
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(212, 175, 55, ${p.opacity})`;
+        ctx.fill();
+      });
+      // Connect nearby particles
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.strokeStyle = `rgba(212, 175, 55, ${0.15 * (1 - dist / 120)})`;
+            ctx.lineWidth = 0.5;
+            ctx.stroke();
+          }
+        }
       }
-
-      // 清空输入并聚焦
-      if (input) {
-        input.value = '';
-        input.focus();
-      }
-      if (btn) btn.classList.remove('loading');
-      isSubmitting = false;
+      animId = requestAnimationFrame(draw);
     }
+    draw();
   }
 
-  /**
-   * 切换密码显示/隐藏
-   */
-  function togglePasswordVisibility() {
-    const input = document.getElementById('login-password');
-    const toggle = document.getElementById('login-toggle-visibility');
-    if (!input) return;
-    if (input.type === 'password') {
-      input.type = 'text';
-      if (toggle) toggle.textContent = '🙈';
-    } else {
-      input.type = 'password';
-      if (toggle) toggle.textContent = '👁';
-    }
-  }
-
-  /**
-   * 初始化登录页面
-   */
+  /* ---------- Build login UI ---------- */
   function initLogin() {
-    // 创建登录遮罩层
     const overlay = document.createElement('div');
     overlay.id = 'login-overlay';
     overlay.innerHTML = `
+      <canvas id="login-particles"></canvas>
       <div class="login-bg-decoration"></div>
       <div class="login-container">
         <div class="login-brand">
-          <img src="assets/images/kailioncrafts-logo.png" alt="KaiLionCrafts Logo" class="login-logo" onerror="this.style.display='none'">
+          <div class="login-logo-ring">
+            <div class="login-logo-inner">
+              <span class="login-logo-text">锴</span>
+            </div>
+          </div>
           <h1 class="login-company-name">KaiLionCrafts</h1>
-          <p class="login-company-subtitle">YANGJIANG HARDWARE</p>
+          <p class="login-company-subtitle">YANGJIANG HARDWARE · EST. 2026</p>
         </div>
         <h2 class="login-title">锴利超级AI工作台</h2>
-        <p class="login-subtitle">企业级 AI 内容创作平台</p>
-        <div class="login-input-wrapper">
-          <input type="password" id="login-password" class="login-input"
-                 placeholder="请输入访问密码" autocomplete="off" maxlength="20" spellcheck="false">
-          <button type="button" id="login-toggle-visibility" class="login-toggle-visibility" title="显示/隐藏密码">👁</button>
+        <p class="login-subtitle">企业级 AI 内容创作平台 · 安全访问</p>
+
+        <div class="pin-dots" id="pin-dots">
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
+          <span class="pin-dot"></span>
         </div>
+
+        <div class="pin-keypad" id="pin-keypad">
+          <button class="pin-key" data-digit="1">1<span class="pin-key-sub"></span></button>
+          <button class="pin-key" data-digit="2">2<span class="pin-key-sub">ABC</span></button>
+          <button class="pin-key" data-digit="3">3<span class="pin-key-sub">DEF</span></button>
+          <button class="pin-key" data-digit="4">4<span class="pin-key-sub">GHI</span></button>
+          <button class="pin-key" data-digit="5">5<span class="pin-key-sub">JKL</span></button>
+          <button class="pin-key" data-digit="6">6<span class="pin-key-sub">MNO</span></button>
+          <button class="pin-key" data-digit="7">7<span class="pin-key-sub">PQRS</span></button>
+          <button class="pin-key" data-digit="8">8<span class="pin-key-sub">TUV</span></button>
+          <button class="pin-key" data-digit="9">9<span class="pin-key-sub">WXYZ</span></button>
+          <button class="pin-key pin-key-empty" disabled></button>
+          <button class="pin-key" data-digit="0">0<span class="pin-key-sub"></span></button>
+          <button class="pin-key pin-key-backspace" id="pin-backspace" title="删除">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 4H8l-7 8 7 8h13a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2z"/>
+              <line x1="18" y1="9" x2="12" y2="15"/>
+              <line x1="12" y1="9" x2="18" y2="15"/>
+            </svg>
+          </button>
+        </div>
+
         <div id="login-countdown" class="login-countdown"></div>
-        <button id="login-button" class="login-button">
+        <button id="login-button" class="login-button" style="display:none;">
           <span class="login-button-text">进 入 工 作 台</span>
           <span class="login-button-spinner"></span>
         </button>
         <div id="login-error" class="login-error"></div>
+
         <div class="login-security-notice">
           <span class="login-security-icon">🔒</span>
-          本页面为本地界面锁屏机制，非企业级认证；公网/局域网部署请启用服务端 ACCESS_TOKEN
+          本页面为本地界面锁屏 · 公网部署请启用服务端 ACCESS_TOKEN
+          <span class="login-version">v2.14.2</span>
         </div>
         <div class="login-footer">
           © 2026 KaiLionCrafts · 阳江市锴利国际贸易有限公司
@@ -335,45 +400,46 @@
     `;
     document.body.appendChild(overlay);
 
-    // 绑定事件
-    const button = document.getElementById('login-button');
-    const input = document.getElementById('login-password');
-    const toggle = document.getElementById('login-toggle-visibility');
+    // Bind keypad
+    overlay.querySelectorAll('.pin-key[data-digit]').forEach(key => {
+      key.addEventListener('click', () => appendPinDigit(key.dataset.digit));
+    });
+    const backspace = document.getElementById('pin-backspace');
+    if (backspace) backspace.addEventListener('click', backspacePin);
 
-    if (button) {
-      button.addEventListener('click', handleLogin);
-    }
+    // Keyboard support
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('login-overlay').classList.contains('hidden')) return;
+      if (/^[0-9]$/.test(e.key)) {
+        appendPinDigit(e.key);
+      } else if (e.key === 'Backspace') {
+        backspacePin();
+      } else if (e.key === 'Enter' && currentPin.length === CONFIG.pinLength) {
+        handleLogin();
+      }
+    });
 
-    if (input) {
-      input.addEventListener('keydown', function(e) {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          handleLogin();
-        }
-      });
-      input.addEventListener('input', hideError);
-    }
+    // Init particles
+    initParticles();
 
-    if (toggle) {
-      toggle.addEventListener('click', togglePasswordVisibility);
-    }
-
-    // 检查登录状态
+    // Check session
     if (isLoggedIn()) {
+      if (checkSessionTimeout()) return;
       hideLogin();
+      startActivityMonitor();
     } else {
       showLogin();
     }
   }
 
-  // 暴露退出登录方法到全局
+  /* ---------- Global API ---------- */
   window.KailionLogin = {
     logout: logout,
     isLoggedIn: isLoggedIn,
-    showLogin: showLogin
+    showLogin: showLogin,
+    refreshSession: updateLastActivity
   };
 
-  // DOM加载完成后初始化
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initLogin);
   } else {

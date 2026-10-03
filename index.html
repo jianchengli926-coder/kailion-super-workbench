@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="assets/css/workbench.css">
   <link rel="stylesheet" href="assets/css/results.css">
   <link rel="stylesheet" href="assets/css/canvas-ext.css">
-  <link rel="stylesheet" href="assets/css/login.css?v2.14.1">
+  <link rel="stylesheet" href="assets/css/login.css?v2.14.2">
 </head>
 <body>
 
@@ -330,6 +330,21 @@
             </div>
           </form>
         </div>
+        <!-- v2.14.2：模型故障转移状态面板 -->
+        <div class="settings-section">
+          <h3>🔄 模型故障转移</h3>
+          <p class="settings-desc">在线模型优先，全部失败时自动回退本地 Ollama；支持手动切换与自动故障转移链</p>
+          <label style="display:flex;align-items:center;gap:8px;margin:8px 0;cursor:pointer;">
+            <input type="checkbox" id="failover-enabled" checked> 启用自动故障转移
+          </label>
+          <div id="failover-status" class="failover-status-panel">
+            <div class="failover-loading">检测中...</div>
+          </div>
+          <div class="failover-chain" id="failover-chain"></div>
+          <div class="settings-desc" style="margin-top:10px;font-size:11px;opacity:0.7;">
+            💡 优先级：智谱GLM(免费) → 硅基流动(免费) → Gemini(免费) → wawapi → OpenAI → DeepSeek → 豆包 → Ollama本地
+          </div>
+        </div>
         <!-- v2.2.0-super：CORS 代理 -->
         <div class="settings-section">
           <h3>🌐 CORS 代理</h3>
@@ -558,7 +573,7 @@
     console.info('[Migration] 迁移了 ' + migrated + ' 个 localStorage 键（ljc_ → kailion_）');
   })();
   </script>
-    <script src="assets/js/login.js?v2.14.1"></script>
+    <script src="assets/js/login.js?v2.14.2"></script>
 <script src="assets/js/nodes-data.js?v2.14.1"></script>
   <!-- v2.0.0-super：三工作台合并数据（专家/提示词/SKU/数字人/风格等） -->
   <script src="assets/js/super-data.js?v2.14.1"></script>
@@ -614,5 +629,67 @@
   <script src="assets/js/app.js?v2.14.1"></script>
   <!-- v1.0.0：全局搜索（Ctrl/Cmd+K），最后加载以索引全部数据 -->
   <script src="assets/js/search.js?v2.14.1"></script>
+  <!-- v2.14.2：模型故障转移状态面板渲染 -->
+  <script>
+  (function() {
+    'use strict';
+    function renderFailoverStatus() {
+      var panel = document.getElementById('failover-status');
+      var chain = document.getElementById('failover-chain');
+      var toggle = document.getElementById('failover-enabled');
+      if (!panel || !window.Failover) return;
+      try {
+        var status = window.Failover.getStatus();
+        var config = window.Failover.getConfig();
+        if (toggle) toggle.checked = config.enabled;
+        panel.innerHTML =
+          '<div class="failover-stats">' +
+            '<div class="failover-stat"><div class="failover-stat-num">' + status.totalProviders + '</div><div class="failover-stat-label">总供应商</div></div>' +
+            '<div class="failover-stat"><div class="failover-stat-num" style="color:#34d399">' + status.usableProviders + '</div><div class="failover-stat-label">可用</div></div>' +
+            '<div class="failover-stat"><div class="failover-stat-num" style="color:#f87171">' + (status.totalProviders - status.usableProviders) + '</div><div class="failover-stat-label">未配置Key</div></div>' +
+            '<div class="failover-stat"><div class="failover-stat-num">' + status.textFallbacks + '</div><div class="failover-stat-label">文本备用链</div></div>' +
+          '</div>';
+        var fallbacks = window.Failover.getFallbackProviders(null, 'text');
+        var allProviders = (window.ProviderStore && window.ProviderStore.load) ? window.ProviderStore.load() : [];
+        var priority = ['builtin_zhipu_relay','siliconflow','gemini','wawapi_relay','openai','deepseek','doubao','builtin_ollama','builtin_ollama_local'];
+        var html = '';
+        var order = 1;
+        priority.forEach(function(id) {
+          var p = allProviders.find(function(x) { return x.id === id; });
+          if (!p) return;
+          var isLocal = /ollama|localhost|127\.0\.0\.1/i.test(p.baseurl + p.name);
+          var hasKey = !!(p.key && p.key.length);
+          var usable = isLocal || hasKey;
+          var typeBadge = isLocal ? '<span class="failover-chain-badge badge-local">本地</span>' : '<span class="failover-chain-badge badge-online">在线</span>';
+          var statusBadge = usable ? '<span class="failover-chain-badge badge-ready">就绪</span>' : '<span class="failover-chain-badge badge-nokey">需配置Key</span>';
+          html += '<div class="failover-chain-item ' + (usable ? 'usable' : 'unusable') + '">' +
+            '<span class="failover-chain-order">' + order + '</span>' +
+            '<span class="failover-chain-name">' + p.name + '</span>' +
+            typeBadge + statusBadge +
+          '</div>';
+          order++;
+        });
+        if (chain) chain.innerHTML = html;
+      } catch(e) {
+        panel.innerHTML = '<div class="failover-loading">故障转移模块未就绪</div>';
+      }
+    }
+    var settingsBtn = document.getElementById('btn-settings');
+    if (settingsBtn) {
+      settingsBtn.addEventListener('click', function() {
+        setTimeout(renderFailoverStatus, 100);
+      });
+    }
+    var toggle = document.getElementById('failover-enabled');
+    if (toggle) {
+      toggle.addEventListener('change', function() {
+        if (window.Failover) {
+          window.Failover.setConfig('enabled', toggle.checked);
+          renderFailoverStatus();
+        }
+      });
+    }
+  })();
+  </script>
 </body>
 </html>
