@@ -279,13 +279,13 @@
 
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num blue">25</div><div class="stat-label">测试功能项</div></div>
-      <div class="stat-card"><div class="stat-num green">21</div><div class="stat-label">测试通过</div></div>
+      <div class="stat-card"><div class="stat-num green">22</div><div class="stat-label">测试通过</div></div>
       <div class="stat-card"><div class="stat-num gold">3</div><div class="stat-label">部分可用</div></div>
-      <div class="stat-card"><div class="stat-num red">1</div><div class="stat-label">不可用</div></div>
+      <div class="stat-card"><div class="stat-num red">0</div><div class="stat-label">不可用</div></div>
     </div>
     <div style="margin:10px 0;">
-      <div style="font-size:12px;color:#64748b;margin-bottom:4px;">综合通过率：84%</div>
-      <div class="progress-bar"><div class="progress-fill" style="width:84%"></div></div>
+      <div style="font-size:12px;color:#64748b;margin-bottom:4px;">综合通过率：88%</div>
+      <div class="progress-bar"><div class="progress-fill" style="width:88%"></div></div>
     </div>
 
     <h3>测试明细</h3>
@@ -310,7 +310,7 @@
       <tr><td>17</td><td>模型</td><td>故障转移链优先级</td><td><span class="badge badge-pass">通过</span></td><td>GLM→硅基→Gemini→...→Ollama</td></tr>
       <tr><td>18</td><td>模型</td><td>故障转移可视化面板</td><td><span class="badge badge-pass">通过</span></td><td>统计+链状态+开关（新增）</td></tr>
       <tr><td>19</td><td>模型</td><td>Ollama本地模型可用性</td><td><span class="badge badge-pass">通过</span></td><td>10个模型，含qwen3.5/flux2等</td></tr>
-      <tr><td>20</td><td>模型</td><td>在线模型API Key配置</td><td><span class="badge badge-fail">不可用</span></td><td>4个在线供应商均无API Key</td></tr>
+      <tr><td>20</td><td>模型</td><td>在线模型API Key配置</td><td><span class="badge badge-pass">通过</span></td><td>智谱GLM已配置并验证（glm-4-flash返回200）</td></tr>
       <tr><td>21</td><td>设置</td><td>供应商管理</td><td><span class="badge badge-pass">通过</span></td><td>增删改/导入导出/从API获取模型</td></tr>
       <tr><td>22</td><td>设置</td><td>主题切换</td><td><span class="badge badge-pass">通过</span></td><td>深色/浅色/跟随系统+自定义</td></tr>
       <tr><td>23</td><td>设置</td><td>数据备份导出</td><td><span class="badge badge-pass">通过</span></td><td>全部数据/当前工作流/导入</td></tr>
@@ -324,7 +324,7 @@
     <h2>🔄 五、模型故障转移深度分析</h2>
 
     <h3>故障转移链（文本模型优先级）</h3>
-    <div class="chain-item"><span class="chain-order">1</span><span class="chain-name">智谱 GLM（免费·在线）</span><span class="badge badge-info">在线</span><span class="badge badge-fail">需配置Key</span></div>
+    <div class="chain-item"><span class="chain-order">1</span><span class="chain-name">智谱 GLM（免费·在线）</span><span class="badge badge-info">在线</span><span class="badge badge-pass">✅ 已配置·已验证</span></div>
     <div class="chain-item"><span class="chain-order">2</span><span class="chain-name">硅基流动 SiliconFlow（免费·在线）</span><span class="badge badge-info">在线</span><span class="badge badge-fail">需配置Key</span></div>
     <div class="chain-item"><span class="chain-order">3</span><span class="chain-name">Gemini（免费·在线·500次/天）</span><span class="badge badge-info">在线</span><span class="badge badge-fail">需配置Key</span></div>
     <div class="chain-item"><span class="chain-order">4</span><span class="chain-name">wawapi 中转站（在线）</span><span class="badge badge-info">在线</span><span class="badge badge-warn">未配置</span></div>
@@ -336,8 +336,8 @@
     <h3>当前状态</h3>
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-num">5</div><div class="stat-label">已配置供应商</div></div>
-      <div class="stat-card"><div class="stat-num green">1</div><div class="stat-label">实际可用（Ollama）</div></div>
-      <div class="stat-card"><div class="stat-num red">4</div><div class="stat-label">在线模型无Key</div></div>
+      <div class="stat-card"><div class="stat-num green">2</div><div class="stat-label">可用供应商</div></div>
+      <div class="stat-card"><div class="stat-num red">3</div><div class="stat-label">未配置Key</div></div>
       <div class="stat-card"><div class="stat-num gold">6</div><div class="stat-label">本地已安装模型</div></div>
     </div>
 
@@ -354,11 +354,11 @@
 // 8. onProviderUsed 回调报告实际使用的供应商/模型 ✅
     </div>
 
-    <div class="issue-item">
-      <h4>⚠️ 关键待办：配置在线模型 API Key</h4>
-      <p>当前故障转移代码完全正确，但4个在线供应商均未配置API Key，导致实际只有Ollama本地模型可用。
-      建议优先配置<strong>智谱GLM免费模型</strong>（注册 open.bigmodel.cn 获取 Key，glm-4-flash / glm-4.7-flash 免费），
-      即可实现"在线GLM优先 → 失败回退本地Ollama"的完整故障转移链。</p>
+    <div class="improvement-item">
+      <h4>✅ 已完成：智谱GLM API Key 已配置并验证</h4>
+      <p>智谱GLM API Key 已写入工作台，glm-4-flash 实测返回 HTTP 200。
+      故障转移链现已完整运行：<strong>在线GLM优先 → 失败自动回退本地Ollama</strong>。
+      剩余3个在线供应商（硅基流动/Gemini/豆包）可按需配置以增强冗余。</p>
     </div>
   </div>
 
@@ -504,10 +504,15 @@ API Logger 记录调用日志和费用估算
     <h2>📋 九、待办事项与建议</h2>
 
     <h3>🔴 高优先级</h3>
+    <div class="improvement-item">
+      <h4>✅ 已完成：配置智谱GLM免费模型 API Key</h4>
+      <p>API Key 已写入工作台供应商配置，glm-4-flash 实测返回 HTTP 200 正常回复。
+      故障转移链现已完整激活：<strong>智谱GLM（在线优先）→ 其他在线模型 → Ollama本地（兜底）</strong>。
+      可用供应商从 1 个提升至 2 个，文本/图片/视频/嵌入四类备用链均为 2 条。</p>
+    </div>
     <div class="issue-item">
-      <h4>1. 配置智谱GLM免费模型 API Key</h4>
-      <p>注册 open.bigmodel.cn → 控制台 → API Keys → 创建Key → 工作台设置 → 供应商管理 → 智谱GLM → 填入Key。
-      配置后即可使用 glm-4-flash / glm-4.7-flash（免费），实现"在线优先、本地兜底"的完整故障转移。</p>
+      <h4>2. 配置硅基流动 / Gemini 免费模型 Key（可选增强）</h4>
+      <p>硅基流动（siliconflow.cn）和 Gemini（aistudio.google.com）均提供免费额度。配置后可进一步增强故障转移链的冗余度，实现3+层在线模型兜底。</p>
     </div>
 
     <h3>🟡 中优先级</h3>
