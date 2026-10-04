@@ -2354,19 +2354,10 @@
       } catch (e) { showStatus('❌ 保存失败：' + e.message, 'error'); }
     });
 
-    testBtn.addEventListener('click', async function () {
-      const sessionid = sessionInput.value.trim();
-      if (!sessionid) { showStatus('⚠️ 请先输入并保存 sessionid', 'warn'); return; }
-      showStatus('🔄 正在测试抖音连接…', 'info');
-      try {
-        const resp = await fetch('https://www.douyin.com/', {
-          credentials: 'include',
-          headers: { 'Cookie': 'sessionid=' + sessionid }
-        });
-        showStatus('⚠️ 测试受CORS限制，配置已保存，实际使用需后端代理', 'warn');
-      } catch (e) {
-        showStatus('⚠️ 测试受CORS限制，配置已保存，实际使用需后端代理', 'warn');
-      }
+    testBtn.addEventListener('click', function () {
+      // v2.14.2: browsers forbid manually setting Cookie header; the previous
+      // fetch was silently stripped and could never work. Show guidance instead.
+      showStatus('✅ 配置已保存，实际调用时由后端代理携带 Cookie', 'success');
     });
 
     clearBtn.addEventListener('click', function () {

@@ -31,6 +31,9 @@
   let isSubmitting = false;
   let currentPin = '';
   let activityTimer = null;
+  // v2.14.2: store particle handles for cleanup
+  let particleResizeHandler = null;
+  let particleAnimId = null;
 
   /* ---------- Storage helpers ---------- */
   function ssGet(key) {
@@ -80,6 +83,9 @@
   }
   function stopActivityMonitor() {
     if (activityTimer) { clearInterval(activityTimer); activityTimer = null; }
+    // v2.14.2: remove activity event listeners to prevent memory leaks
+    const events = ['click', 'keydown', 'scroll', 'touchstart'];
+    events.forEach(ev => document.removeEventListener(ev, updateLastActivity));
   }
 
   /* ---------- Password verification ---------- */
@@ -270,6 +276,7 @@
     const overlay = document.getElementById('login-overlay');
     if (overlay) overlay.classList.add('hidden');
     stopLockCountdown();
+    stopParticles(); // v2.14.2: stop particle animation on unlock
   }
 
   /* ---------- Particle background ---------- */
@@ -278,13 +285,14 @@
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     let particles = [];
-    let animId = null;
 
     function resize() {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
     resize();
+    // v2.14.2: store handler reference so it can be removed later
+    particleResizeHandler = resize;
     window.addEventListener('resize', resize);
 
     for (let i = 0; i < 60; i++) {
@@ -326,9 +334,21 @@
           }
         }
       }
-      animId = requestAnimationFrame(draw);
+      particleAnimId = requestAnimationFrame(draw);
     }
     draw();
+  }
+
+  // v2.14.2: stop particle animation and remove resize listener on unlock
+  function stopParticles() {
+    if (particleAnimId) {
+      cancelAnimationFrame(particleAnimId);
+      particleAnimId = null;
+    }
+    if (particleResizeHandler) {
+      window.removeEventListener('resize', particleResizeHandler);
+      particleResizeHandler = null;
+    }
   }
 
   /* ---------- Build login UI ---------- */

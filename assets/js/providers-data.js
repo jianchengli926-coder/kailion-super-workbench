@@ -171,47 +171,47 @@
       ] },
     { name: 'xAI Grok', nameEn: 'xAI Grok', baseurl: 'https://api.x.ai/v1', category: 'llm', categoryEn: CAT_EN.llm, icon: '𝕏', protocol: 'openai',
       models: [
-        { id: 'grok-2', name: 'Grok 2', type: 'llm' },
-        { id: 'grok-2-1212', name: 'Grok 2 (1212)', type: 'llm' },
-        { id: 'grok-2-mini', name: 'Grok 2 Mini', type: 'llm' },
-        { id: 'grok-vision-beta', name: 'Grok Vision Beta', type: 'llm' }
+        { id: 'grok-2', label: 'Grok 2', capabilities: ['text'] },
+        { id: 'grok-2-1212', label: 'Grok 2 (1212)', capabilities: ['text'] },
+        { id: 'grok-2-mini', label: 'Grok 2 Mini', capabilities: ['text'] },
+        { id: 'grok-vision-beta', label: 'Grok Vision Beta', capabilities: ['text', 'vision'] }
       ] },
     { name: 'ElevenLabs Omni', nameEn: 'ElevenLabs Omni', baseurl: 'https://api.elevenlabs.io/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎙️', protocol: 'custom',
       models: [
-        { id: 'omni-v1', name: 'Omni v1', type: 'video' }
+        { id: 'omni-v1', label: 'Omni v1', capabilities: ['video'] }
       ] },
     { name: 'Agnes API', nameEn: 'Agnes API', baseurl: 'https://api.agnesapi.com/v1', category: 'universal', categoryEn: CAT_EN.universal, icon: '🔮', protocol: 'openai',
       models: [
-        { id: 'agnes-image', name: 'Agnes 图片生成', type: 'image' },
-        { id: 'agnes-video', name: 'Agnes 视频生成', type: 'video' }
+        { id: 'agnes-image', label: 'Agnes 图片生成', capabilities: ['image'] },
+        { id: 'agnes-video', label: 'Agnes 视频生成', capabilities: ['video'] }
       ] },
     { name: '可灵 Kling', nameEn: 'Kling AI', baseurl: 'https://api.klingai.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎬', protocol: 'custom',
       models: [
-        { id: 'kling-v1', name: '可灵 V1', type: 'video' },
-        { id: 'kling-v1.5', name: '可灵 V1.5', type: 'video' },
-        { id: 'kling-v1.6', name: '可灵 V1.6', type: 'video' }
+        { id: 'kling-v1', label: '可灵 V1', capabilities: ['video'] },
+        { id: 'kling-v1.5', label: '可灵 V1.5', capabilities: ['video'] },
+        { id: 'kling-v1.6', label: '可灵 V1.6', capabilities: ['video'] }
       ] },
     { name: '即梦 Seedance', nameEn: 'Seedance', baseurl: 'https://api.jimeng.jianying.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '💫', protocol: 'custom',
       models: [
-        { id: 'seedance-1.0', name: 'Seedance 1.0', type: 'video' },
-        { id: 'seedance-1.0-pro', name: 'Seedance 1.0 Pro', type: 'video' }
+        { id: 'seedance-1.0', label: 'Seedance 1.0', capabilities: ['video'] },
+        { id: 'seedance-1.0-pro', label: 'Seedance 1.0 Pro', capabilities: ['video'] }
       ] },
     { name: 'VEO', nameEn: 'Google VEO', baseurl: 'https://api.veo.google.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎥', protocol: 'openai',
       models: [
-        { id: 'veo-2', name: 'VEO 2', type: 'video' },
-        { id: 'veo-3', name: 'VEO 3', type: 'video' }
+        { id: 'veo-2', label: 'VEO 2', capabilities: ['video'] },
+        { id: 'veo-3', label: 'VEO 3', capabilities: ['video'] }
       ] },
     { name: '冰火 Binghuo', nameEn: 'Binghuo Video', baseurl: 'https://api.binghuo.video/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🔥', protocol: 'custom',
       models: [
-        { id: 'binghuo-v1', name: '冰火 V1', type: 'video' }
+        { id: 'binghuo-v1', label: '冰火 V1', capabilities: ['video'] }
       ] },
     { name: '12AI', nameEn: '12AI Video', baseurl: 'https://api.12ai.video/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🎞️', protocol: 'custom',
       models: [
-        { id: '12ai-v1', name: '12AI V1', type: 'video' }
+        { id: '12ai-v1', label: '12AI V1', capabilities: ['video'] }
       ] },
     { name: 'ToAPIs', nameEn: 'ToAPIs Video', baseurl: 'https://api.toapis.com/v1', category: 'video', categoryEn: CAT_EN.video, icon: '🌐', protocol: 'openai',
       models: [
-        { id: 'toapis-video', name: 'ToAPIs 视频', type: 'video' }
+        { id: 'toapis-video', label: 'ToAPIs 视频', capabilities: ['video'] }
       ] },
     { name: 'Meshy', nameEn: 'Meshy', baseurl: 'https://api.meshy.ai/v1', category: '3d', categoryEn: CAT_EN['3d'], icon: '🎲',
       desc: 'Meshy AI 3D 资产生成，支持纹理重绘与格式转换',

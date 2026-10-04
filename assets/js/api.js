@@ -575,7 +575,7 @@
     forms.push({
       id: 'openai-generations',
       label: 'OpenAI /images/generations',
-      url: base + '/images/generations',
+      url: base + v1Prefix + '/images/generations',
       body: { model: model, prompt: prompt, n: n, size: size, quality: params.quality || 'standard', style: params.style || 'vivid' }
     });
     forms.push({

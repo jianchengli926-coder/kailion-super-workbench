@@ -593,6 +593,7 @@
     /* ---------- tasks.js ---------- */
     'tasks.batchTitle': '⚡ 批量并行任务',
     'tasks.batchNamePh': '任务名称（如：详情页批量生成）',
+    'tasks.batchInputsPh': '输入批量数据，每行一条...',
     'tasks.currentWf': '当前画布工作流',
     'tasks.concurrency': '并发数',
     'tasks.dataSourcePh': '数据源（CSV 路径 / 链接）',
@@ -1908,6 +1909,7 @@
     /* ---------- tasks.js ---------- */
     'tasks.batchTitle': '⚡ Batch Parallel Tasks',
     'tasks.batchNamePh': 'Task name (e.g.: batch detail page generation)',
+    'tasks.batchInputsPh': 'Enter batch data, one per line...',
     'tasks.currentWf': 'Current canvas workflow',
     'tasks.concurrency': 'Concurrency',
     'tasks.dataSourcePh': 'Data source (CSV path / URL)',

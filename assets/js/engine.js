@@ -1758,7 +1758,8 @@
               const itvResp = await fetch(itvProv.baseurl.replace(/\/$/, '') + '/videos/generations', {
                 method: 'POST',
                 headers: { 'Authorization': 'Bearer ' + (itvProv.key || ''), 'Content-Type': 'application/json' },
-                body: JSON.stringify({ model: (itvProv.models && itvProv.models[0] && itvProv.models[0].id) || 'sora', image: itvImage, prompt: itvPrompt, duration: Number(itv.duration) || 5, ratio: itv.ratio || '16:9' })
+                body: JSON.stringify({ model: (itvProv.models && itvProv.models[0] && itvProv.models[0].id) || 'sora', image: itvImage, prompt: itvPrompt, duration: Number(itv.duration) || 5, ratio: itv.ratio || '16:9' }),
+                signal: apiOpts.signal
               });
               const itvData = await itvResp.json();
               const itvUrl = (itvData.data && itvData.data[0] && itvData.data[0].url) || itvData.url || itvData.video_url || '';
@@ -1771,6 +1772,7 @@
                 throw new Error('未返回视频URL');
               }
             } catch (itve) {
+              if (itve && itve.name === 'AbortError') throw itve;
               output = '【图生视频降级】' + itve.message;
               bodyHtml = buildTextResult('⚠️ ' + output);
               node._meta = { real: false, simulated: true, failed: true };
@@ -1851,7 +1853,8 @@
             const dvpResp = await fetch(dvpProv.baseurl.replace(/\/$/, '') + '/videos/generations', {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (dvpProv.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify({ model: (dvpProv.models && dvpProv.models[0] && dvpProv.models[0].id) || 'sora', prompt: dvpPrompt, duration: Number(dvpDuration), ratio: dvpRatio })
+              body: JSON.stringify({ model: (dvpProv.models && dvpProv.models[0] && dvpProv.models[0].id) || 'sora', prompt: dvpPrompt, duration: Number(dvpDuration), ratio: dvpRatio }),
+              signal: apiOpts.signal
             });
             const dvpData = await dvpResp.json();
             const videoUrl = (dvpData.data && dvpData.data[0] && dvpData.data[0].url) || dvpData.url || dvpData.video_url || '';
@@ -1864,6 +1867,7 @@
               throw new Error('未返回视频URL');
             }
           } catch (dvpe) {
+            if (dvpe && dvpe.name === 'AbortError') throw dvpe;
             output = '【抖音视频生成降级】' + dvpe.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2160,7 +2164,8 @@
           try {
             const searchUrl = searchProv.baseurl.replace(/\/$/, '') + '/search';
             const sresp = await fetch(searchUrl + '?q=' + encodeURIComponent(query) + '&count=' + count + '&engine=' + engine + '&timeRange=' + timeRange, {
-              headers: { 'Authorization': 'Bearer ' + (searchProv.key || '') }
+              headers: { 'Authorization': 'Bearer ' + (searchProv.key || '') },
+              signal: apiOpts.signal
             });
             const sdata = await sresp.json();
             const results = sdata.results || sdata.data || [];
@@ -2174,6 +2179,7 @@
             ).join('') + '</div>';
             node._meta = { real: true, simulated: false, failed: false, provider: searchProv.name };
           } catch (se) {
+            if (se && se.name === 'AbortError') throw se;
             output = '【搜索降级】搜索API调用失败：' + se.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2204,7 +2210,8 @@
           const mresp = await fetch(mcpUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream' },
-            body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method: 'tools/call', params: { name: toolName, arguments: args } })
+            body: JSON.stringify({ jsonrpc: '2.0', id: Date.now(), method: 'tools/call', params: { name: toolName, arguments: args } }),
+            signal: apiOpts.signal
           });
           const mtext = await mresp.text();
           let mresult = mtext;
@@ -2217,6 +2224,7 @@
           bodyHtml = '<pre style="max-height:300px;overflow:auto;background:#f8fafc;padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;">' + esc(String(mresult).substring(0, 3000)) + '</pre>';
           node._meta = { real: true, simulated: false, failed: false, tool: toolName, server: serverUrl };
         } catch (me) {
+          if (me && me.name === 'AbortError') throw me;
           await sleep(400);
           output = '【MCP降级】工具调用失败：' + me.message + '\n\n服务器: ' + serverUrl + '\n工具: ' + toolName + '\n参数: ' + JSON.stringify(args);
           resultTitle = '🔌 MCP 工具调用（降级）';
@@ -2235,7 +2243,8 @@
             const oresp = await fetch(ocrUrl, {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (ocrProv.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify({ image: upstreamImg, language: op.language, mode: op.mode, outputFormat: op.outputFormat })
+              body: JSON.stringify({ image: upstreamImg, language: op.language, mode: op.mode, outputFormat: op.outputFormat }),
+              signal: apiOpts.signal
             });
             const odata = await oresp.json();
             output = odata.text || odata.result || JSON.stringify(odata);
@@ -2243,6 +2252,7 @@
             bodyHtml = '<pre style="max-height:300px;overflow:auto;background:#f8fafc;padding:12px;border-radius:8px;font-size:13px;white-space:pre-wrap;">' + esc(output.substring(0, 3000)) + '</pre>';
             node._meta = { real: true, simulated: false, failed: false, provider: ocrProv.name };
           } catch (oe) {
+            if (oe && oe.name === 'AbortError') throw oe;
             output = '【OCR降级】识别失败：' + oe.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2266,7 +2276,8 @@
             const bresp = await fetch(bgUrl, {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (bgProv.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify({ image: bgImg, scene: rp.scene, format: rp.outputFormat, quality: rp.quality })
+              body: JSON.stringify({ image: bgImg, scene: rp.scene, format: rp.outputFormat, quality: rp.quality }),
+              signal: apiOpts.signal
             });
             const bdata = await bresp.json();
             output = bdata.url || bdata.image || '去背景完成';
@@ -2274,6 +2285,7 @@
             bodyHtml = '<img src="' + esc(output) + '" style="max-width:100%;border-radius:8px;border:1px dashed #cbd5e1;" />';
             node._meta = { real: true, simulated: false, failed: false, provider: bgProv.name };
           } catch (be) {
+            if (be && be.name === 'AbortError') throw be;
             output = '【去背景降级】处理失败：' + be.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2323,7 +2335,8 @@
             const fresp = await fetch(webhook, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
+              body: JSON.stringify(payload),
+              signal: apiOpts.signal
             });
             const fdata = await fresp.json();
             if (fdata.code === 0 || fdata.StatusCode === 0) {
@@ -2335,6 +2348,7 @@
               throw new Error(fdata.msg || fdata.StatusMessage || '发送失败');
             }
           } catch (fe) {
+            if (fe && fe.name === 'AbortError') throw fe;
             output = '【飞书消息发送失败】' + fe.message + '\n\n请检查：\n1. Webhook地址是否正确\n2. 机器人是否已添加到群\n3. 签名Secret是否正确（如开启）';
             resultTitle = '📨 飞书消息发送失败';
             bodyHtml = buildTextResult('⚠️ ' + output);
@@ -2353,7 +2367,8 @@
             const rtresp = await fetch(rtUrl, {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (rtProv.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify({ image: rtImg, mode: rtp.mode, region: rtp.region, format: rtp.outputFormat, quality: rtp.quality })
+              body: JSON.stringify({ image: rtImg, mode: rtp.mode, region: rtp.region, format: rtp.outputFormat, quality: rtp.quality }),
+              signal: apiOpts.signal
             });
             const rtdata = await rtresp.json();
             output = rtdata.url || rtdata.image || '文字移除完成';
@@ -2361,6 +2376,7 @@
             bodyHtml = '<img src="' + esc(output) + '" style="max-width:100%;border-radius:8px;border:1px dashed #cbd5e1;" />';
             node._meta = { real: true, simulated: false, failed: false, provider: rtProv.name };
           } catch (rte) {
+            if (rte && rte.name === 'AbortError') throw rte;
             output = '【文字移除降级】处理失败：' + rte.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2393,7 +2409,8 @@
             const gresp = await fetch(gprov.baseurl.replace(/\/$/, '') + '/chat/completions', {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (gprov.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify(gBody)
+              body: JSON.stringify(gBody),
+              signal: apiOpts.signal
             });
             const gdata = await gresp.json();
             if (gdata.choices && gdata.choices[0]) {
@@ -2405,6 +2422,7 @@
               throw new Error((gdata.error && gdata.error.message) || 'Grok API返回格式错误');
             }
           } catch (ge) {
+            if (ge && ge.name === 'AbortError') throw ge;
             output = '【Grok降级】调用失败：' + ge.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2433,7 +2451,8 @@
             const dcpResp = await fetch(dcpProv.baseurl.replace(/\/$/, '') + '/chat/completions', {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (dcpProv.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify({ model: dcpProv.models?.[0]?.id || 'gpt-3.5-turbo', messages: [{ role: 'user', content: dcpPrompt }], max_tokens: 1000 })
+              body: JSON.stringify({ model: dcpProv.models?.[0]?.id || 'gpt-3.5-turbo', messages: [{ role: 'user', content: dcpPrompt }], max_tokens: 1000 }),
+              signal: apiOpts.signal
             });
             const dcpData = await dcpResp.json();
             output = dcpData.choices?.[0]?.message?.content || '生成失败';
@@ -2441,6 +2460,7 @@
             bodyHtml = buildTextResult(output);
             node._meta = { real: true, simulated: false, failed: false, provider: dcpProv.name };
           } catch (dcpe) {
+            if (dcpe && dcpe.name === 'AbortError') throw dcpe;
             output = '【抖音文案降级】' + dcpe.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };
@@ -2474,7 +2494,8 @@
             const dspResp = await fetch(dspProv.baseurl.replace(/\/$/, '') + '/chat/completions', {
               method: 'POST',
               headers: { 'Authorization': 'Bearer ' + (dspProv.key || ''), 'Content-Type': 'application/json' },
-              body: JSON.stringify({ model: dspProv.models?.[0]?.id || 'gpt-3.5-turbo', messages: [{ role: 'user', content: dspPrompt }], max_tokens: 2000 })
+              body: JSON.stringify({ model: dspProv.models?.[0]?.id || 'gpt-3.5-turbo', messages: [{ role: 'user', content: dspPrompt }], max_tokens: 2000 }),
+              signal: apiOpts.signal
             });
             const dspData = await dspResp.json();
             output = dspData.choices?.[0]?.message?.content || '生成失败';
@@ -2482,6 +2503,7 @@
             bodyHtml = buildTextResult(output);
             node._meta = { real: true, simulated: false, failed: false, provider: dspProv.name };
           } catch (dspe) {
+            if (dspe && dspe.name === 'AbortError') throw dspe;
             output = '【抖音脚本降级】' + dspe.message;
             bodyHtml = buildTextResult('⚠️ ' + output);
             node._meta = { real: false, simulated: true, failed: true };

@@ -36,8 +36,7 @@
     'openai',                    // ⑤ OpenAI（在线）
     'deepseek',                  // ⑥ DeepSeek（在线）
     'doubao',                    // ⑦ 豆包（在线）
-    'builtin_ollama',            // ⑧ Ollama本地（最后兜底）
-    'builtin_ollama_local'       // ⑧ Ollama本地（兼容ID）
+    'builtin_ollama_local'       // ⑧ Ollama本地（最后兜底）
   ];
 
   // 图像模型优先级（从高到低）
@@ -47,8 +46,7 @@
     'gemini',                    // ③ Gemini Nano Banana（免费·在线）
     'openai',                    // ④ OpenAI DALL-E（在线）
     'wawapi_relay',              // ⑤ wawapi中转站（在线）
-    'builtin_ollama',            // ⑥ Ollama本地（最后兜底）
-    'builtin_ollama_local'       // ⑥ Ollama本地（兼容ID）
+    'builtin_ollama_local'       // ⑥ Ollama本地（最后兜底）
   ];
 
   // v2.14.0：视频 / 3D 模型优先级
@@ -57,8 +55,7 @@
     'openai',                    // ② OpenAI（在线）
     'siliconflow',               // ③ 硅基流动
     'builtin_zhipu_relay',       // ④ 智谱
-    'builtin_ollama',            // ⑤ Ollama本地（最后兜底）
-    'builtin_ollama_local'
+    'builtin_ollama_local'       // ⑤ Ollama本地（最后兜底）
   ];
 
   // v2.14.0：嵌入模型优先级（嵌入通常复用文本供应商）
@@ -67,7 +64,6 @@
     'siliconflow',
     'openai',
     'wawapi_relay',
-    'builtin_ollama',
     'builtin_ollama_local'
   ];
 
@@ -206,8 +202,8 @@
 
     // 如果优先在线，把本地Ollama放最后
     if (CONFIG.preferOnline) {
-      const local = result.filter(p => p.id === 'builtin_ollama' || p.id === 'builtin_ollama_local');
-      const online = result.filter(p => p.id !== 'builtin_ollama' && p.id !== 'builtin_ollama_local');
+      const local = result.filter(p => p.id === 'builtin_ollama_local');
+      const online = result.filter(p => p.id !== 'builtin_ollama_local');
       return [...online, ...local];
     }
 
