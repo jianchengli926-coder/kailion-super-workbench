@@ -100,27 +100,64 @@
       return dot / (Math.sqrt(na) * Math.sqrt(nb));
     },
 
-    // ---- localStorage 缓存 ----
+    // ---- localStorage 缓存（LRU 限容，防止超过 5MB 配额） ----
+    MAX_CACHE_ENTRIES: 120,   // 最多缓存 120 条文档向量（约 1.2MB，安全）
+    MAX_CACHE_BYTES: 3.5 * 1024 * 1024, // 序列化后不超过 3.5MB
+
     _loadCache() {
       try { return JSON.parse(localStorage.getItem(this.CACHE_KEY) || '{}'); }
       catch (e) { return {}; }
     },
+
+    // LRU 淘汰：超过条目上限或字节上限时，移除最久未访问的条目
+    _evictCache(cache) {
+      const entries = Object.entries(cache);
+      // 按 lastAccessed 升序（最旧的在前）
+      entries.sort((a, b) => (a[1].lastAccessed || 0) - (b[1].lastAccessed || 0));
+      while (entries.length > this.MAX_CACHE_ENTRIES) {
+        const [oldKey] = entries.shift();
+        delete cache[oldKey];
+      }
+      // 如果仍然超字节上限，继续淘汰
+      let serialized = JSON.stringify(cache);
+      while (serialized.length > this.MAX_CACHE_BYTES && entries.length > 10) {
+        const [oldKey] = entries.shift();
+        delete cache[oldKey];
+        serialized = JSON.stringify(cache);
+      }
+      return cache;
+    },
+
     _saveCache(cache) {
-      try { localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache)); }
-      catch (e) { console.warn('[KBEmbedding] cache save failed (quota?)', e.message); }
+      try {
+        this._evictCache(cache);
+        localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+      } catch (e) {
+        // 二次兜底：再删一半条目后重试
+        try {
+          const keys = Object.keys(cache);
+          keys.sort((a, b) => (cache[a].lastAccessed || 0) - (cache[b].lastAccessed || 0));
+          keys.slice(0, Math.floor(keys.length / 2)).forEach(k => delete cache[k]);
+          localStorage.setItem(this.CACHE_KEY, JSON.stringify(cache));
+        } catch (e2) {
+          console.warn('[KBEmbedding] cache save failed (quota?)', e2.message);
+        }
+      }
     },
 
     /**
-     * 获取文档向量（带缓存）
+     * 获取文档向量（带 LRU 缓存）
      */
     async getDocVector(docId, text, updatedAt) {
       const cache = this._loadCache();
       const hit = cache[docId];
       if (hit && hit.vector && (!updatedAt || hit.updatedAt === updatedAt)) {
+        hit.lastAccessed = Date.now();
+        this._saveCache(cache);
         return hit.vector;
       }
       const vec = await this.embed(text);
-      cache[docId] = { vector: vec, updatedAt: updatedAt || Date.now() };
+      cache[docId] = { vector: vec, updatedAt: updatedAt || Date.now(), lastAccessed: Date.now() };
       this._saveCache(cache);
       return vec;
     },
@@ -396,12 +433,9 @@
     // 重建索引按钮
     document.getElementById('ckb-rebuild').addEventListener('click', rebuildIndexHandler);
 
-    // 检测向量服务可用性 & 自动增量索引
+    // 检测向量服务可用性（不自动增量索引，避免 586 文档向量超 localStorage 配额；
+    // 用户可手动点击「重建索引」按需构建，缓存已设 LRU 上限 120 条）
     await refreshVectorStatus();
-    KBEmbedding.autoIndexIfNeeded().then(r => {
-      if (r && r.indexed) console.log('[KB] auto-indexed', r.indexed, 'new docs');
-      refreshVectorStatus();
-    }).catch(e => console.warn('[KB] auto-index failed', e));
   }
 
   /**

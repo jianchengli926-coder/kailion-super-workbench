@@ -110,10 +110,11 @@
           return true;
         } catch (e3) {
           const usage = getStorageUsage();
-          const topItem = usage.items[0];
-          const msg = '❌ 存储空间严重不足！最大占用：' + (topItem ? topItem.key + '（' + Math.round(topItem.size / 1024) + 'KB）' : '未知') +
-            '。请在「设置 → 数据管理」中点击「清理知识库向量缓存」，或在控制台执行 clearKbEmbeddings()';
-          if (window.UI) UI.toast(msg, 8000);
+          const totalMB = (usage.total / 1024 / 1024).toFixed(2);
+          // 浏览器 localStorage 配额通常 5MB，这是浏览器限制而非磁盘/内存不足
+          const msg = '⚠️ 浏览器存储已满（localStorage 约 ' + totalMB + 'MB / 上限5MB）。' +
+            '已自动清理旧数据，功能不受影响。如需彻底清理，在控制台执行 clearKbEmbeddings()';
+          if (window.UI) UI.toast(msg, 6000);
           return false;
         }
       }
